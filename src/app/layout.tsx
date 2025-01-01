@@ -8,19 +8,21 @@ const vazirmatn = Vazirmatn({ subsets: ["arabic"] });
 
 export const metadata = {
   title: "SnippetHub",
-  description: "A platform for managing and sharing code snippets.",
+  description: "پلتفرم مدیریت و اشتراک‌گذاری کد",
 };
 
-const RootLayout = ({ children }: { children: React.ReactNode }) => {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="fa" dir="rtl" className={vazirmatn.className}>
-      <body>
+      <body className="min-h-screen relative flex flex-col bg-background antialiased dark">
         <Header />
-        <main>{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>
   );
-};
-
-export default RootLayout;
+}

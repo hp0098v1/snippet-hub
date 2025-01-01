@@ -15,6 +15,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   DropdownMenu,
@@ -40,18 +41,10 @@ import {
   Settings,
   Trash2,
 } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 export const metadata: Metadata = {
-  title: "داشبورد | SnippetHub",
-  description: "مدیریت اسنیپت‌ها و پروفایل کاربری",
+  title: "پروفایل کاربر | SnippetHub",
+  description: "مشاهده پروفایل و اسنیپت‌های کاربر",
 };
 
 // This would come from your database or auth session
@@ -79,6 +72,9 @@ const snippets = [
     language: "JavaScript",
     visibility: "public",
     createdAt: "۱۴۰۲/۱۰/۱۵",
+    code: `function greeting(name) {
+  return \`Hello, \${name}!\`;
+}`,
   },
   {
     id: "2",
@@ -87,6 +83,9 @@ const snippets = [
     language: "Python",
     visibility: "private",
     createdAt: "۱۴۰۲/۱۰/۱۴",
+    code: `class Person:
+    def __init__(self, name):
+        self.name = name`,
   },
   // Add more snippets here
 ];
@@ -100,7 +99,15 @@ const languages = [
   { value: "cpp", label: "C++" },
 ];
 
-export default function DashboardPage() {
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function UserProfilePage(props: Props) {
+  const { id } = await props.params;
+  // In a real app, you would check if the logged-in user matches this profile
+  const isOwnProfile = id === userData.id;
+
   return (
     <div className="container flex-1 space-y-8 p-8">
       {/* User Profile Section */}
@@ -120,21 +127,25 @@ export default function DashboardPage() {
                     .join("")}
                 </AvatarFallback>
               </Avatar>
-              <Button
-                size="icon"
-                variant="outline"
-                className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full"
-              >
-                <Edit2 className="h-4 w-4" />
-              </Button>
+              {isOwnProfile && (
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full"
+                >
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+              )}
             </div>
             <div className="space-y-2 text-center md:flex-1 md:text-right">
               <div>
                 <div className="flex items-center justify-center gap-2 md:justify-start">
                   <CardTitle className="text-2xl">{userData.name}</CardTitle>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Settings className="h-4 w-4" />
-                  </Button>
+                  {isOwnProfile && (
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
                 <CardDescription className="mt-1">
                   {userData.username}
@@ -172,14 +183,16 @@ export default function DashboardPage() {
                   <CardDescription>عمومی</CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="border-none shadow-none">
-                <CardHeader className="p-0 text-center">
-                  <CardTitle className="text-2xl font-bold text-primary">
-                    {userData.stats.private}
-                  </CardTitle>
-                  <CardDescription>خصوصی</CardDescription>
-                </CardHeader>
-              </Card>
+              {isOwnProfile && (
+                <Card className="border-none shadow-none">
+                  <CardHeader className="p-0 text-center">
+                    <CardTitle className="text-2xl font-bold text-primary">
+                      {userData.stats.private}
+                    </CardTitle>
+                    <CardDescription>خصوصی</CardDescription>
+                  </CardHeader>
+                </Card>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -206,51 +219,60 @@ export default function DashboardPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <Select defaultValue="all">
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="وضعیت نمایش" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">همه</SelectItem>
-                  <SelectItem value="public">عمومی</SelectItem>
-                  <SelectItem value="private">خصوصی</SelectItem>
-                </SelectContent>
-              </Select>
+              {isOwnProfile && (
+                <Select defaultValue="all">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="وضعیت نمایش" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">همه</SelectItem>
+                    <SelectItem value="public">عمومی</SelectItem>
+                    <SelectItem value="private">خصوصی</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
             </div>
           </div>
-          <Button className="w-full md:w-auto">
-            <Plus className="ml-2 h-4 w-4" />
-            اسنیپت جدید
-          </Button>
+          {isOwnProfile && (
+            <Button className="w-full md:w-auto">
+              <Plus className="ml-2 h-4 w-4" />
+              اسنیپت جدید
+            </Button>
+          )}
         </div>
 
-        {/* Snippets Table */}
-        <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>عنوان</TableHead>
-                <TableHead>زبان</TableHead>
-                <TableHead>وضعیت نمایش</TableHead>
-                <TableHead>تاریخ ایجاد</TableHead>
-                <TableHead className="w-[100px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {snippets.map((snippet) => (
-                <TableRow key={snippet.id}>
-                  <TableCell className="font-medium">
-                    <Link
-                      href={`/snippets/${snippet.id}`}
-                      className="hover:text-primary hover:underline"
-                    >
-                      {snippet.title}
-                    </Link>
-                  </TableCell>
-                  <TableCell>
+        {/* Snippets Grid */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {snippets
+            .filter(
+              (snippet) => isOwnProfile || snippet.visibility === "public"
+            )
+            .map((snippet) => (
+              <Card key={snippet.id} className="flex flex-col">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="line-clamp-1">
+                        {snippet.title}
+                      </CardTitle>
+                      <CardDescription className="line-clamp-2">
+                        {snippet.description}
+                      </CardDescription>
+                    </div>
                     <Badge variant="outline">{snippet.language}</Badge>
-                  </TableCell>
-                  <TableCell>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1">
+                  <pre className="line-clamp-3 overflow-x-auto rounded-lg bg-muted p-4">
+                    <code className="text-xs">{snippet.code}</code>
+                  </pre>
+                </CardContent>
+                <CardFooter className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Calendar className="h-4 w-4" />
+                      {snippet.createdAt}
+                    </div>
                     <Badge
                       variant={
                         snippet.visibility === "public"
@@ -267,52 +289,52 @@ export default function DashboardPage() {
                         {snippet.visibility === "public" ? "عمومی" : "خصوصی"}
                       </div>
                     </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {snippet.createdAt}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Code2 className="ml-2 h-4 w-4" />
-                          مشاهده
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Edit2 className="ml-2 h-4 w-4" />
-                          ویرایش
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          {snippet.visibility === "public" ? (
-                            <>
-                              <EyeOff className="ml-2 h-4 w-4" />
-                              خصوصی کردن
-                            </>
-                          ) : (
-                            <>
-                              <Eye className="ml-2 h-4 w-4" />
-                              عمومی کردن
-                            </>
-                          )}
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600 focus:bg-red-50 focus:text-red-600">
-                          <Trash2 className="ml-2 h-4 w-4" />
-                          حذف
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/snippets/${snippet.id}`}>
+                        <Code2 className="ml-2 h-4 w-4" />
+                        مشاهده
+                      </Link>
+                    </Button>
+                    {isOwnProfile && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Edit2 className="ml-2 h-4 w-4" />
+                            ویرایش
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            {snippet.visibility === "public" ? (
+                              <>
+                                <EyeOff className="ml-2 h-4 w-4" />
+                                خصوصی کردن
+                              </>
+                            ) : (
+                              <>
+                                <Eye className="ml-2 h-4 w-4" />
+                                عمومی کردن
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600 focus:bg-red-50 focus:text-red-600">
+                            <Trash2 className="ml-2 h-4 w-4" />
+                            حذف
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
+                </CardFooter>
+              </Card>
+            ))}
+        </div>
       </div>
     </div>
   );

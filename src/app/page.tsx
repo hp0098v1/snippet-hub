@@ -1,77 +1,82 @@
-import React from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { ArrowLeft, Code2, Share2, Lock, ChevronDown } from "lucide-react";
 
-const features = [
-  {
-    title: "ذخیره امن کد",
-    description: "کدهای خود را به صورت امن و سازمان‌یافته ذخیره کنید",
-    icon: "🔒",
-  },
-  {
-    title: "اشتراک‌گذاری آسان",
-    description: "کدها را به صورت عمومی یا خصوصی به اشتراک بگذارید",
-    icon: "🔗",
-  },
-  {
-    title: "کشف کدهای جدید",
-    description: "کدهای عمومی دیگر توسعه‌دهندگان را کشف کنید",
-    icon: "🔍",
-  },
-];
-
-const Home = () => {
+export default function HomePage() {
   return (
-    <div className="min-h-screen">
+    <div className="flex flex-col container">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center min-h-screen text-center px-4">
-        <h1 className="text-4xl font-bold mb-4">به اسنیپت‌هاب خوش آمدید</h1>
-        <p className="text-lg text-muted-foreground max-w-sm mb-8">
-          کدهای خود را به سادگی سازماندهی کنید، به اشتراک بگذارید و کدهای جدید
-          را کشف کنید
-        </p>
-        <div className="flex gap-4">
-          <Button asChild variant="default" size="lg">
-            <a href="/auth/signup">شروع کنید</a>
-          </Button>
-          <Button asChild variant="outline" size="lg">
-            <a href="#features">بیشتر بدانید</a>
-          </Button>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-16 bg-muted">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center mb-12">
-            ویژگی‌های اسنیپت‌هاب
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="p-6">
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </Card>
-            ))}
+      <section className="flex flex-1 flex-col items-center justify-center space-y-12 px-4 py-24 text-center md:py-32">
+        <div className="space-y-6">
+          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+            مدیریت و اشتراک‌گذاری کد،
+            <br />
+            به سادگی و زیبایی
+          </h1>
+          <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl">
+            اسنیپت‌هاب پلتفرمی برای ذخیره، مدیریت و اشتراک‌گذاری قطعات کد است.
+            کدهای خود را به صورت خصوصی یا عمومی به اشتراک بگذارید.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Button asChild size="lg">
+              <Link href="/signup">
+                شروع کنید
+                <ArrowLeft className="mr-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              // onClick={() => {
+              //   document
+              //     .getElementById("features")
+              //     ?.scrollIntoView({ behavior: "smooth" });
+              // }}
+            >
+              بیشتر بدانید
+              <ChevronDown className="mr-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold mb-4">به جامعه ما بپیوندید</h2>
-          <p className="text-muted-foreground mb-8">
-            هم‌اکنون ثبت‌نام کنید و از امکانات اسنیپت‌هاب بهره‌مند شوید
-          </p>
-          <Button asChild variant="default" size="lg">
-            <a href="/auth/signup">ثبت‌نام رایگان</a>
-          </Button>
+      {/* Features Section */}
+      <section id="features" className="border-t py-24">
+        <div className="container space-y-12">
+          <h2 className="text-center text-3xl font-bold">
+            ویژگی‌های اسنیپت‌هاب
+          </h2>
+          <div className="grid gap-8 md:grid-cols-3">
+            <div className="flex flex-col items-center space-y-4 rounded-lg border bg-card text-card-foreground p-6 text-center">
+              <div className="rounded-full bg-primary/10 p-3">
+                <Code2 className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold">مدیریت کد</h3>
+              <p className="text-gray-500">
+                کدهای خود را به صورت سازمان‌یافته ذخیره و مدیریت کنید
+              </p>
+            </div>
+            <div className="flex flex-col items-center space-y-4 rounded-lg border bg-card text-card-foreground p-6 text-center">
+              <div className="rounded-full bg-primary/10 p-3">
+                <Share2 className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold">اشتراک‌گذاری</h3>
+              <p className="text-gray-500">
+                کدهای خود را به راحتی با دیگران به اشتراک بگذارید
+              </p>
+            </div>
+            <div className="flex flex-col items-center space-y-4 rounded-lg border bg-card text-card-foreground p-6 text-center">
+              <div className="rounded-full bg-primary/10 p-3">
+                <Lock className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold">حریم خصوصی</h3>
+              <p className="text-gray-500">
+                کنترل کامل روی خصوصی یا عمومی بودن کدهای خود داشته باشید
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </div>
   );
-};
-
-export default Home;
+}
