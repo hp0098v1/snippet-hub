@@ -1,14 +1,13 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getMockUsers } from "@/lib/mock/users";
-import { getMockSnippets } from "@/lib/mock/snippets";
 import { getMockCurrentUser } from "@/lib/mock/auth";
 import { Button } from "@/components/ui/button";
 import { PaginationControl } from "@/components/shared/pagination-control";
 import { SnippetCard } from "@/components/snippets/snippet-card";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
+import { getUserByUsername, getUserSnippets } from "@/db/queries";
 
 type Props = {
   params: Promise<{
@@ -21,8 +20,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { username } = await params;
-  const { data: users } = await getMockUsers({});
-  const user = users.find((u) => u.username === username);
+  const user = await getUserByUsername(username);
 
   if (!user) {
     return {
@@ -41,20 +39,18 @@ export default async function UserProfilePage({ params, searchParams }: Props) {
   const { page } = await searchParams;
   const pageNumber = Number(page) || 1;
 
-  const { data: users } = await getMockUsers({});
-  const user = users.find((u) => u.username === username);
+  const user = await getUserByUsername(username);
   const currentUser = await getMockCurrentUser();
 
   if (!user) {
     notFound();
   }
 
-  const { data: snippets, metadata } = await getMockSnippets({
+  const userSnippets = await getUserSnippets({
+    userId: user.id,
     page: pageNumber,
-    limit: 6,
+    limit: 1,
   });
-
-  const userSnippets = snippets.filter((s) => s.author.username === username);
   const isOwnProfile = currentUser?.id === user.id;
 
   return (
@@ -62,7 +58,7 @@ export default async function UserProfilePage({ params, searchParams }: Props) {
       {/* Profile header */}
       <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
         <Avatar className="h-32 w-32">
-          <AvatarImage src={user.image} />
+          <AvatarImage src={user.image ?? undefined} />
           <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
         </Avatar>
 
@@ -87,7 +83,9 @@ export default async function UserProfilePage({ params, searchParams }: Props) {
 
           <div className="flex gap-4 text-sm">
             <div>
-              <span className="font-medium">{user.snippetsCount}</span>{" "}
+              <span className="font-medium">
+                {userSnippets.metadata.totalItems}
+              </span>{" "}
               <span className="text-muted-foreground">قطعه کد</span>
             </div>
           </div>
@@ -105,14 +103,14 @@ export default async function UserProfilePage({ params, searchParams }: Props) {
           )}
         </div>
 
-        {userSnippets.length > 0 ? (
+        {userSnippets.data.length > 0 ? (
           <>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {userSnippets.map((snippet) => (
+              {userSnippets.data.map((snippet) => (
                 <SnippetCard key={snippet.id} snippet={snippet} />
               ))}
             </div>
-            <PaginationControl totalPages={metadata.totalPages} />
+            <PaginationControl totalPages={userSnippets.metadata.totalPages} />
           </>
         ) : (
           <div className="rounded-lg border border-dashed p-8 text-center">

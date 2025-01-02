@@ -3,7 +3,6 @@ import Form from "next/form";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { PaginationControl } from "@/components/shared/pagination-control";
-import { getMockSnippets } from "@/lib/mock/snippets";
 import { SnippetCard } from "@/components/snippets/snippet-card";
 import {
   Select,
@@ -13,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { getLanguages, getSnippets } from "@/db/queries";
 
 export const metadata: Metadata = {
   title: "قطعه کدها | SnippetHub",
@@ -27,23 +27,18 @@ type Props = {
   }>;
 };
 
-const languages = [
-  { value: "all", label: "همه" },
-  { value: "javascript", label: "JavaScript" },
-  { value: "typescript", label: "TypeScript" },
-  { value: "css", label: "CSS" },
-  { value: "dockerfile", label: "Dockerfile" },
-];
-
 export default async function SnippetsPage(props: Props) {
   const { query, language, page } = await props.searchParams;
 
-  const { data: snippets, metadata } = await getMockSnippets({
+  const { data: snippets, metadata } = await getSnippets({
     query,
-    language: language === "all" ? "" : language,
+    languageId: language === "all" ? undefined : language,
     page: Number(page) || 1,
     limit: 2,
   });
+
+  let languages = await getLanguages();
+  languages = [{ id: "all", name: "همه", slug: "all" }, ...languages];
 
   return (
     <div className="container space-y-8 py-8">
@@ -74,8 +69,8 @@ export default async function SnippetsPage(props: Props) {
           </SelectTrigger>
           <SelectContent>
             {languages.map((lang) => (
-              <SelectItem key={lang.value} value={lang.value}>
-                {lang.label}
+              <SelectItem key={lang.id} value={lang.id}>
+                {lang.name}
               </SelectItem>
             ))}
           </SelectContent>

@@ -4,8 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { UserCard } from "@/components/users/user-card";
 import { PaginationControl } from "@/components/shared/pagination-control";
-import { getMockUsers } from "@/lib/mock/users";
 import { Button } from "@/components/ui/button";
+import { getUsers } from "@/db/queries";
 
 export const metadata: Metadata = {
   title: "کاربران | SnippetHub",
@@ -22,10 +22,10 @@ type Props = {
 export default async function UsersPage(props: Props) {
   const { query, page } = await props.searchParams;
 
-  const { data: users, metadata } = await getMockUsers({
+  const { data: users, metadata } = await getUsers({
     query,
     page: Number(page) || 1,
-    limit: 2,
+    limit: 1,
   });
 
   return (
@@ -61,9 +61,9 @@ export default async function UsersPage(props: Props) {
             id={user.id}
             name={user.name}
             username={user.username}
-            bio={user.bio}
-            image={user.image}
-            snippetsCount={user.snippetsCount}
+            bio={user.bio ?? undefined}
+            image={user.image ?? undefined}
+            snippetsCount={user.snippets.length}
           />
         ))}
       </div>

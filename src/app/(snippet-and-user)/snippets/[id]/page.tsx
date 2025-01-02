@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getMockSnippets } from "@/lib/mock/snippets";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns-jalali";
 import { getMockCurrentUser } from "@/lib/mock/auth";
@@ -20,6 +19,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { getSnippetById, getSnippetByLanguage } from "@/db/queries";
+import { SnippetCard } from "@/components/snippets/snippet-card";
 
 type Props = {
   params: Promise<{
@@ -29,8 +30,7 @@ type Props = {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { id } = await props.params;
-  const { data: snippets } = await getMockSnippets({});
-  const snippet = snippets.find((s) => s.id === id);
+  const snippet = await getSnippetById(id);
 
   if (!snippet) {
     return {
@@ -46,31 +46,35 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function SnippetPage(props: Props) {
   const { id } = await props.params;
-  const { data: snippets } = await getMockSnippets({});
-  const snippet = snippets.find((s) => s.id === id);
+  const snippet = await getSnippetById(id);
   const currentUser = await getMockCurrentUser();
 
   if (!snippet) {
     notFound();
   }
 
-  const isAuthor = currentUser?.id === snippet.author.id;
+  const relatedSnippets = await getSnippetByLanguage(
+    snippet?.languageId,
+    snippet?.id
+  );
+
+  const isAuthor = currentUser?.id === snippet.user.id;
 
   return (
     <div className="container py-8 space-y-8">
-      {/* Author and metadata section */}
+      {/* user and metadata section */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Avatar className="h-12 w-12">
-            <AvatarImage src={snippet.author.image} />
-            <AvatarFallback>{snippet.author.name.slice(0, 2)}</AvatarFallback>
+            <AvatarImage src={snippet.user.image ?? undefined} />
+            <AvatarFallback>{snippet.user.name.slice(0, 2)}</AvatarFallback>
           </Avatar>
           <div className="space-y-1">
             <Link
-              href={`/users/${snippet.author.username}`}
+              href={`/users/${snippet.user.username}`}
               className="text-lg font-medium hover:underline"
             >
-              {snippet.author.name}
+              {snippet.user.name}
             </Link>
             <p className="text-sm text-muted-foreground">
               {formatDistanceToNow(new Date(snippet.createdAt), {
@@ -81,7 +85,7 @@ export default async function SnippetPage(props: Props) {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="capitalize">
-            {snippet.language}
+            {snippet.language.name}
           </Badge>
 
           {isAuthor && (
@@ -143,41 +147,16 @@ export default async function SnippetPage(props: Props) {
       </Card>
 
       {/* Related snippets */}
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold">قطعه کدهای مشابه</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {snippets
-            .filter(
-              (s) => s.id !== snippet.id && s.language === snippet.language
-            )
-            .slice(0, 3)
-            .map((relatedSnippet) => (
-              <Link
-                key={relatedSnippet.id}
-                href={`/snippets/${relatedSnippet.id}`}
-                className="block"
-              >
-                <Card className="h-full transition-colors hover:bg-muted/50">
-                  <CardContent className="p-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          {relatedSnippet.author.name}
-                        </span>
-                        <Badge variant="secondary" className="capitalize">
-                          {relatedSnippet.language}
-                        </Badge>
-                      </div>
-                      <h3 className="line-clamp-2 font-medium">
-                        {relatedSnippet.title}
-                      </h3>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
+      {relatedSnippets.length > 0 && (
+        <section className="space-y-4">
+          <h2 className="text-2xl font-bold">قطعه کدهای مشابه</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedSnippets.map((relatedSnippet) => (
+              <SnippetCard key={relatedSnippet.id} snippet={relatedSnippet} />
             ))}
-        </div>
-      </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

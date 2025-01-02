@@ -11,23 +11,19 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
-import { languages } from "@/lib/mock/languages";
 import Link from "next/link";
+import { CreateSnippet, Language } from "@/db/types";
 
 interface SnippetFormProps {
-  defaultValues?: {
-    title?: string;
-    description?: string;
-    language?: string;
-    code?: string;
-    isPublic?: boolean;
-  };
+  languages: Language[];
+  defaultValues?: CreateSnippet;
   isSubmitting?: boolean;
   onSubmit?: (data: FormData) => void;
   cancelLink: string;
 }
 
 export function SnippetForm({
+  languages,
   defaultValues,
   isSubmitting = false,
   onSubmit,
@@ -50,14 +46,14 @@ export function SnippetForm({
           </div>
           <div className="space-y-2">
             <Label htmlFor="language">زبان برنامه‌نویسی</Label>
-            <Select name="language" defaultValue={defaultValues?.language}>
+            <Select name="languageId" defaultValue={defaultValues?.languageId}>
               <SelectTrigger>
                 <SelectValue placeholder="انتخاب زبان برنامه‌نویسی" />
               </SelectTrigger>
               <SelectContent>
                 {languages.map((lang) => (
-                  <SelectItem key={lang.value} value={lang.value}>
-                    {lang.label}
+                  <SelectItem key={lang.id} value={lang.id}>
+                    {lang.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -70,7 +66,7 @@ export function SnippetForm({
             <Textarea
               id="description"
               name="description"
-              defaultValue={defaultValues?.description}
+              defaultValue={defaultValues?.description || ''}
               placeholder="توضیحات مختصری درباره قطعه کد و کاربرد آن بنویسید"
               className="h-24 resize-none"
             />

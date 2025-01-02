@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { SnippetForm } from "@/components/forms/snippet-form";
 import { getMockSnippets } from "@/lib/mock/snippets";
 import { notFound, redirect } from "next/navigation";
+import { getLanguages, getSnippetById } from "@/db/queries";
 
 type Props = {
   params: Promise<{
@@ -28,8 +29,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function EditSnippetPage(props: Props) {
   const params = await props.params;
-  const { data: snippets } = await getMockSnippets({});
-  const snippet = snippets.find((s) => s.id === params.id);
+  const snippet = await getSnippetById(params.id);
+  const languages = await getLanguages();
 
   if (!snippet) {
     notFound();
@@ -56,10 +57,11 @@ export default async function EditSnippetPage(props: Props) {
         defaultValues={{
           title: snippet.title,
           description: snippet.description,
-          language: snippet.language,
+          languageId: snippet.languageId,
           code: snippet.code,
-          isPublic: true, // This would come from your actual data
+          userId: snippet.userId,
         }}
+        languages={languages}
         onSubmit={updateSnippet}
         cancelLink={`/snippets/${params.id}`}
       />

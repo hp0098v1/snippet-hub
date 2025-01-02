@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { SnippetForm } from "@/components/forms/snippet-form";
 import { redirect } from "next/navigation";
 import { getMockCurrentUser } from "@/lib/mock/auth";
+import { getLanguages } from "@/db/queries";
 
 export const metadata: Metadata = {
   title: "ایجاد قطعه کد جدید | SnippetHub",
@@ -16,6 +17,7 @@ export default async function NewSnippetPage() {
     redirect("/snippets/1"); // Redirect to the new snippet
   }
 
+  const languages = await getLanguages();
   const user = await getMockCurrentUser();
 
   return (
@@ -28,6 +30,7 @@ export default async function NewSnippetPage() {
       </div>
 
       <SnippetForm
+        languages={languages}
         onSubmit={createSnippet}
         cancelLink={`/users/${user?.username}`}
       />

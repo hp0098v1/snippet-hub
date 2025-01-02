@@ -22,7 +22,6 @@ interface UserCardProps {
 }
 
 export function UserCard({
-  id,
   name,
   username,
   bio,
