@@ -7,11 +7,11 @@ import { PaginationControl } from "@/components/shared/pagination-control";
 import { SnippetCard } from "@/components/snippets/snippet-card";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
-import { getUserByUsername, getUserSnippets } from "@/db/queries";
+import { getUserById, getUserSnippets } from "@/db/queries";
 
 type Props = {
   params: Promise<{
-    username: string;
+    id: string;
   }>;
   searchParams: Promise<{
     page?: string;
@@ -19,8 +19,8 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { username } = await params;
-  const user = await getUserByUsername(username);
+  const { id } = await params;
+  const user = await getUserById(id);
 
   if (!user) {
     return {
@@ -35,11 +35,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function UserProfilePage({ params, searchParams }: Props) {
-  const { username } = await params;
+  const { id } = await params;
   const { page } = await searchParams;
   const pageNumber = Number(page) || 1;
 
-  const user = await getUserByUsername(username);
+  const user = await getUserById(id);
   const currentUser = await getMockCurrentUser();
 
   if (!user) {

@@ -22,6 +22,7 @@ interface UserCardProps {
 }
 
 export function UserCard({
+  id,
   name,
   username,
   bio,
@@ -45,7 +46,7 @@ export function UserCard({
                 <h3>
                   <Link
                     className="transition-colors hover:text-primary"
-                    href={`/users/${username}`}
+                    href={`/users/${id}`}
                   >
                     {name}
                   </Link>
@@ -57,7 +58,7 @@ export function UserCard({
             </div>
           </div>
           <Button variant="ghost" size="icon" asChild>
-            <Link href={`/users/${username}`}>
+            <Link href={`/users/${id}`}>
               <ChevronLeft className="size-5 text-muted-foreground" />
             </Link>
           </Button>

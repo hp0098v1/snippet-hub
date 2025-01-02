@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { SnippetForm } from "@/components/forms/snippet-form";
-import { getMockSnippets } from "@/lib/mock/snippets";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getLanguages, getSnippetById } from "@/db/queries";
+import { updateSnippet } from "@/db/actions";
 
 type Props = {
   params: Promise<{
@@ -12,8 +12,7 @@ type Props = {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params;
-  const { data: snippets } = await getMockSnippets({});
-  const snippet = snippets.find((s) => s.id === params.id);
+  const snippet = await getSnippetById(params.id);
 
   if (!snippet) {
     return {
@@ -31,17 +30,10 @@ export default async function EditSnippetPage(props: Props) {
   const params = await props.params;
   const snippet = await getSnippetById(params.id);
   const languages = await getLanguages();
+  const fakeUserId = "_c0YN4xpKdD2J6vA5EGRQ";
 
   if (!snippet) {
     notFound();
-  }
-
-  async function updateSnippet(formData: FormData) {
-    "use server";
-    console.log(formData);
-
-    // Handle snippet update
-    redirect(`/snippets/${params.id}`);
   }
 
   return (
@@ -54,6 +46,7 @@ export default async function EditSnippetPage(props: Props) {
       </div>
 
       <SnippetForm
+        snippetId={params.id}
         defaultValues={{
           title: snippet.title,
           description: snippet.description,
@@ -62,6 +55,7 @@ export default async function EditSnippetPage(props: Props) {
           userId: snippet.userId,
         }}
         languages={languages}
+        userId={fakeUserId}
         onSubmit={updateSnippet}
         cancelLink={`/snippets/${params.id}`}
       />

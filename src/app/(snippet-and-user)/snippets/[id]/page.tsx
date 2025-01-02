@@ -6,21 +6,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns-jalali";
-import { getMockCurrentUser } from "@/lib/mock/auth";
-import { Pencil, Trash2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { Pencil } from "lucide-react";
 import { getSnippetById, getSnippetByLanguage } from "@/db/queries";
 import { SnippetCard } from "@/components/snippets/snippet-card";
+import { CodeBlock } from "@/components/shared/code-block";
+import { SnippetDeleteForm } from "@/components/forms/snippet-delete-form";
 
 type Props = {
   params: Promise<{
@@ -47,7 +37,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default async function SnippetPage(props: Props) {
   const { id } = await props.params;
   const snippet = await getSnippetById(id);
-  const currentUser = await getMockCurrentUser();
+  // const currentUser = await getMockCurrentUser();
 
   if (!snippet) {
     notFound();
@@ -58,7 +48,7 @@ export default async function SnippetPage(props: Props) {
     snippet?.id
   );
 
-  const isAuthor = currentUser?.id === snippet.user.id;
+  const isAuthor = "_c0YN4xpKdD2J6vA5EGRQ" === snippet.user.id;
 
   return (
     <div className="container py-8 space-y-8">
@@ -71,7 +61,7 @@ export default async function SnippetPage(props: Props) {
           </Avatar>
           <div className="space-y-1">
             <Link
-              href={`/users/${snippet.user.username}`}
+              href={`/users/${snippet.user.id}`}
               className="text-lg font-medium hover:underline"
             >
               {snippet.user.name}
@@ -97,35 +87,7 @@ export default async function SnippetPage(props: Props) {
                 </Link>
               </Button>
 
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">حذف</span>
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      آیا از حذف این قطعه کد اطمینان دارید؟
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      این عملیات غیرقابل برگشت است. این قطعه کد برای همیشه حذف
-                      خواهد شد.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>انصراف</AlertDialogCancel>
-                    <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                      حذف
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <SnippetDeleteForm id={id} />
             </div>
           )}
         </div>
@@ -140,9 +102,7 @@ export default async function SnippetPage(props: Props) {
       {/* Code section */}
       <Card>
         <CardContent dir="ltr" className="p-6">
-          <pre className="overflow-x-auto">
-            <code className="text-sm">{snippet.code}</code>
-          </pre>
+          <CodeBlock code={snippet.code} language={snippet.language.slug} />
         </CardContent>
       </Card>
 

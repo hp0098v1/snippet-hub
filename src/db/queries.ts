@@ -5,9 +5,9 @@ import { and, count, desc, eq, ilike, ne, or, sql } from "drizzle-orm";
 import { PaginationParams, PaginatedResponse, User, UserWithSnippets, SnippetWithAuthorAndLanguage, Language } from "./types";
 
 // User Queries
-export async function getUserByUsername(username: string): Promise<User | undefined> {
+export async function getUserById(id: string): Promise<User | undefined> {
   const user = await db.query.users.findFirst({
-    where: (users, { eq }) => eq(users.username, username),
+    where: (users, { eq }) => eq(users.id, id),
   });
 
   return user;

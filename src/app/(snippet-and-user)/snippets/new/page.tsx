@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { SnippetForm } from "@/components/forms/snippet-form";
-import { redirect } from "next/navigation";
 import { getMockCurrentUser } from "@/lib/mock/auth";
 import { getLanguages } from "@/db/queries";
+import { createSnippet } from "@/db/actions";
 
 export const metadata: Metadata = {
   title: "ایجاد قطعه کد جدید | SnippetHub",
@@ -10,15 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default async function NewSnippetPage() {
-  async function createSnippet(formData: FormData) {
-    "use server";
-    console.log(formData);
-    // Handle snippet creation
-    redirect("/snippets/1"); // Redirect to the new snippet
-  }
+
 
   const languages = await getLanguages();
   const user = await getMockCurrentUser();
+  const fakeUserId = '_c0YN4xpKdD2J6vA5EGRQ'
 
   return (
     <div className="container max-w-3xl py-8 space-y-8">
@@ -30,6 +26,7 @@ export default async function NewSnippetPage() {
       </div>
 
       <SnippetForm
+        userId={fakeUserId}
         languages={languages}
         onSubmit={createSnippet}
         cancelLink={`/users/${user?.username}`}
