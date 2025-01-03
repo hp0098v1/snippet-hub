@@ -19,7 +19,7 @@ import {
 import { sendVerificationEmail } from "@/lib/email"; // You'll need to implement this
 
 import { createSession, deleteSession, verifySession } from "@/lib/session";
-import { updateUserSchema } from "@/lib/validations/user";
+import { updateUserSchema, updatePasswordSchema } from "@/lib/validations/user";
 
 export type FormState = {
   success?: boolean;
@@ -221,7 +221,6 @@ export async function incrementSnippetViews(id: string) {
     console.error("Failed to increment views:", error);
   }
 }
-
 
 // Auth Actions
 export async function signup(
@@ -466,4 +465,65 @@ export async function resendVerificationCode(
 export async function logout() {
   deleteSession();
   redirect("/login");
+}
+
+export async function updatePassword(
+  prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const formDataObj = Object.fromEntries(formData.entries());
+  const parsedData = updatePasswordSchema.safeParse(formDataObj);
+
+  if (!parsedData.success) {
+    return {
+      errors: parsedData.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    const { userId } = await verifySession();
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+    });
+
+    if (!user) {
+      return {
+        errors: {
+          message: "کاربر یافت نشد",
+        },
+      };
+    }
+
+    const isPasswordCorrect = await compare(
+      parsedData.data.currentPassword,
+      user.password
+    );
+
+    if (!isPasswordCorrect) {
+      return {
+        errors: {
+          currentPassword: "رمز عبور فعلی اشتباه است",
+        },
+      };
+    }
+
+    const hashedPassword = await hash(parsedData.data.newPassword, 10);
+
+    await db
+      .update(users)
+      .set({
+        password: hashedPassword,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId));
+
+  } catch {
+    return {
+      errors: {
+        message: "خطایی رخ داده است",
+      },
+    };
+  }
+
+  redirect("/dashboard");
 }
