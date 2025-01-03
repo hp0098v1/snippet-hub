@@ -1,3 +1,4 @@
+'server-only'
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { lt, and, eq } from "drizzle-orm";
@@ -14,5 +15,3 @@ export async function cleanupUnverifiedUsers() {
       )
     );
 } 
-
-cleanupUnverifiedUsers();
