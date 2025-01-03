@@ -6,12 +6,12 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import { useActionState } from "react";
 import { updatePassword } from "@/db/actions";
+import Link from "next/link";
 
 export function ChangePasswordForm() {
   const [state, formAction, isPending] = useActionState(updatePassword, {
     errors: {},
   });
-
 
   return (
     <Card>
@@ -69,9 +69,14 @@ export function ChangePasswordForm() {
             <p className="text-sm text-destructive">{state.errors.message}</p>
           )}
 
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "در حال تغییر رمز عبور..." : "تغییر رمز عبور"}
-          </Button>
+          <div className="flex justify-end gap-4">
+            <Button variant="outline" asChild>
+              <Link href={`/dashboard`}>انصراف</Link>
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "در حال تغییر رمز عبور..." : "تغییر رمز عبور"}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
