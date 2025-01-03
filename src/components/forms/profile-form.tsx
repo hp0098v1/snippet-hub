@@ -114,7 +114,7 @@ export function ProfileForm({ user }: Props) {
 
           <div className="flex justify-end gap-4">
             <Button variant="outline" asChild>
-              <Link href={`/users/${user.username}`}>انصراف</Link>
+              <Link href={`/dashboard`}>انصراف</Link>
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending ? "در حال ذخیره..." : "ذخیره تغییرات"}
