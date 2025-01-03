@@ -5,6 +5,11 @@ config();
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
+  SESSION_SECRET: z.string(),
+  SMTP_HOST: z.string(),
+  SMTP_PORT: z.string(),
+  SMTP_USER: z.string(),
+  SMTP_PASSWORD: z.string(),
 });
 
 try {

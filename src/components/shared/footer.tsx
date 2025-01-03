@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Twitter } from "lucide-react";
+import { Github, Mail } from "lucide-react";
 
 export function Footer() {
   return (
@@ -26,15 +26,15 @@ export function Footer() {
         </div>
         <div className="flex items-center gap-4">
           <Link
-            href="https://twitter.com/snippethub"
+            href="mailto:erfanpaya2021@gmail.com"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-primary"
           >
-            <Twitter className="h-5 w-5" />
+            <Mail className="h-5 w-5" />
           </Link>
           <Link
-            href="https://github.com/snippethub"
+            href="https://github.com/hp0098v1/snippet-hub"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-primary"

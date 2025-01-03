@@ -1,68 +1,143 @@
 # SnippetHub
 
-SnippetHub is a platform designed for managing and sharing code snippets. It allows users to store their code, share it either privately or publicly, and view public snippets from others. This project aims to provide a clean, modern, and responsive interface for users to interact with their snippets.
+SnippetHub is a modern web application for sharing and managing code snippets. Built with Next.js 15, TypeScript, and PostgreSQL, it provides a platform for developers to share, discover, and manage code snippets across different programming languages.
 
 ## Features
 
-- User authentication (Login and Signup)
-- Dashboard for managing code snippets
-- Add, edit, and view code snippets
-- Public profiles for users to showcase their snippets
-- Terms of service and privacy policy
+- 🔐 **Authentication System**
 
-## Technologies Used
+  - Email & Password authentication
+  - Email verification with OTP
+  - Session-based authentication
+  - Protected routes with middleware
+  - Auto cleanup of unverified users
 
-- **Next.js**: A React framework for building server-rendered applications.
-- **Tailwind CSS**: A utility-first CSS framework for styling.
-- **Shadcn UI**: A component library for building modern user interfaces.
+- 👥 **User Management**
+
+  - User profiles
+  - Profile customization
+  - Public user pages
+  - Dashboard for personal snippets
+
+- 📝 **Snippet Management**
+
+  - Create, edit, and delete snippets
+  - Syntax highlighting for multiple languages
+  - Code editor with language support
+  - Public sharing of snippets
+  - Related snippets suggestions
+
+- 🎨 **Modern UI/UX**
+  - Responsive design
+  - RTL support
+  - Dark/Light mode
+  - Clean and intuitive interface
+  - Loading states and animations
+
+## Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Database**: PostgreSQL with Drizzle ORM
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Email**: Nodemailer
+- **Authentication**: Custom JWT-based auth
+- **Code Editor**: CodeMirror
+- **Form Validation**: Zod
 
 ## Project Structure
 
 ```
-snippethub
-├── src
-│   ├── app
-│   ├── components
-│   ├── lib
-│   └── styles
-├── tailwind.config.js
-├── next.config.js
-├── package.json
-└── README.md
+src/
+├── app/                    # Next.js app router pages
+│   ├── (auth)/            # Authentication routes
+│   ├── (public)/          # Public routes
+│   └── dashboard/         # Protected dashboard routes
+├── components/            # React components
+│   ├── forms/            # Form components
+│   ├── shared/           # Shared/common components
+│   ├── snippets/         # Snippet-related components
+│   └── ui/               # UI components
+├── db/                    # Database configuration
+│   ├── actions.ts        # Server actions
+│   ├── queries.ts        # Database queries
+│   └── schema.ts         # Database schema
+└── lib/                  # Utility functions
+    ├── session.ts        # Session management
+    ├── email.ts          # Email functionality
+    └── validations/      # Zod schemas
 ```
 
 ## Getting Started
 
 1. Clone the repository:
 
-   ```
-   git clone <repository-url>
-   ```
+```bash
+git clone https://github.com/yourusername/snippet-hub.git
+cd snippet-hub
+```
 
-2. Navigate to the project directory:
+2. Install dependencies:
 
-   ```
-   cd snippethub
-   ```
+```bash
+pnpm install
+```
 
-3. Install dependencies:
+3. Set up environment variables:
 
-   ```
-   npm install
-   ```
+```bash
+cp .env.example .env
+```
 
-4. Run the development server:
+Required environment variables:
 
-   ```
-   npm run dev
-   ```
+```env
+DATABASE_URL=
+SESSION_SECRET=
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASSWORD=
+```
 
-5. Open your browser and navigate to `http://localhost:3000` to view the application.
+4. Run database migrations:
+
+```bash
+pnpm db:push
+```
+
+5. Start the development server:
+
+```bash
+pnpm dev
+```
+
+## Features in Detail
+
+### Authentication Flow
+
+- User signs up with email/password
+- Verification code is sent to email
+- 2-minute cooldown for resending verification code
+- Unverified accounts are automatically deleted after 24 hours
+- Session-based authentication with JWT
+
+### Snippet Management
+
+- Create snippets with title, description, and code
+- Support for multiple programming languages
+- Syntax highlighting in preview
+- Edit and delete own snippets
+- Public sharing with unique URLs
+
+### User Dashboard
+
+- Overview of personal snippets
+- Profile management
+- Account settings
+- Activity tracking
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or features you'd like to add.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
+Contributions are welcome! Please feel free to submit a Pull Request.

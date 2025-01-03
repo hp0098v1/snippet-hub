@@ -1,7 +1,8 @@
 import { Metadata } from "next";
-import { getMockCurrentUser } from "@/lib/mock/auth";
 import { notFound } from "next/navigation";
 import { ProfileForm } from "@/components/forms/profile-form";
+import { getUserById } from "@/db/queries";
+import { verifySession } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "تنظیمات پروفایل | SnippetHub",
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default async function ProfileSettingsPage() {
-  const user = await getMockCurrentUser();
+  const { userId } = await verifySession();
+
+  const user = await getUserById(userId);
 
   if (!user) {
     notFound();

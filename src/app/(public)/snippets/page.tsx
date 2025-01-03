@@ -34,7 +34,7 @@ export default async function SnippetsPage(props: Props) {
     query,
     languageId: language === "all" ? undefined : language,
     page: Number(page) || 1,
-    limit: 2,
+    limit: 6,
   });
 
   let languages = await getLanguages();

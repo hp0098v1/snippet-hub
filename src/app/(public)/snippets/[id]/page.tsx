@@ -11,6 +11,7 @@ import { getSnippetById, getSnippetByLanguage } from "@/db/queries";
 import { SnippetCard } from "@/components/snippets/snippet-card";
 import { CodeBlock } from "@/components/shared/code-block";
 import { SnippetDeleteForm } from "@/components/forms/snippet-delete-form";
+import { getSession } from "@/lib/session";
 
 type Props = {
   params: Promise<{
@@ -37,18 +38,20 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default async function SnippetPage(props: Props) {
   const { id } = await props.params;
   const snippet = await getSnippetById(id);
-  // const currentUser = await getMockCurrentUser();
 
   if (!snippet) {
     notFound();
   }
+
+  // Get session
+  const { userId } = await getSession();
 
   const relatedSnippets = await getSnippetByLanguage(
     snippet?.languageId,
     snippet?.id
   );
 
-  const isAuthor = "_c0YN4xpKdD2J6vA5EGRQ" === snippet.user.id;
+  const isOwner = userId === snippet.user.id;
 
   return (
     <div className="container py-8 space-y-8">
@@ -78,10 +81,10 @@ export default async function SnippetPage(props: Props) {
             {snippet.language.name}
           </Badge>
 
-          {isAuthor && (
+          {isOwner && (
             <div className="flex gap-2">
               <Button variant="ghost" size="icon" asChild>
-                <Link href={`/snippets/${id}/edit`}>
+                <Link href={`/dashboard/snippets/edit/${id}`}>
                   <Pencil className="h-4 w-4" />
                   <span className="sr-only">ویرایش</span>
                 </Link>

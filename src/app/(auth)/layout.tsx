@@ -10,8 +10,8 @@ export default function AuthLayout({
     <div className="container relative flex h-[calc(100vh-8rem)] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
         <Image
-          src="/placeholder.svg"
-          alt="placeholder"
+          src="/auth-bg.jpg"
+          alt="auth background"
           className="absolute inset-0"
           fill
         />

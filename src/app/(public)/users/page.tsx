@@ -25,7 +25,7 @@ export default async function UsersPage(props: Props) {
   const { data: users, metadata } = await getUsers({
     query,
     page: Number(page) || 1,
-    limit: 1,
+    limit: 6,
   });
 
   return (

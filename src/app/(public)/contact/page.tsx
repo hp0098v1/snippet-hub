@@ -17,8 +17,8 @@ import {
   MessageSquare,
   Phone,
   Send,
-  Twitter,
 } from "lucide-react";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "تماس با ما | SnippetHub",
@@ -112,17 +112,17 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="font-medium">ایمیل پشتیبانی</p>
-                  <a
-                    href="mailto:support@snippethub.ir"
+                  <Link
+                    href="mailto:erfanpaya2021@gmail.com"
                     className="text-sm text-muted-foreground hover:text-primary"
                   >
-                    support@snippethub.ir
-                  </a>
+                    erfanpaya2021@gmail.com
+                  </Link>
                 </div>
               </div>
 
               {/* Social Media */}
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Twitter className="h-5 w-5" />
                 </div>
@@ -137,7 +137,7 @@ export default function ContactPage() {
                     @snippethub
                   </a>
                 </div>
-              </div>
+              </div> */}
 
               {/* GitHub */}
               <div className="flex items-center gap-3">
@@ -146,14 +146,14 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="font-medium">گیت‌هاب</p>
-                  <a
-                    href="https://github.com/snippethub"
+                  <Link
+                    href="https://github.com/hp0098v1/snippet-hub"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-muted-foreground hover:text-primary"
                   >
-                    github.com/snippethub
-                  </a>
+                    github.com/hp0098v1/snippet-hub
+                  </Link>
                 </div>
               </div>
             </CardContent>

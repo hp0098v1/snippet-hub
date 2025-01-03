@@ -21,7 +21,6 @@ import Form from "next/form";
 import { FormState } from "@/db/actions";
 
 interface SnippetFormProps {
-  userId: string;
   snippetId?: string;
   languages: Language[];
   defaultValues?: CreateSnippet;
@@ -35,7 +34,6 @@ const initialState = {
 
 export function SnippetForm({
   snippetId,
-  userId,
   languages,
   defaultValues,
   onSubmit,
@@ -66,7 +64,6 @@ export function SnippetForm({
           formData.get("description") as string
         );
         newFormData.append("languageId", formData.get("languageId") as string);
-        newFormData.append("userId", userId);
         newFormData.append("code", code);
 
         formAction(newFormData);

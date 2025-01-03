@@ -30,7 +30,6 @@ export default async function EditSnippetPage(props: Props) {
   const params = await props.params;
   const snippet = await getSnippetById(params.id);
   const languages = await getLanguages();
-  const fakeUserId = "_c0YN4xpKdD2J6vA5EGRQ";
 
   if (!snippet) {
     notFound();
@@ -55,7 +54,6 @@ export default async function EditSnippetPage(props: Props) {
           userId: snippet.userId,
         }}
         languages={languages}
-        userId={fakeUserId}
         onSubmit={updateSnippet}
         cancelLink={`/snippets/${params.id}`}
       />

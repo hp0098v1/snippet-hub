@@ -1,17 +1,21 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, varchar, boolean } from "drizzle-orm/pg-core";
 
 // Users table
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   username: varchar("username", { length: 255 }).notNull().unique(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
+  email: text("email").notNull().unique(),
   password: text("password").notNull(),
   bio: text("bio"),
   image: text("image"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  emailVerified: boolean("email_verified").default(false).notNull(),
+  verificationCode: text("verification_code"),
+  verificationCodeExpiresAt: timestamp("verification_code_expires_at"),
+  deleteAt: timestamp("delete_at"),
 });
 
 // Languages table

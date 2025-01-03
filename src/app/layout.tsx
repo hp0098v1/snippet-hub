@@ -3,6 +3,7 @@ import { Vazirmatn } from "next/font/google";
 import { Header } from "@/components/shared/header";
 import { Footer } from "@/components/shared/footer";
 import "./globals.css";
+import { SessionProvider } from "@/components/providers/session-provider";
 
 const vazirmatn = Vazirmatn({ subsets: ["arabic"] });
 
@@ -19,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" className={vazirmatn.className}>
       <body className="min-h-screen relative flex flex-col bg-background antialiased dark">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <SessionProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );

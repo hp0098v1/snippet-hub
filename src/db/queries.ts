@@ -6,8 +6,13 @@ import { PaginationParams, PaginatedResponse, User, UserWithSnippets, SnippetWit
 
 // User Queries
 export async function getUserById(id: string): Promise<User | undefined> {
+  const conditions = [
+    eq(users.id, id),
+    eq(users.emailVerified, true),
+  ]
+
   const user = await db.query.users.findFirst({
-    where: (users, { eq }) => eq(users.id, id),
+    where: and(...conditions),
   });
 
   return user;
@@ -16,11 +21,12 @@ export async function getUserById(id: string): Promise<User | undefined> {
 export async function getUsers(params: {
   query?: string;
 } & PaginationParams = {}): Promise<PaginatedResponse<UserWithSnippets>> {
-  const { query, page = 1, limit = 1 } = params;
+  const { query, page = 1, limit = 6 } = params;
   const offset = (page - 1) * limit;
 
   const conditions = [
     query ? or(ilike(users.name, `%${query.trim()}%`), ilike(users.username, `%${query.trim()}%`)) : undefined,
+    eq(users.emailVerified, true),
   ]
 
   // Base query
@@ -83,7 +89,7 @@ export async function getSnippets(params: {
   languageId?: string;
   userId?: string;
 } & PaginationParams = {}): Promise<PaginatedResponse<SnippetWithAuthorAndLanguage>> {
-  const { query, languageId, userId, page = 1, limit = 10 } = params;
+  const { query, languageId, userId, page = 1, limit = 6 } = params;
   const offset = (page - 1) * limit;
 
   const conditions = [
@@ -142,7 +148,7 @@ export async function getSnippets(params: {
 export async function getUserSnippets(params: {
   userId: string;
 } & PaginationParams): Promise<PaginatedResponse<SnippetWithAuthorAndLanguage>> {
-  const { userId, page = 1, limit = 10 } = params;
+  const { userId, page = 1, limit = 6 } = params;
   const offset = (page - 1) * limit;
 
   const conditions = [
