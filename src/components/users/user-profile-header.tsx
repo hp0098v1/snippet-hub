@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Lock, Pencil, Settings } from "lucide-react";
+import { Code2, Lock, Pencil, Settings } from "lucide-react";
 
 type Props = {
   isOwnProfile?: boolean;
@@ -79,6 +79,7 @@ export function UserProfileHeader({
 
         <div className="flex gap-4 text-sm">
           <div>
+            <Code2 className="h-4 w-4 text-primary" />
             <span className="font-medium">{userSnippetsCount}</span>{" "}
             <span className="text-muted-foreground">قطعه کد</span>
           </div>

@@ -61,7 +61,7 @@ export default async function SnippetPage(props: Props) {
   return (
     <div className="container py-8 space-y-8">
       {/* user and metadata section */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Avatar className="h-12 w-12">
             <AvatarImage src={snippet.user.image ?? undefined} />
