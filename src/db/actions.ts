@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { snippets, users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import {
   createSnippetSchema,
@@ -208,6 +208,20 @@ export async function deleteSnippet(id: string): Promise<FormState> {
   revalidatePath(`/users/${selectedSnippet.userId}`);
   redirect(`/users/${selectedSnippet.userId}`);
 }
+
+export async function incrementSnippetViews(id: string) {
+  try {
+    await db
+      .update(snippets)
+      .set({
+        views: sql`${snippets.views} + 1`,
+      })
+      .where(eq(snippets.id, id));
+  } catch (error) {
+    console.error("Failed to increment views:", error);
+  }
+}
+
 
 // Auth Actions
 export async function signup(

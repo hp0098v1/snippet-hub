@@ -1,9 +1,15 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { SnippetWithAuthorAndLanguage } from "@/db/types";
 import { formatDistanceToNow } from "date-fns-jalali";
+import { Eye } from "lucide-react";
 
 type Props = {
   snippet: SnippetWithAuthorAndLanguage;
@@ -48,6 +54,14 @@ export function SnippetCard({ snippet }: Props) {
           {snippet.description}
         </p>
       </CardContent>
+      <CardFooter>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="gap-1.5">
+            <Eye className="h-4 w-4" />
+            {snippet.views.toLocaleString("fa")}
+          </Badge>
+        </div>
+      </CardFooter>
     </Card>
   );
 }

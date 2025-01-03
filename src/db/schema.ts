@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, varchar, boolean } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  varchar,
+  boolean,
+  integer,
+} from "drizzle-orm/pg-core";
 
 // Users table
 export const users = pgTable("users", {
@@ -31,8 +38,13 @@ export const snippets = pgTable("snippets", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   code: text("code").notNull(),
-  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  languageId: text("language_id").notNull().references(() => languages.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  languageId: text("language_id")
+    .notNull()
+    .references(() => languages.id, { onDelete: "cascade" }),
+  views: integer("views").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

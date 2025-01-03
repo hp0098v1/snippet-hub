@@ -5,7 +5,10 @@ import { Footer } from "@/components/shared/footer";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
 
-const vazirmatn = Vazirmatn({ subsets: ["arabic"] });
+const vazirmatn = Vazirmatn({
+  subsets: ["arabic"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata = {
   title: "SnippetHub",

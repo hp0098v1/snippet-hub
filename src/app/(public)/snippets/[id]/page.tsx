@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns-jalali";
-import { Pencil } from "lucide-react";
+import { Pencil, Eye } from "lucide-react";
 import { getSnippetById, getSnippetByLanguage } from "@/db/queries";
 import { SnippetCard } from "@/components/snippets/snippet-card";
 import { CodeBlock } from "@/components/shared/code-block";
 import { SnippetDeleteForm } from "@/components/forms/snippet-delete-form";
 import { getSession } from "@/lib/session";
+import { incrementSnippetViews } from "@/db/actions";
 
 type Props = {
   params: Promise<{
@@ -46,6 +47,9 @@ export default async function SnippetPage(props: Props) {
   // Get session
   const { userId } = await getSession();
 
+  // Increment views
+  await incrementSnippetViews(id);
+
   const relatedSnippets = await getSnippetByLanguage(
     snippet?.languageId,
     snippet?.id
@@ -77,6 +81,10 @@ export default async function SnippetPage(props: Props) {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="gap-1.5">
+            <Eye className="h-4 w-4" />
+            {snippet.views.toLocaleString("fa")}
+          </Badge>
           <Badge variant="secondary" className="capitalize">
             {snippet.language.name}
           </Badge>
