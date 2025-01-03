@@ -20,6 +20,11 @@ import { sendVerificationEmail } from "@/lib/email"; // You'll need to implement
 
 import { createSession, deleteSession, verifySession } from "@/lib/session";
 import { updateUserSchema, updatePasswordSchema } from "@/lib/validations/user";
+import {
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from "@/lib/validations/auth";
+import { sendResetPasswordEmail } from "@/lib/email"; // You'll need to implement this
 
 export type FormState = {
   success?: boolean;
@@ -553,6 +558,118 @@ export async function toggleSnippetLike(snippetId: string): Promise<FormState> {
     revalidatePath("/snippets");
     revalidatePath(`/snippets/${snippetId}`);
     revalidatePath(`/users/${userId}`);
+
+    return {
+      success: true,
+    };
+  } catch {
+    return {
+      errors: {
+        message: "خطایی رخ داده است",
+      },
+    };
+  }
+}
+
+export async function forgotPassword(
+  prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const formDataObj = Object.fromEntries(formData.entries());
+  const parsedData = forgotPasswordSchema.safeParse(formDataObj);
+
+  if (!parsedData.success) {
+    return {
+      errors: parsedData.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, parsedData.data.email),
+    });
+
+    if (!user || !user.emailVerified) {
+      return {
+        errors: {
+          email: "کاربری با این ایمیل یافت نشد",
+        },
+      };
+    }
+
+    // Generate reset token
+    const resetToken = nanoid(32);
+    const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    // Update user with reset token
+    await db
+      .update(users)
+      .set({
+        resetToken,
+        resetTokenExpiresAt,
+      })
+      .where(eq(users.id, user.id));
+
+    // Send reset password email
+    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${resetToken}`;
+    await sendResetPasswordEmail(user.email, resetLink);
+
+    return {
+      success: true,
+    };
+  } catch  {
+    return {
+      errors: {
+        message: "خطایی رخ داده است",
+      },
+    };
+  }
+}
+
+export async function resetPassword(
+  token: string,
+  prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const formDataObj = Object.fromEntries(formData.entries());
+  const parsedData = resetPasswordSchema.safeParse(formDataObj);
+
+  if (!parsedData.success) {
+    return {
+      errors: parsedData.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    // Find user with valid reset token
+    const user = await db.query.users.findFirst({
+      where: and(
+        eq(users.resetToken, token),
+        sql`${users.resetTokenExpiresAt} > NOW()`
+      ),
+    });
+
+    if (!user) {
+      return {
+        errors: {
+          message: "لینک بازیابی رمز عبور نامعتبر یا منقضی شده است",
+        },
+      };
+    }
+
+    // Hash new password
+    const hashedPassword = await hash(parsedData.data.password, 10);
+
+    // Update user password and clear reset token
+    await db
+      .update(users)
+      .set({
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiresAt: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, user.id));
 
     return {
       success: true,

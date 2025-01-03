@@ -53,7 +53,7 @@ export function UserCard({
                 </h3>
               </CardTitle>
               <CardDescription>
-                {username && <p>@{username}</p>}
+                {username && <p dir="ltr">@{username}</p>}
               </CardDescription>
             </div>
           </div>

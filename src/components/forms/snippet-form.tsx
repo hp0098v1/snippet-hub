@@ -23,7 +23,7 @@ import { FormState } from "@/db/actions";
 interface SnippetFormProps {
   snippetId?: string;
   languages: Language[];
-  defaultValues?: CreateSnippet;
+  defaultValues?: Omit<CreateSnippet, "views">;
   onSubmit: (prevState: FormState, formData: FormData) => Promise<FormState>;
   cancelLink: string;
 }
@@ -57,7 +57,7 @@ export function SnippetForm({
         if (isEditing) {
           newFormData.append("id", snippetId as string);
         }
-        
+
         newFormData.append("title", formData.get("title") as string);
         newFormData.append(
           "description",

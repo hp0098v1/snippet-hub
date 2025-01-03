@@ -40,6 +40,12 @@ export function AuthLoginForm() {
             <div className="grid gap-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">رمز عبور</Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-muted-foreground hover:underline"
+                >
+                  رمز عبور را فراموش کرده‌اید؟
+                </Link>
               </div>
               <PasswordInput
                 id="password"

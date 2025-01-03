@@ -38,7 +38,9 @@ export function UserProfileHeader({
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">{userName}</h1>
-            <p className="text-muted-foreground">@{userUsername}</p>
+            <p dir="ltr" className="text-muted-foreground">
+              @{userUsername}
+            </p>
           </div>
 
           {isOwnProfile && (

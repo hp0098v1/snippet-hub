@@ -52,6 +52,7 @@ export default async function EditSnippetPage(props: Props) {
           languageId: snippet.languageId,
           code: snippet.code,
           userId: snippet.userId,
+          
         }}
         languages={languages}
         onSubmit={updateSnippet}

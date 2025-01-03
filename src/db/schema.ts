@@ -11,18 +11,20 @@ import {
 
 // Users table
 export const users = pgTable("users", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().notNull(),
   name: varchar("name", { length: 255 }).notNull(),
-  username: varchar("username", { length: 255 }).notNull().unique(),
-  email: text("email").notNull().unique(),
+  username: varchar("username", { length: 255 }).unique().notNull(),
+  email: text("email").unique().notNull(),
+  emailVerified: boolean("email_verified").default(false),
   password: text("password").notNull(),
-  bio: text("bio"),
   image: text("image"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
+  bio: text("bio"),
   verificationCode: text("verification_code"),
   verificationCodeExpiresAt: timestamp("verification_code_expires_at"),
+  resetToken: text("reset_token"),
+  resetTokenExpiresAt: timestamp("reset_token_expires_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
   deleteAt: timestamp("delete_at"),
 });
 
