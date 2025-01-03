@@ -13,6 +13,7 @@ import { CodeBlock } from "@/components/shared/code-block";
 import { SnippetDeleteForm } from "@/components/forms/snippet-delete-form";
 import { getSession } from "@/lib/session";
 import { incrementSnippetViews } from "@/db/actions";
+import { LikeButton } from "@/components/snippets/like-button";
 
 type Props = {
   params: Promise<{
@@ -85,6 +86,11 @@ export default async function SnippetPage(props: Props) {
             <Eye className="h-4 w-4" />
             {snippet.views.toLocaleString("fa")}
           </Badge>
+          <LikeButton
+            snippetId={snippet.id}
+            isLiked={snippet.isLiked ?? false}
+            likesCount={snippet._count?.likes ?? 0}
+          />
           <Badge variant="secondary" className="capitalize">
             {snippet.language.name}
           </Badge>

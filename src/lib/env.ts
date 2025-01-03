@@ -5,6 +5,8 @@ config();
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
+  BLOB_READ_WRITE_TOKEN: z.string(),
+  NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN: z.string(),
   SESSION_SECRET: z.string(),
   SMTP_HOST: z.string(),
   SMTP_PORT: z.string(),
@@ -16,7 +18,7 @@ try {
   envSchema.parse(process.env);
 } catch (error) {
   if (error instanceof z.ZodError) {
-    console.error("Environment variables are not set correctly", error.errors);
+    console.log("Environment variables are not set correctly", error.errors);
   }
 }
 

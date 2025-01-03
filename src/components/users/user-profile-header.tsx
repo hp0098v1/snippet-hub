@@ -2,7 +2,13 @@ import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Lock, Pencil, Settings } from "lucide-react";
 
 type Props = {
   isOwnProfile?: boolean;
@@ -36,12 +42,34 @@ export function UserProfileHeader({
           </div>
 
           {isOwnProfile && (
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/dashboard/settings/profile">
-                <Pencil className="ml-2 h-4 w-4" />
-                ویرایش پروفایل
-              </Link>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Settings className="h-4 w-4" />
+                  <span className="sr-only">تنظیمات</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/dashboard/settings/profile"
+                    className="flex w-full items-center"
+                  >
+                    <Pencil className="ml-2 h-4 w-4" />
+                    ویرایش پروفایل
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/dashboard/settings/update-password"
+                    className="flex w-full items-center"
+                  >
+                    <Lock className="ml-2 h-4 w-4" />
+                    تغییر رمز عبور
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
 

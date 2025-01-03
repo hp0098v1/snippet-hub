@@ -6,6 +6,7 @@ import {
   varchar,
   boolean,
   integer,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 
 // Users table
@@ -49,12 +50,30 @@ export const snippets = pgTable("snippets", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Likes table
+export const likes = pgTable(
+  "likes",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    snippetId: text("snippet_id")
+      .notNull()
+      .references(() => snippets.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    pk: primaryKey(t.userId, t.snippetId), // Composite primary key
+  })
+);
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   snippets: many(snippets),
+  likes: many(likes),
 }));
 
-export const snippetsRelations = relations(snippets, ({ one }) => ({
+export const snippetsRelations = relations(snippets, ({ one, many }) => ({
   user: one(users, {
     fields: [snippets.userId],
     references: [users.id],
@@ -63,8 +82,21 @@ export const snippetsRelations = relations(snippets, ({ one }) => ({
     fields: [snippets.languageId],
     references: [languages.id],
   }),
+  likes: many(likes),
 }));
 
 export const languagesRelations = relations(languages, ({ many }) => ({
   snippets: many(snippets),
+}));
+
+// Likes relations
+export const likesRelations = relations(likes, ({ one }) => ({
+  user: one(users, {
+    fields: [likes.userId],
+    references: [users.id],
+  }),
+  snippet: one(snippets, {
+    fields: [likes.snippetId],
+    references: [snippets.id],
+  }),
 }));

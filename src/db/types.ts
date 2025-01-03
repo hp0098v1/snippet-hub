@@ -1,17 +1,23 @@
 import { type InferSelectModel } from "drizzle-orm";
-import { languages, snippets, users } from "./schema";
+import { languages, snippets, users, likes } from "./schema";
 
 export type User = InferSelectModel<typeof users>;
 export type Snippet = InferSelectModel<typeof snippets>;
 export type Language = InferSelectModel<typeof languages>;
+export type Like = InferSelectModel<typeof likes>;
 
 export type UserWithSnippets = User & {
   snippets: Snippet[];
 };
 
 export type SnippetWithAuthorAndLanguage = Snippet & {
-  user: Pick<User, "id" | "name" | "username" | "image">;
-  language: Pick<Language, "id" | "name" | "slug">;
+  user: User;
+  language: Language;
+  likes: Like[];
+  _count?: {
+    likes: number;
+  };
+  isLiked?: boolean;
 };
 
 export type PaginationParams = {
@@ -22,8 +28,8 @@ export type PaginationParams = {
 export type PaginatedResponse<T> = {
   data: T[];
   metadata: {
-    totalPages: number;
     currentPage: number;
+    totalPages: number;
     totalItems: number;
     itemsPerPage: number;
     hasNextPage: boolean;
@@ -32,14 +38,17 @@ export type PaginatedResponse<T> = {
 };
 
 // Action Types
-export type CreateSnippet = Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>
+export type CreateSnippet = Omit<Snippet, "id" | "createdAt" | "updatedAt">;
 
 export type UpdateSnippet = Partial<CreateSnippet> & {
   id: string;
 };
 
-export type CreateUser = Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'image' | 'bio'>
+export type CreateUser = Omit<
+  User,
+  "id" | "createdAt" | "updatedAt" | "image" | "bio"
+>;
 
-export type UpdateUser = Partial<Omit<CreateUser, 'email'>> & {
+export type UpdateUser = Partial<Omit<CreateUser, "email">> & {
   id: string;
-}; 
+};

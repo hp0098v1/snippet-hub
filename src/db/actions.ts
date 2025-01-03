@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { snippets, users } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { snippets, users, likes } from "@/db/schema";
+import { eq, sql, and } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import {
   createSnippetSchema,
@@ -54,7 +54,7 @@ export async function updateUser(
       where: eq(users.username, parsedFormData.data.username),
     });
 
-    if (existingUser) {
+    if (existingUser && existingUser.id !== userId) {
       return {
         errors: {
           username: "این نام کاربری قبلاً استفاده شده است",
@@ -516,7 +516,6 @@ export async function updatePassword(
         updatedAt: new Date(),
       })
       .where(eq(users.id, userId));
-
   } catch {
     return {
       errors: {
@@ -526,4 +525,43 @@ export async function updatePassword(
   }
 
   redirect("/dashboard");
+}
+
+export async function toggleSnippetLike(snippetId: string): Promise<FormState> {
+  try {
+    const { userId } = await verifySession();
+
+    // Check if user has already liked the snippet
+    const existingLike = await db.query.likes.findFirst({
+      where: and(eq(likes.userId, userId), eq(likes.snippetId, snippetId)),
+    });
+
+    if (existingLike) {
+      // Unlike: Remove the like
+      await db
+        .delete(likes)
+        .where(and(eq(likes.userId, userId), eq(likes.snippetId, snippetId)));
+    } else {
+      // Like: Add new like
+      await db.insert(likes).values({
+        userId,
+        snippetId,
+      });
+    }
+
+    // Revalidate the pages
+    revalidatePath("/snippets");
+    revalidatePath(`/snippets/${snippetId}`);
+    revalidatePath(`/users/${userId}`);
+
+    return {
+      success: true,
+    };
+  } catch {
+    return {
+      errors: {
+        message: "خطایی رخ داده است",
+      },
+    };
+  }
 }

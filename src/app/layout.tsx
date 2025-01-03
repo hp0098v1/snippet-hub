@@ -4,6 +4,7 @@ import { Header } from "@/components/shared/header";
 import { Footer } from "@/components/shared/footer";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -27,6 +28,7 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <Toaster />
         </SessionProvider>
       </body>
     </html>

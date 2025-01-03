@@ -10,6 +10,7 @@ import Link from "next/link";
 import { SnippetWithAuthorAndLanguage } from "@/db/types";
 import { formatDistanceToNow } from "date-fns-jalali";
 import { Eye } from "lucide-react";
+import { LikeButton } from "./like-button";
 
 type Props = {
   snippet: SnippetWithAuthorAndLanguage;
@@ -27,7 +28,7 @@ export function SnippetCard({ snippet }: Props) {
             </Avatar>
             <div className="space-y-1">
               <Link
-                href={`/users/${snippet.user.username}`}
+                href={`/users/${snippet.user.id}`}
                 className="text-sm font-medium hover:underline"
               >
                 {snippet.user.name}
@@ -60,6 +61,11 @@ export function SnippetCard({ snippet }: Props) {
             <Eye className="h-4 w-4" />
             {snippet.views.toLocaleString("fa")}
           </Badge>
+          <LikeButton
+            snippetId={snippet.id}
+            isLiked={snippet.isLiked ?? false}
+            likesCount={snippet._count?.likes ?? 0}
+          />
         </div>
       </CardFooter>
     </Card>

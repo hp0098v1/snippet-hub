@@ -6,33 +6,44 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-// import { ImageUpload } from "@/components/shared/image-upload";
+import { ImageUpload } from "@/components/shared/image-upload";
 import { User } from "@/db/types";
 import { updateUser } from "@/db/actions";
 import { useActionState } from "react";
+import { useRef } from "react";
 
 type Props = {
   user: User;
 };
 
 export function ProfileForm({ user }: Props) {
-  // const handleImageChange = (file: File) => {
-  //   // Here you would handle the file upload to your server
-  //   console.log("Selected file:", file);
-  // };
-
+  const formRef = useRef<HTMLFormElement>(null);
   const [state, formAction, isPending] = useActionState(updateUser, {
     errors: {},
   });
+
+  const handleImageChange = (url: string) => {
+    // Add a hidden input to the form with the image URL
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "image";
+    input.value = url;
+
+    // Remove any existing image input
+    const existingInput = formRef.current?.querySelector('input[name="image"]');
+    if (existingInput) {
+      existingInput.remove();
+    }
+
+    // Add the new input
+    formRef.current?.appendChild(input);
+  };
 
   return (
     <Card>
       <CardHeader className="space-y-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="text-sm text-muted-foreground text-center rounded-full border border-primary size-32 flex items-center justify-center">
-            قابلیت تغییر تصویر <br /> پروفایل در آینده
-          </div>
-          {/* <ImageUpload
+          <ImageUpload
             defaultImage={user.image ?? undefined}
             defaultFallback={user.name.slice(0, 2)}
             onChange={handleImageChange}
@@ -41,11 +52,11 @@ export function ProfileForm({ user }: Props) {
             <p className="text-sm text-muted-foreground">
               تصویر پروفایل خود را تغییر دهید
             </p>
-          </div> */}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <form className="space-y-6" action={formAction}>
+        <form ref={formRef} className="space-y-6" action={formAction}>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
