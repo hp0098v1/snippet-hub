@@ -5,7 +5,7 @@ import Image from "next/image";
 export function Footer() {
   return (
     <footer className="border-t bg-background">
-      <div className="container flex flex-col gap-4 py-8 md:flex-row md:items-center md:justify-between md:py-12">
+      <div className="container flex flex-col gap-4 pb-4 pt-8 md:flex-row md:items-center md:justify-between md:pt-12">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
           <Link
             href="/"
@@ -44,6 +44,17 @@ export function Footer() {
             <Github className="h-5 w-5" />
           </Link>
         </div>
+      </div>
+      <div className="container text-sm text-muted-foreground py-4">
+        ساخته شده با ❤️ توسط
+        <Link
+          href="https://portfolio-hp0098v1.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-primary"
+        >
+          &nbsp;ErfanPaya (hp0098v1)
+        </Link>
       </div>
     </footer>
   );

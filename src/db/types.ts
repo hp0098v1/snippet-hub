@@ -9,6 +9,13 @@ export type FormState = {
   };
 };
 
+export type Stats = {
+  usersCount: number;
+  snippetsCount: number;
+  likesCount: number;
+  viewsCount: number;
+};
+
 export type User = InferSelectModel<typeof users>;
 export type Snippet = InferSelectModel<typeof snippets>;
 export type Language = InferSelectModel<typeof languages>;
