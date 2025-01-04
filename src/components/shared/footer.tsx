@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Github, Mail } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -10,6 +11,7 @@ export function Footer() {
             href="/"
             className="flex items-center space-x-2 space-x-reverse"
           >
+            <Image src="/logo.png" alt="SnippetHub" width={30} height={30} />
             <span className="text-lg font-bold">SnippetHub</span>
           </Link>
           <nav className="flex gap-4 text-sm text-muted-foreground">

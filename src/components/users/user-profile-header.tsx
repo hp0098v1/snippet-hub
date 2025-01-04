@@ -38,9 +38,7 @@ export function UserProfileHeader({
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">{userName}</h1>
-            <p dir="ltr" className="text-muted-foreground">
-              @{userUsername}
-            </p>
+            <p className="text-muted-foreground">@{userUsername}</p>
           </div>
 
           {isOwnProfile && (
@@ -77,12 +75,9 @@ export function UserProfileHeader({
 
         {userBio && <p className="text-muted-foreground">{userBio}</p>}
 
-        <div className="flex gap-4 text-sm">
-          <div>
-            <Code2 className="h-4 w-4 text-primary" />
-            <span className="font-medium">{userSnippetsCount}</span>{" "}
-            <span className="text-muted-foreground">قطعه کد</span>
-          </div>
+        <div className="flex gap-2 items-center text-sm">
+          <Code2 className="h-4 w-4 text-primary" />
+          {userSnippetsCount} قطعه کد
         </div>
       </div>
     </section>
