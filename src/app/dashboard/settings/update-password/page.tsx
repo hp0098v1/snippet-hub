@@ -1,5 +1,6 @@
 import { Metadata } from "next";
-import { ChangePasswordForm } from "@/components/forms/change-password-form";
+
+import { ChangePasswordForm } from "@/components/users/forms/change-password-form";
 
 export const metadata: Metadata = {
   title: "تنظیمات | SnippetHub",

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ProfileForm } from "@/components/forms/profile-form";
+import { ProfileForm } from "@/components/users/forms/profile-form";
 import { getUserById } from "@/db/queries";
 import { verifySession } from "@/lib/session";
 

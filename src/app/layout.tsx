@@ -3,7 +3,7 @@ import { Vazirmatn } from "next/font/google";
 import { Header } from "@/components/shared/header";
 import { Footer } from "@/components/shared/footer";
 import "./globals.css";
-import { SessionProvider } from "@/components/providers/session-provider";
+import { SessionProvider } from "@/context/session-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 const vazirmatn = Vazirmatn({

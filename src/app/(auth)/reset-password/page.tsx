@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { ResetPasswordForm } from "@/components/forms/reset-password-form";
+import { ResetPasswordForm } from "@/components/auth/forms/reset-password-form";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {

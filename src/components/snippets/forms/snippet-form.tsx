@@ -1,5 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
+
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,10 +17,16 @@ import { Label } from "@/components/ui/label";
 
 import Link from "next/link";
 import { CreateSnippet, Language } from "@/db/types";
-import { CodeEditor } from "@/components/forms/code-editor";
+
 import { useActionState, useState } from "react";
 import Form from "next/form";
 import { FormState } from "@/db/actions";
+
+const CodeEditor = dynamic(
+  () =>
+    import("@/components/snippets/code-editor").then((mod) => mod.CodeEditor),
+  { ssr: false, loading: () => <div>Loading...</div> }
+);
 
 interface SnippetFormProps {
   snippetId?: string;

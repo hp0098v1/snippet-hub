@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import { AuthContainer } from "@/components/auth/auth-container";
-import { AuthLoginForm } from "@/components/forms/auth-login-form";
+import { AuthLoginForm } from "@/components/auth/forms/auth-login-form";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {

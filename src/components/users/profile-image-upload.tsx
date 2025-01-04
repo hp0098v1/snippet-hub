@@ -13,7 +13,7 @@ type Props = {
   onChange: (url: string) => void;
 };
 
-export function ImageUpload({
+export function ProfileImageUpload({
   defaultImage,
   defaultFallback,
   onChange,

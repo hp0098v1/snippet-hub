@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import { AuthContainer } from "@/components/auth/auth-container";
-import { AuthVerifyEmailForm } from "@/components/forms/auth-verify-email";
+import { AuthVerifyEmailForm } from "@/components/auth/forms/auth-verify-email";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {

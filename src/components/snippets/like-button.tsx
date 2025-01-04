@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { useSession } from "@/components/providers/session-provider";
+import { useSession } from "@/context/session-provider";
 import { toggleSnippetLike } from "@/db/actions";
 import { Heart } from "lucide-react";
 import { useTransition } from "react";

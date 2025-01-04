@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-import { SnippetForm } from "@/components/forms/snippet-form";
+import { SnippetForm } from "@/components/snippets/forms/snippet-form";
 import { getLanguages } from "@/db/queries";
 import { createSnippet } from "@/db/actions";
 

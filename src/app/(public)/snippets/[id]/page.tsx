@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import dynamic from "next/dynamic";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,11 +11,16 @@ import { formatDistanceToNow } from "date-fns-jalali";
 import { Pencil, Eye } from "lucide-react";
 import { getSnippetById, getSnippetByLanguage } from "@/db/queries";
 import { SnippetCard } from "@/components/snippets/snippet-card";
-import { CodeBlock } from "@/components/shared/code-block";
-import { SnippetDeleteForm } from "@/components/forms/snippet-delete-form";
+
+import { SnippetDeleteForm } from "@/components/snippets/forms/snippet-delete-form";
 import { getSession } from "@/lib/session";
 import { incrementSnippetViews } from "@/db/actions";
 import { LikeButton } from "@/components/snippets/like-button";
+
+const CodeBlock = dynamic(
+  () => import("@/components/snippets/code-block").then((mod) => mod.CodeBlock),
+  { ssr: false, loading: () => <div>Loading...</div> }
+);
 
 type Props = {
   params: Promise<{

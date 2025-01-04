@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { ImageUpload } from "@/components/shared/image-upload";
+import { ProfileImageUpload } from "@/components/users/profile-image-upload";
 import { User } from "@/db/types";
 import { updateUser } from "@/db/actions";
 import { useActionState } from "react";
@@ -43,7 +43,7 @@ export function ProfileForm({ user }: Props) {
     <Card>
       <CardHeader className="space-y-4">
         <div className="flex flex-col items-center gap-4">
-          <ImageUpload
+          <ProfileImageUpload
             defaultImage={user.image ?? undefined}
             defaultFallback={user.name.slice(0, 2)}
             onChange={handleImageChange}

@@ -1,5 +1,6 @@
 import { Metadata } from "next";
-import { ForgotPasswordForm } from "@/components/forms/forgot-password-form";
+
+import { ForgotPasswordForm } from "@/components/auth/forms/forgot-password-form";
 
 export const metadata: Metadata = {
   title: "فراموشی رمز عبور | SnippetHub",

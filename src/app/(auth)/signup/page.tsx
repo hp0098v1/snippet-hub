@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import { AuthContainer } from "@/components/auth/auth-container";
-import { AuthSignupForm } from "@/components/forms/auth-signup-form";
+import { AuthSignupForm } from "@/components/auth/forms/auth-signup-form";
 
 export const metadata: Metadata = {
   title: "ثبت‌نام | SnippetHub",
