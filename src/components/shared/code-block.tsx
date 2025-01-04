@@ -15,7 +15,7 @@ interface CodeBlockProps {
 export function CodeBlock({
   code,
   language = "typescript",
-  showLineNumbers = true,
+  showLineNumbers = false,
 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
@@ -30,7 +30,7 @@ export function CodeBlock({
       <Button
         size="icon"
         variant="ghost"
-        className="absolute flex right-4 top-4"
+        className="absolute flex right-3 top-3"
         onClick={copyToClipboard}
       >
         {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -43,6 +43,7 @@ export function CodeBlock({
           margin: 0,
           borderRadius: "0.5rem",
           padding: "1.5rem",
+          fontSize: "0.8rem",
         }}
       >
         {code}

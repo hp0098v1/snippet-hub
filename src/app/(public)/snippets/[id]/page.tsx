@@ -118,7 +118,7 @@ export default async function SnippetPage(props: Props) {
 
       {/* Code section */}
       <Card>
-        <CardContent dir="ltr" className="p-6">
+        <CardContent dir="ltr" className="p-0">
           <CodeBlock code={snippet.code} language={snippet.language.slug} />
         </CardContent>
       </Card>
