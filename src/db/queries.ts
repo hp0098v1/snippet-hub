@@ -140,7 +140,7 @@ export async function getSnippets(
       language: true,
       likes: true,
     },
-    orderBy: desc(snippets.createdAt),
+    orderBy: desc(snippets.views),
   });
 
   // Get total count
