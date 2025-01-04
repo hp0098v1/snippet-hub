@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ProfileForm } from "@/components/users/forms/profile-form";
 import { getUserById } from "@/db/queries";
 import { verifySession } from "@/lib/session";
+import { PageHeader } from "@/components/shared/page-header";
 
 export const metadata: Metadata = {
   title: "تنظیمات پروفایل | SnippetHub",
@@ -20,14 +21,12 @@ export default async function ProfileSettingsPage() {
 
   return (
     <div className="container max-w-2xl py-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">تنظیمات پروفایل</h1>
-        <p className="text-muted-foreground">
-          اطلاعات پروفایل خود را مدیریت کنید
-        </p>
-      </div>
+      <PageHeader
+        title="تنظیمات پروفایل"
+        description="اطلاعات پروفایل خود را مدیریت کنید"
+      />
 
-      <ProfileForm user={user}  />
+      <ProfileForm user={user} />
     </div>
   );
 }

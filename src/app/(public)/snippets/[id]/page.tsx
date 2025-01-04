@@ -1,11 +1,11 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns-jalali";
 import { Pencil, Eye } from "lucide-react";
@@ -16,10 +16,11 @@ import { SnippetDeleteForm } from "@/components/snippets/forms/snippet-delete-fo
 import { getSession } from "@/lib/session";
 import { incrementSnippetViews } from "@/db/actions";
 import { LikeButton } from "@/components/snippets/like-button";
+import { SaveButton } from "@/components/snippets/save-button";
 
 const CodeBlock = dynamic(
   () => import("@/components/snippets/code-block").then((mod) => mod.CodeBlock),
-  { ssr: false, loading: () => <div>Loading...</div> }
+  { loading: () => <div>Loading...</div> }
 );
 
 type Props = {
@@ -53,7 +54,7 @@ export default async function SnippetPage(props: Props) {
   }
 
   // Get session
-  const { userId } = await getSession();
+  const { userId, isAuth } = await getSession();
 
   // Increment views
   await incrementSnippetViews(id);
@@ -88,22 +89,30 @@ export default async function SnippetPage(props: Props) {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="gap-1.5">
-            <Eye className="h-4 w-4" />
-            {snippet.views.toLocaleString("fa")}
-          </Badge>
-          <LikeButton
-            snippetId={snippet.id}
-            isLiked={snippet.isLiked ?? false}
-            likesCount={snippet._count?.likes ?? 0}
-          />
-          <Badge variant="secondary" className="capitalize">
-            {snippet.language.name}
-          </Badge>
+        <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary">{snippet.language.name}</Badge>
+            <Badge variant="secondary" className="gap-1.5">
+              <Eye className="h-4 w-4" />
+              {snippet.views.toLocaleString("fa")}
+            </Badge>
+            <LikeButton
+              snippetId={snippet.id}
+              isAuth={isAuth}
+              isLiked={snippet.isLiked ?? false}
+              likesCount={snippet._count?.likes ?? 0}
+            />
+            {isAuth && (
+              <SaveButton
+                snippetId={snippet.id}
+                isAuth={isAuth}
+                isSaved={snippet.isSaved ?? false}
+              />
+            )}
+          </div>
 
           {isOwner && (
-            <div className="flex gap-2">
+            <div className="flex items-center gap-1">
               <Button variant="ghost" size="icon" asChild>
                 <Link href={`/dashboard/snippets/edit/${id}`}>
                   <Pencil className="h-4 w-4" />
@@ -136,7 +145,11 @@ export default async function SnippetPage(props: Props) {
           <h2 className="text-2xl font-bold">قطعه کدهای مشابه</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {relatedSnippets.map((relatedSnippet) => (
-              <SnippetCard key={relatedSnippet.id} snippet={relatedSnippet} />
+              <SnippetCard
+                key={relatedSnippet.id}
+                isAuth={isAuth}
+                snippet={relatedSnippet}
+              />
             ))}
           </div>
         </section>

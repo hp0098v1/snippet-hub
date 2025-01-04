@@ -1,81 +1,15 @@
 "use server";
+
 import { db } from "@/db";
-import { languages, snippets, users } from "@/db/schema";
-import { and, asc, count, desc, eq, ilike, ne, or } from "drizzle-orm";
+import { savedSnippets, snippets } from "@/db/schema";
+import { and, desc, count, eq, ilike, or, ne } from "drizzle-orm";
 import {
   PaginationParams,
   PaginatedResponse,
-  User,
-  UserWithSnippets,
   SnippetWithAuthorAndLanguage,
-  Language,
-} from "./types";
+} from "@/db/types";
 import { getSession } from "@/lib/session";
 
-// User Queries
-export async function getUserById(id: string): Promise<User | undefined> {
-  const conditions = [eq(users.id, id), eq(users.emailVerified, true)];
-
-  const user = await db.query.users.findFirst({
-    where: and(...conditions),
-  });
-
-  return user;
-}
-
-export async function getUsers(
-  params: {
-    query?: string;
-  } & PaginationParams = {}
-): Promise<PaginatedResponse<UserWithSnippets>> {
-  const { query, page = 1, limit = 6 } = params;
-  const offset = (page - 1) * limit;
-
-  const conditions = [
-    query
-      ? or(
-          ilike(users.name, `%${query.trim()}%`),
-          ilike(users.username, `%${query.trim()}%`)
-        )
-      : undefined,
-    eq(users.emailVerified, true),
-  ];
-
-  // Base query
-  const data = await db.query.users.findMany({
-    where: and(...conditions),
-    limit,
-    offset,
-    with: {
-      snippets: true,
-    },
-    orderBy: asc(users.createdAt),
-  });
-
-  // Get total count
-  const totalItems = await db
-    .select({ count: count() })
-    .from(users)
-    .where(and(...conditions))
-    .execute()
-    .then((res) => Number(res[0].count));
-
-  const totalPages = Math.ceil(totalItems / limit);
-
-  return {
-    data,
-    metadata: {
-      currentPage: page,
-      totalPages,
-      totalItems,
-      itemsPerPage: limit,
-      hasNextPage: page < totalPages,
-      hasPreviousPage: page > 1,
-    },
-  };
-}
-
-// Snippet Queries
 export async function getSnippetById(
   id: string
 ): Promise<SnippetWithAuthorAndLanguage | undefined> {
@@ -89,6 +23,7 @@ export async function getSnippetById(
       user: true,
       language: true,
       likes: true,
+      savedBy: true,
     },
   });
 
@@ -98,9 +33,13 @@ export async function getSnippetById(
     ...snippet,
     _count: {
       likes: snippet.likes.length,
+      saves: snippet.savedBy.length,
     },
     isLiked: currentUserId
       ? snippet.likes.some((like) => like.userId === currentUserId)
+      : false,
+    isSaved: currentUserId
+      ? snippet.savedBy.some((save) => save.userId === currentUserId)
       : false,
   };
 }
@@ -139,6 +78,7 @@ export async function getSnippets(
       user: true,
       language: true,
       likes: true,
+      savedBy: true,
     },
     orderBy: desc(snippets.views),
   });
@@ -153,19 +93,23 @@ export async function getSnippets(
 
   const totalPages = Math.ceil(totalItems / limit);
 
-  // Transform data to include likes count and user's like status
-  const snippetsWithLikes = data.map((snippet) => ({
+  // Transform data to include likes count and user's like/save status
+  const snippetsWithLikesAndSaves = data.map((snippet) => ({
     ...snippet,
     _count: {
       likes: snippet.likes.length,
+      saves: snippet.savedBy.length,
     },
     isLiked: currentUserId
       ? snippet.likes.some((like) => like.userId === currentUserId)
       : false,
+    isSaved: currentUserId
+      ? snippet.savedBy.some((save) => save.userId === currentUserId)
+      : false,
   }));
 
   return {
-    data: snippetsWithLikes,
+    data: snippetsWithLikesAndSaves,
     metadata: {
       currentPage: page,
       totalPages,
@@ -199,6 +143,7 @@ export async function getUserSnippets(
       user: true,
       language: true,
       likes: true,
+      savedBy: true,
     },
     orderBy: desc(snippets.createdAt),
   });
@@ -212,19 +157,91 @@ export async function getUserSnippets(
 
   const totalPages = Math.ceil(totalItems / limit);
 
-  // Transform data to include likes count and user's like status
-  const snippetsWithLikes = data.map((snippet) => ({
+  // Transform data to include likes count and user's like/save status
+  const snippetsWithLikesAndSaves = data.map((snippet) => ({
     ...snippet,
     _count: {
       likes: snippet.likes.length,
+      saves: snippet.savedBy.length,
     },
     isLiked: currentUserId
       ? snippet.likes.some((like) => like.userId === currentUserId)
       : false,
+    isSaved: currentUserId
+      ? snippet.savedBy.some((save) => save.userId === currentUserId)
+      : false,
   }));
 
   return {
-    data: snippetsWithLikes,
+    data: snippetsWithLikesAndSaves,
+    metadata: {
+      currentPage: page,
+      totalPages,
+      totalItems,
+      itemsPerPage: limit,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
+}
+
+export async function getSavedSnippets(
+  params: {
+    userId: string;
+  } & PaginationParams
+): Promise<PaginatedResponse<SnippetWithAuthorAndLanguage>> {
+  const { userId, page = 1, limit = 12 } = params;
+  const offset = (page - 1) * limit;
+
+  // Get current user for like status
+  const session = await getSession();
+  const currentUserId = session.userId;
+
+  // Get saved snippets
+  const data = await db.query.savedSnippets.findMany({
+    where: eq(savedSnippets.userId, userId),
+    limit,
+    offset,
+    with: {
+      snippet: {
+        with: {
+          user: true,
+          language: true,
+          likes: true,
+          savedBy: true,
+        },
+      },
+    },
+    orderBy: desc(savedSnippets.createdAt),
+  });
+
+  // Get total count
+  const totalItems = await db
+    .select({ count: count() })
+    .from(savedSnippets)
+    .where(eq(savedSnippets.userId, userId))
+    .execute()
+    .then((res) => Number(res[0].count));
+
+  const totalPages = Math.ceil(totalItems / limit);
+
+  // Transform data to include likes count and user's like/save status
+  const snippetsWithLikesAndSaves = data.map(({ snippet }) => ({
+    ...snippet,
+    _count: {
+      likes: snippet.likes.length,
+      saves: snippet.savedBy.length,
+    },
+    isLiked: currentUserId
+      ? snippet.likes.some((like) => like.userId === currentUserId)
+      : false,
+    isSaved: currentUserId
+      ? snippet.savedBy.some((save) => save.userId === currentUserId)
+      : false,
+  }));
+
+  return {
+    data: snippetsWithLikesAndSaves,
     metadata: {
       currentPage: page,
       totalPages,
@@ -256,34 +273,23 @@ export async function getSnippetByLanguage(
       user: true,
       language: true,
       likes: true,
+      savedBy: true,
     },
     orderBy: desc(snippets.createdAt),
   });
 
-  // Transform data to include likes count and user's like status
+  // Transform data to include likes count and user's like/save status
   return data.map((snippet) => ({
     ...snippet,
     _count: {
       likes: snippet.likes.length,
+      saves: snippet.savedBy.length,
     },
     isLiked: currentUserId
       ? snippet.likes.some((like) => like.userId === currentUserId)
       : false,
+    isSaved: currentUserId
+      ? snippet.savedBy.some((save) => save.userId === currentUserId)
+      : false,
   }));
-}
-
-// Language Queries
-export async function getLanguages(): Promise<Language[]> {
-  return db.select().from(languages).orderBy(languages.name);
-}
-
-export async function getLanguageBySlug(
-  slug: string
-): Promise<Language | undefined> {
-  const [language] = await db
-    .select()
-    .from(languages)
-    .where(eq(languages.slug, slug))
-    .limit(1);
-  return language;
 }

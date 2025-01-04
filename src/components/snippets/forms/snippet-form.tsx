@@ -20,7 +20,7 @@ import { CreateSnippet, Language } from "@/db/types";
 
 import { useActionState, useState } from "react";
 import Form from "next/form";
-import { FormState } from "@/db/actions";
+import { FormState } from "@/db/types";
 
 const CodeEditor = dynamic(
   () =>

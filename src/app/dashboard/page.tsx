@@ -12,8 +12,8 @@ export type Props = {
 
 export default async function DashboardPage(props: Props) {
   const { page } = await props.searchParams;
-  const { userId: id } = await verifySession();
-  
+  const { userId: id, isAuth } = await verifySession();
+
   const pageNumber = Number(page) || 1;
 
   const user = await getUserById(id);
@@ -32,7 +32,6 @@ export default async function DashboardPage(props: Props) {
     <div className="container py-8 space-y-8">
       {/* Profile header */}
       <UserProfileHeader
-        isOwnProfile={true}
         userImage={user.image}
         userName={user.name}
         userUsername={user.username}
@@ -43,6 +42,7 @@ export default async function DashboardPage(props: Props) {
       {/* User's snippets */}
       <UserSnippets
         isOwnProfile={true}
+        isAuth={isAuth}
         totalPages={userSnippets.metadata.totalPages}
         userSnippets={userSnippets.data}
       />

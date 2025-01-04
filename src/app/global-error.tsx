@@ -16,7 +16,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+    <div className="h-full flex flex-col items-center justify-center p-4">
       <div className="text-center space-y-6 max-w-md">
         <h1 className="text-4xl font-bold text-red-600">
           اوه! مشکلی پیش آمده است
@@ -24,7 +24,7 @@ export default function Error({
         <p className="text-gray-600 dark:text-gray-400">
           از این اتفاق متأسفیم. یک خطای غیرمنتظره رخ داده است
         </p>
-        <div className="space-x-4">
+        <div className="flex justify-center items-center gap-4">
           <Button onClick={() => reset()} variant="default">
             تلاش مجدد
           </Button>

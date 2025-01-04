@@ -1,23 +1,36 @@
 import { type InferSelectModel } from "drizzle-orm";
-import { languages, snippets, users, likes } from "./schema";
+import { languages, snippets, users, likes, savedSnippets } from "./schema";
+
+export type FormState = {
+  success?: boolean;
+  errors?: {
+    message?: string;
+    [key: string]: string[] | string | undefined;
+  };
+};
 
 export type User = InferSelectModel<typeof users>;
 export type Snippet = InferSelectModel<typeof snippets>;
 export type Language = InferSelectModel<typeof languages>;
 export type Like = InferSelectModel<typeof likes>;
+export type SavedSnippet = InferSelectModel<typeof savedSnippets>;
 
 export type UserWithSnippets = User & {
   snippets: Snippet[];
+  savedSnippets?: SavedSnippet[];
 };
 
 export type SnippetWithAuthorAndLanguage = Snippet & {
   user: User;
   language: Language;
   likes: Like[];
+  savedBy?: SavedSnippet[];
   _count?: {
     likes: number;
+    saves?: number;
   };
   isLiked?: boolean;
+  isSaved?: boolean;
 };
 
 export type PaginationParams = {

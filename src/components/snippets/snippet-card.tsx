@@ -11,12 +11,14 @@ import { SnippetWithAuthorAndLanguage } from "@/db/types";
 import { formatDistanceToNow } from "date-fns-jalali";
 import { Eye } from "lucide-react";
 import { LikeButton } from "./like-button";
+import { SaveButton } from "@/components/snippets/save-button";
 
 type Props = {
+  isAuth: boolean;
   snippet: SnippetWithAuthorAndLanguage;
 };
 
-export function SnippetCard({ snippet }: Props) {
+export function SnippetCard({ isAuth, snippet }: Props) {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="space-y-4">
@@ -62,10 +64,18 @@ export function SnippetCard({ snippet }: Props) {
             {snippet.views.toLocaleString("fa")}
           </Badge>
           <LikeButton
+            isAuth={isAuth}
             snippetId={snippet.id}
             isLiked={snippet.isLiked ?? false}
             likesCount={snippet._count?.likes ?? 0}
           />
+          {isAuth && (
+            <SaveButton
+              snippetId={snippet.id}
+              isAuth={isAuth}
+              isSaved={snippet.isSaved ?? false}
+            />
+          )}
         </div>
       </CardFooter>
     </Card>

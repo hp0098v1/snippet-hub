@@ -3,6 +3,7 @@ import { SnippetForm } from "@/components/snippets/forms/snippet-form";
 import { notFound } from "next/navigation";
 import { getLanguages, getSnippetById } from "@/db/queries";
 import { updateSnippet } from "@/db/actions";
+import { PageHeader } from "@/components/shared/page-header";
 
 type Props = {
   params: Promise<{
@@ -37,12 +38,10 @@ export default async function EditSnippetPage(props: Props) {
 
   return (
     <div className="container max-w-3xl py-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">ویرایش قطعه کد</h1>
-        <p className="text-muted-foreground">
-          تغییرات مورد نظر خود را اعمال کنید
-        </p>
-      </div>
+      <PageHeader
+        title="ویرایش قطعه کد"
+        description="تغییرات مورد نظر خود را اعمال کنید"
+      />
 
       <SnippetForm
         snippetId={params.id}
@@ -52,7 +51,6 @@ export default async function EditSnippetPage(props: Props) {
           languageId: snippet.languageId,
           code: snippet.code,
           userId: snippet.userId,
-          
         }}
         languages={languages}
         onSubmit={updateSnippet}

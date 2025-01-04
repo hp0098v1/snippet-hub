@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { SnippetForm } from "@/components/snippets/forms/snippet-form";
 import { getLanguages } from "@/db/queries";
 import { createSnippet } from "@/db/actions";
+import { PageHeader } from "@/components/shared/page-header";
 
 export const metadata: Metadata = {
   title: "ایجاد قطعه کد جدید | SnippetHub",
@@ -14,12 +15,10 @@ export default async function NewSnippetPage() {
 
   return (
     <div className="container max-w-3xl py-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">ایجاد قطعه کد جدید</h1>
-        <p className="text-muted-foreground">
-          قطعه کد خود را به اشتراک بگذارید و به دیگران کمک کنید
-        </p>
-      </div>
+      <PageHeader
+        title="ایجاد قطعه کد جدید"
+        description="قطعه کد خود را به اشتراک بگذارید و به دیگران کمک کنید"
+      />
 
       <SnippetForm
         languages={languages}

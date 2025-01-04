@@ -69,10 +69,28 @@ export const likes = pgTable(
   })
 );
 
+// Saved Snippets table
+export const savedSnippets = pgTable(
+  "saved_snippets",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    snippetId: text("snippet_id")
+      .notNull()
+      .references(() => snippets.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    pk: primaryKey(t.userId, t.snippetId), // Composite primary key
+  })
+);
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   snippets: many(snippets),
   likes: many(likes),
+  savedSnippets: many(savedSnippets),
 }));
 
 export const snippetsRelations = relations(snippets, ({ one, many }) => ({
@@ -85,6 +103,7 @@ export const snippetsRelations = relations(snippets, ({ one, many }) => ({
     references: [languages.id],
   }),
   likes: many(likes),
+  savedBy: many(savedSnippets),
 }));
 
 export const languagesRelations = relations(languages, ({ many }) => ({
@@ -99,6 +118,18 @@ export const likesRelations = relations(likes, ({ one }) => ({
   }),
   snippet: one(snippets, {
     fields: [likes.snippetId],
+    references: [snippets.id],
+  }),
+}));
+
+// Saved Snippets relations
+export const savedSnippetsRelations = relations(savedSnippets, ({ one }) => ({
+  user: one(users, {
+    fields: [savedSnippets.userId],
+    references: [users.id],
+  }),
+  snippet: one(snippets, {
+    fields: [savedSnippets.snippetId],
     references: [snippets.id],
   }),
 }));

@@ -60,12 +60,12 @@ export default async function UserProfilePage({ params, searchParams }: Props) {
         userUsername={user.username}
         userBio={user.bio}
         userSnippetsCount={userSnippets.metadata.totalItems}
-        isOwnProfile={isOwnProfile}
       />
 
       {/* User's snippets */}
       <UserSnippets
         isOwnProfile={isOwnProfile}
+        isAuth={isAuth}
         totalPages={userSnippets.metadata.totalPages}
         userSnippets={userSnippets.data}
       />

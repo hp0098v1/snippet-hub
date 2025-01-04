@@ -2,37 +2,35 @@
 
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { Heart } from "lucide-react";
+import { Bookmark } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { toggleSnippetLike } from "@/db/actions";
+import { toggleSaveSnippet } from "@/db/actions";
 import { cn } from "@/lib/utils";
 
 type Props = {
   snippetId: string;
-  isLiked: boolean;
-  likesCount: number;
+  isSaved: boolean;
   isAuth: boolean;
   className?: string;
 };
 
-export function LikeButton({
+export function SaveButton({
   snippetId,
-  isLiked,
-  likesCount,
-  isAuth,
+  isSaved,
+  isAuth = false,
   className,
 }: Props) {
   const [isPending, startTransition] = useTransition();
 
-  function handleLike() {
+  function handleSave() {
     if (!isAuth) {
-      toast.error("برای لایک کردن باید وارد شوید");
+      toast.error("برای ذخیره کردن باید وارد شوید");
       return;
     }
 
     startTransition(async () => {
-      const result = await toggleSnippetLike(snippetId);
+      const result = await toggleSaveSnippet(snippetId);
 
       if (result.errors) {
         toast.error(result.errors.message);
@@ -48,12 +46,12 @@ export function LikeButton({
         isPending && "opacity-50 cursor-default",
         className
       )}
-      onClick={!isPending ? handleLike : undefined}
+      onClick={!isPending ? handleSave : undefined}
     >
-      <Heart
-        className={`size-4 ${isLiked ? "fill-current text-red-500" : ""}`}
+      <Bookmark
+        className={cn("size-4", isSaved ? "fill-current text-yellow-500" : "")}
       />
-      {likesCount.toLocaleString("fa")}
+      <span className="sr-only">Save</span>
     </Badge>
   );
 }

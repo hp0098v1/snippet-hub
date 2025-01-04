@@ -1,17 +1,8 @@
-import Link from "next/link";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Code2, Lock, Pencil, Settings } from "lucide-react";
+import { Code2,  } from "lucide-react";
+
 
 type Props = {
-  isOwnProfile?: boolean;
   userImage: string | null;
   userName: string;
   userUsername: string;
@@ -20,7 +11,6 @@ type Props = {
 };
 
 export function UserProfileHeader({
-  isOwnProfile = false,
   userImage,
   userName,
   userUsername,
@@ -40,37 +30,6 @@ export function UserProfileHeader({
             <h1 className="text-3xl font-bold">{userName}</h1>
             <p className="text-muted-foreground">@{userUsername}</p>
           </div>
-
-          {isOwnProfile && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Settings className="h-4 w-4" />
-                  <span className="sr-only">تنظیمات</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/dashboard/settings/profile"
-                    className="flex w-full items-center"
-                  >
-                    <Pencil className="ml-2 h-4 w-4" />
-                    ویرایش پروفایل
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/dashboard/settings/update-password"
-                    className="flex w-full items-center"
-                  >
-                    <Lock className="ml-2 h-4 w-4" />
-                    تغییر رمز عبور
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
         </div>
 
         {userBio && <p className="text-muted-foreground">{userBio}</p>}

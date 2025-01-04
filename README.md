@@ -1,168 +1,175 @@
-# SnippetHub
+[English](README.md) | [فارسی](README.fa.md)
+
+# Snippet Hub
 
 SnippetHub is a modern web application for sharing and managing code snippets. Built with Next.js 15, TypeScript, and PostgreSQL, it provides a platform for developers to share, discover, and manage code snippets across different programming languages.
 
 🌐 **[Live Preview](https://snippet-hub-hp0098v1.vercel.app/)**
 
+## Navigation
+
+- [Features](#features)
+  - [Authentication](#authentication)
+  - [User Management](#user-management)
+  - [Snippet Management](#snippet-management)
+  - [Social Features](#social-features)
+  - [Search & Discovery](#search--discovery)
+  - [Responsive Design](#responsive-design)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Database Schema](#database-schema)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Features
 
-### Authentication & Security
+- 🔐 **Authentication**
 
-- Email & Password authentication
-- Email verification with OTP
-- Login with session
-- Password reset via email
-- Password change
-- Protected dashboard routes
-- Auto cleanup of unverified users
+  - Email/Password authentication
+  - Email verification
+  - Password reset functionality
+  - Session management
 
-### User Profile
+- 👤 **User Management**
 
-- Profile information management
-- Profile image upload
-- View user's snippets
-- Snippet count display
-- Bio and username customization
+  - User profiles
+  - Profile customization
+  - Password change
+  - Bio and avatar support
 
-### Snippets
+- 📝 **Snippet Management**
 
-- Create new snippets
-- Edit snippets
-- Delete snippets
-- Like snippets
-- View count tracking
-- Like count display
-- Related snippets suggestions
-- Syntax highlighting for multiple languages
+  - Create, edit, and delete snippets
+  - Syntax highlighting
+  - Multiple programming languages support
+  - Description and title for each snippet
+  - View count tracking
 
-### UI/UX
+- ❤️ **Social Features**
 
-- Responsive design
-- RTL support
-- Light/Dark theme
-- Modern UI components
-- Smooth animations
-- User-friendly notifications
-- Clean and intuitive interface
+  - Like snippets
+  - Save snippets for later
+  - View other users' profiles
+  - See user's snippets and activity
+
+- 🔍 **Search & Discovery**
+
+  - Search snippets by title/description
+  - Filter by programming language
+  - Browse popular snippets
+  - Discover users
+
+- 📱 **Responsive Design**
+  - Mobile-first approach
+  - Dark/Light mode support
+  - RTL support
+  - Clean and modern UI
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Shadcn UI
-- **Database**: PostgreSQL
-- **ORM**: Drizzle ORM
-- **Storage**: Vercel Blob Storage
+- **Framework**: [Next.js 15](https://nextjs.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/)
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
+- **Authentication**: Custom email/password with session management
+- **Storage**: [Vercel Blob Storage](https://vercel.com/storage/blobs)
 - **Email**: Nodemailer
-
-## Getting Started
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/yourusername/snippet-hub.git
-   cd snippet-hub
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   pnpm install
-   ```
-
-3. Set up environment variables:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-4. Fill in the environment variables in .env:
-
-   ```bash
-   DATABASE_URL="postgresql://user:password@localhost:5432/your_database"
-   BLOB_READ_WRITE_TOKEN="your_vercel_blob_token"
-   NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN="your_vercel_blob_token"
-   SESSION_SECRET="your_session_secret"
-   SMTP_HOST="smtp.gmail.com"
-   SMTP_PORT="587"
-   SMTP_USER="your_email@gmail.com"
-   SMTP_PASSWORD="your_app_specific_password"
-   NEXT_PUBLIC_APP_URL="http://localhost:3000"
-   ```
-
-5. Run database migrations:
-
-   ```bash
-   pnpm db:push
-   ```
-
-6. Start the development server:
-   ```bash
-   pnpm dev
-   ```
+- **Deployment**: [Vercel](https://vercel.com/)
 
 ## Project Structure
 
 ```
 src/
-├── app/ # Next.js app router pages
-│ ├── (auth)/ # Authentication routes
-│ ├── (public)/ # Public routes
-│ └── dashboard/ # Protected dashboard routes
-├── components/ # React components
-│ ├── forms/ # Form components
-│ ├── shared/ # Shared/common components
-│ ├── snippets/ # Snippet-related components
-│ └── ui/ # UI components
-├── db/ # Database configuration
-│ ├── actions.ts # Server actions
-│ ├── queries.ts # Database queries
-│ └── schema.ts # Database schema
-└── lib/ # Utility functions
-├── session.ts # Session management
-├── email.ts # Email functionality
-└── validations/ # Zod schemas
+├── app/                    # Next.js app router pages
+│   ├── (auth)/            # Authentication routes
+│   ├── (public)/          # Public routes
+│   └── dashboard/         # Protected dashboard routes
+├── components/            # React components
+│   ├── auth/             # Authentication components
+│   ├── shared/           # Shared components
+│   ├── snippets/         # Snippet-related components
+│   ├── ui/              # UI components (shadcn)
+│   └── users/           # User-related components
+├── db/                   # Database configuration
+│   ├── actions/         # Server actions
+│   ├── queries/         # Database queries
+│   └── schema.ts        # Database schema
+├── lib/                 # Utility functions
+│   ├── email.ts        # Email functionality
+│   ├── session.ts      # Session management
+│   └── validations/    # Form validations
+└── middleware.ts       # Next.js middleware
 ```
 
-## Features in Detail
+## Database Schema
 
-### Authentication Flow
+- **users**: User accounts and profiles
+- **snippets**: Code snippets with metadata
+- **languages**: Programming languages
+- **likes**: Snippet likes
+- **savedSnippets**: Saved snippets for users
 
-- User signs up with email/password
-- Verification code is sent to email
-- 2-minute cooldown for resending verification code
-- Unverified accounts are automatically deleted after 24 hours
-- Session-based authentication
-- Password reset via email link
+## Getting Started
 
-### Snippet Management
+### Prerequisites
 
-- Create snippets with title, description, and code
-- Support for multiple programming languages
-- Syntax highlighting in preview
-- Edit and delete own snippets
-- Public sharing with unique URLs
-- Like and view count tracking
+- Git
+- Node.js 18+
+- PostgreSQL
+- pnpm (recommended)
 
-### User Dashboard
+### Installation
 
-- Overview of personal snippets
-- Profile management
-- Account settings
-- Password change
-- Profile image upload
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/snippet-hub.git
+cd snippet-hub
+```
+
+2. Copy `.env.example` to `.env` and fill in your values:
+
+```bash
+DATABASE_URL="postgresql://user:password@localhost:5432/your_database"
+BLOB_READ_WRITE_TOKEN="your_vercel_blob_token"
+NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN="your_vercel_blob_token"
+SESSION_SECRET="your_session_secret"
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USER="your_email@gmail.com"
+SMTP_PASSWORD="your_app_specific_password"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
+
+3. Install dependencies:
+
+```bash
+pnpm install
+```
+
+4. Set up the database:
+
+```bash
+pnpm db:push
+```
+
+5. Start the development server:
+
+```bash
+pnpm dev
+```
+
+Visit `http://localhost:3000` to see the app.
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-1. Fork the project
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { logout } from "@/db/actions";
 import { useSession } from "@/context/session-provider";
-import Link from "next/link";
-import { LogOut, User } from "lucide-react";
+import { DashboardMenu } from "@/components/shared/dashboard-menu";
+import { LogOut } from "lucide-react";
 
 export function AuthButtons() {
   const { isAuth } = useSession();
@@ -19,18 +21,7 @@ export function AuthButtons() {
               <span className="sr-only">خروج</span>
             </Button>
           </form>
-          <Button
-            aria-label="داشبورد"
-            title="داشبورد"
-            variant="ghost"
-            size="icon"
-            asChild
-          >
-            <Link href="/dashboard">
-              <User />
-              <span className="sr-only">داشبورد</span>
-            </Link>
-          </Button>
+          <DashboardMenu />
         </>
       ) : (
         <>

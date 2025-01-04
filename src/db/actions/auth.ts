@@ -1,233 +1,24 @@
 "use server";
 
-import { db } from "@/db";
-import { snippets, users, likes } from "@/db/schema";
-import { eq, sql, and } from "drizzle-orm";
-import { nanoid } from "nanoid";
-import {
-  createSnippetSchema,
-  updateSnippetSchema,
-} from "@/lib/validations/snippets";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { nanoid } from "nanoid";
+import { and, eq, sql } from "drizzle-orm";
 import { hash, compare } from "bcryptjs";
+
+import { db } from "@/db";
+import { users } from "@/db/schema";
 import {
   loginSchema,
   signupSchema,
   verifyEmailSchema,
-} from "@/lib/validations/auth";
-import { sendVerificationEmail } from "@/lib/email"; // You'll need to implement this
-
-import { createSession, deleteSession, verifySession } from "@/lib/session";
-import { updateUserSchema, updatePasswordSchema } from "@/lib/validations/user";
-import {
   forgotPasswordSchema,
   resetPasswordSchema,
 } from "@/lib/validations/auth";
-import { sendResetPasswordEmail } from "@/lib/email"; // You'll need to implement this
+import { sendVerificationEmail, sendResetPasswordEmail } from "@/lib/email";
+import { createSession, deleteSession } from "@/lib/session";
 
-export type FormState = {
-  success?: boolean;
-  errors?: {
-    message?: string;
-    [key: string]: string[] | string | undefined;
-  };
-};
+import { FormState } from "@/db/types";
 
-async function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// User Actions
-export async function updateUser(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  await wait(2000);
-  const { userId } = await verifySession();
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedFormData = updateUserSchema.safeParse(formDataObj);
-
-  if (!parsedFormData.success) {
-    return {
-      errors: parsedFormData.error.flatten().fieldErrors,
-    };
-  }
-
-  try {
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.username, parsedFormData.data.username),
-    });
-
-    if (existingUser && existingUser.id !== userId) {
-      return {
-        errors: {
-          username: "این نام کاربری قبلاً استفاده شده است",
-        },
-      };
-    }
-
-    await db
-      .update(users)
-      .set({
-        ...parsedFormData.data,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, userId));
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
-  }
-
-  revalidatePath(`/dashboard`);
-  revalidatePath(`/users`);
-  revalidatePath(`/users/${userId}`);
-  redirect(`/dashboard`);
-}
-
-// Snippet Actions
-export async function createSnippet(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedFormData = createSnippetSchema.safeParse(formDataObj);
-
-  if (!parsedFormData.success) {
-    return {
-      errors: parsedFormData.error.flatten().fieldErrors,
-    };
-  }
-
-  const { userId } = await verifySession();
-  const snippetId = nanoid();
-
-  try {
-    await db.insert(snippets).values({
-      id: snippetId,
-      userId,
-      ...parsedFormData.data,
-    });
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
-  }
-
-  revalidatePath("/snippets");
-  revalidatePath(`/users/${userId}`);
-  redirect(`/snippets/${snippetId}`);
-}
-
-export async function updateSnippet(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  await wait(2000);
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedFormData = updateSnippetSchema.safeParse(formDataObj);
-
-  if (!parsedFormData.success) {
-    return {
-      errors: parsedFormData.error.flatten().fieldErrors,
-    };
-  }
-
-  const { userId } = await verifySession();
-
-  const selectedSnippet = await db.query.snippets.findFirst({
-    where: eq(snippets.id, parsedFormData.data.id),
-  });
-
-  const isOwner = selectedSnippet?.userId === userId;
-
-  if (!isOwner) {
-    return {
-      errors: {
-        message: "شما نمیتوانید قطعه کد دیگری را ویرایش کنید",
-      },
-    };
-  }
-
-  try {
-    await db
-      .update(snippets)
-      .set({
-        ...parsedFormData.data,
-        updatedAt: new Date(),
-      })
-      .where(eq(snippets.id, parsedFormData.data.id));
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
-  }
-
-  revalidatePath("/snippets");
-  revalidatePath(`/snippets/${parsedFormData.data.id}`);
-  revalidatePath(`/users/${userId}`);
-  redirect(`/snippets/${parsedFormData.data.id}`);
-}
-
-export async function deleteSnippet(id: string): Promise<FormState> {
-  const selectedSnippet = await db.query.snippets.findFirst({
-    where: eq(snippets.id, id),
-  });
-
-  if (!selectedSnippet) {
-    return {
-      errors: {
-        message: "قطعه کد یافت نشد",
-      },
-    };
-  }
-
-  try {
-    const { userId } = await verifySession();
-
-    if (selectedSnippet.userId !== userId) {
-      return {
-        errors: {
-          message: "شما نمیتوانید قطعه کد دیگری را حذف کنید",
-        },
-      };
-    }
-
-    await db.delete(snippets).where(eq(snippets.id, id));
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
-  }
-
-  revalidatePath("/snippets");
-  revalidatePath(`/users/${selectedSnippet.userId}`);
-  redirect(`/users/${selectedSnippet.userId}`);
-}
-
-export async function incrementSnippetViews(id: string) {
-  try {
-    await db
-      .update(snippets)
-      .set({
-        views: sql`${snippets.views} + 1`,
-      })
-      .where(eq(snippets.id, id));
-  } catch (error) {
-    console.error("Failed to increment views:", error);
-  }
-}
-
-// Auth Actions
 export async function signup(
   prevState: FormState,
   formData: FormData
@@ -468,107 +259,8 @@ export async function resendVerificationCode(
 }
 
 export async function logout() {
-  deleteSession();
+  await deleteSession();
   redirect("/login");
-}
-
-export async function updatePassword(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedData = updatePasswordSchema.safeParse(formDataObj);
-
-  if (!parsedData.success) {
-    return {
-      errors: parsedData.error.flatten().fieldErrors,
-    };
-  }
-
-  try {
-    const { userId } = await verifySession();
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, userId),
-    });
-
-    if (!user) {
-      return {
-        errors: {
-          message: "کاربر یافت نشد",
-        },
-      };
-    }
-
-    const isPasswordCorrect = await compare(
-      parsedData.data.currentPassword,
-      user.password
-    );
-
-    if (!isPasswordCorrect) {
-      return {
-        errors: {
-          currentPassword: "رمز عبور فعلی اشتباه است",
-        },
-      };
-    }
-
-    const hashedPassword = await hash(parsedData.data.newPassword, 10);
-
-    await db
-      .update(users)
-      .set({
-        password: hashedPassword,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, userId));
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
-  }
-
-  redirect("/dashboard");
-}
-
-export async function toggleSnippetLike(snippetId: string): Promise<FormState> {
-  try {
-    const { userId } = await verifySession();
-
-    // Check if user has already liked the snippet
-    const existingLike = await db.query.likes.findFirst({
-      where: and(eq(likes.userId, userId), eq(likes.snippetId, snippetId)),
-    });
-
-    if (existingLike) {
-      // Unlike: Remove the like
-      await db
-        .delete(likes)
-        .where(and(eq(likes.userId, userId), eq(likes.snippetId, snippetId)));
-    } else {
-      // Like: Add new like
-      await db.insert(likes).values({
-        userId,
-        snippetId,
-      });
-    }
-
-    // Revalidate the pages
-    revalidatePath("/snippets");
-    revalidatePath(`/snippets/${snippetId}`);
-    revalidatePath(`/users/${userId}`);
-
-    return {
-      success: true,
-    };
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
-  }
 }
 
 export async function forgotPassword(
@@ -617,7 +309,7 @@ export async function forgotPassword(
     return {
       success: true,
     };
-  } catch  {
+  } catch {
     return {
       errors: {
         message: "خطایی رخ داده است",
