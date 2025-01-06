@@ -17,7 +17,6 @@ import { incrementSnippetViews } from "@/db/actions";
 import { LikeButton } from "@/components/snippets/like-button";
 import { SaveButton } from "@/components/snippets/save-button";
 
-
 type Props = {
   params: Promise<{
     id: string;

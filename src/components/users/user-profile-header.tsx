@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Code2,  } from "lucide-react";
-
+import { Code2 } from "lucide-react";
 
 type Props = {
   userImage: string | null;

@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useActionState } from "react";
+import { useRef } from "react";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { ProfileImageUpload } from "@/components/users/profile-image-upload";
+import { ImageUpload } from "@/components/shared/image-upload";
 import { User } from "@/db/types";
 import { updateUser } from "@/db/actions";
-import { useActionState } from "react";
-import { useRef } from "react";
 
 type Props = {
   user: User;
@@ -22,31 +22,38 @@ export function ProfileForm({ user }: Props) {
     errors: {},
   });
 
-  const handleImageChange = (url: string) => {
-    // Add a hidden input to the form with the image URL
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = "image";
-    input.value = url;
-
-    // Remove any existing image input
-    const existingInput = formRef.current?.querySelector('input[name="image"]');
-    if (existingInput) {
-      existingInput.remove();
+  const handleImageChange = (file: File | null) => {
+    // Create a hidden input if it doesn't exist
+    let input = formRef.current?.querySelector(
+      'input[name="image"]'
+    ) as HTMLInputElement;
+    if (!input) {
+      input = document.createElement("input");
+      input.type = "file";
+      input.name = "image";
+      input.style.display = "none";
+      formRef.current?.appendChild(input);
     }
 
-    // Add the new input
-    formRef.current?.appendChild(input);
+    // Create a DataTransfer object to set the file
+    if (file) {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      input.files = dataTransfer.files;
+    } else {
+      input.value = "";
+    }
   };
 
   return (
     <Card>
       <CardHeader className="space-y-4">
         <div className="flex flex-col items-center gap-4">
-          <ProfileImageUpload
+          <ImageUpload
             defaultImage={user.image ?? undefined}
             defaultFallback={user.name.slice(0, 2)}
             onChange={handleImageChange}
+            variant="avatar"
           />
           <div className="text-center">
             <p className="text-sm text-muted-foreground">

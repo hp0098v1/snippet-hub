@@ -1,13 +1,15 @@
 "use server";
 
-import { db } from "@/db";
-import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { hash, compare } from "bcryptjs";
-import { updateUserSchema, updatePasswordSchema } from "@/lib/validations/user";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
+import { hash, compare } from "bcryptjs";
+
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { updatePasswordSchema, updateUserSchema } from "@/lib/validations/user";
 import { verifySession } from "@/lib/session";
+import { uploadFile } from "@/db/actions/upload";
 
 import { FormState } from "@/db/types";
 
@@ -16,16 +18,48 @@ export async function updateUser(
   formData: FormData
 ): Promise<FormState> {
   const { userId } = await verifySession();
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedFormData = updateUserSchema.safeParse(formDataObj);
-
-  if (!parsedFormData.success) {
-    return {
-      errors: parsedFormData.error.flatten().fieldErrors,
-    };
-  }
 
   try {
+    // Handle image upload first
+    let imageUrl: string | undefined = undefined;
+    const imageFile = formData.get("image") as File | null;
+
+    if (imageFile && typeof imageFile !== "string") {
+      // Get current user to check if we need to delete old image
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+      });
+
+      console.log("user image", user?.image);
+
+      const uploadResult = await uploadFile(imageFile, {
+        oldUrl: user?.image,
+        maxSize: 5 * 1024 * 1024, // 5MB
+        accept: "image/*",
+      });
+
+      if (!uploadResult.success) {
+        return {
+          errors: {
+            image: uploadResult.error,
+          },
+        };
+      }
+
+      imageUrl = uploadResult.url;
+    }
+
+    // Remove image from formData to parse remaining fields
+    formData.delete("image");
+    const formDataObj = Object.fromEntries(formData.entries());
+    const parsedFormData = updateUserSchema.safeParse(formDataObj);
+
+    if (!parsedFormData.success) {
+      return {
+        errors: parsedFormData.error.flatten().fieldErrors,
+      };
+    }
+
     const existingUser = await db.query.users.findFirst({
       where: eq(users.username, parsedFormData.data.username),
     });
@@ -42,10 +76,12 @@ export async function updateUser(
       .update(users)
       .set({
         ...parsedFormData.data,
+        image: imageUrl,
         updatedAt: new Date(),
       })
       .where(eq(users.id, userId));
-  } catch {
+  } catch (error) {
+    console.error("Error updating user:", error);
     return {
       errors: {
         message: "خطایی رخ داده است",
@@ -58,6 +94,7 @@ export async function updateUser(
   revalidatePath(`/users/${userId}`);
   redirect(`/dashboard`);
 }
+
 
 
 export async function updatePassword(
@@ -119,3 +156,4 @@ export async function updatePassword(
 
   redirect("/dashboard");
 }
+
