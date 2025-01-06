@@ -38,14 +38,15 @@ SnippetHub is a modern web application for sharing and managing code snippets. B
   - User profiles
   - Profile customization
   - Password change
-  - Bio and avatar support
+  - Bio and avatar (profile image) support
 
 - 📝 **Snippet Management**
 
-  - Create, edit, and delete snippets
-  - Syntax highlighting
-  - Multiple programming languages support
-  - Description and title for each snippet
+  - Rich text editor with Tiptap
+  - Code blocks with syntax highlighting
+  - Support for 10+ programming languages
+  - Real-time preview
+  - Auto-save drafts
   - View count tracking
 
 - ❤️ **Social Features**
@@ -57,16 +58,19 @@ SnippetHub is a modern web application for sharing and managing code snippets. B
 
 - 🔍 **Search & Discovery**
 
-  - Search snippets by title/description
-  - Filter by programming language
-  - Browse popular snippets
+  - Full-text search in titles and content
+  - Advanced filtering options
+  - Sort by popularity, date, or relevance
+  - Language-based categorization
+  - Trending snippets section
   - Discover users
 
 - 📱 **Responsive Design**
   - Mobile-first approach
-  - Dark/Light mode support
+  - Dark mode support
   - RTL support
   - Clean and modern UI
+  - Optimized performance
 
 ## Tech Stack
 
