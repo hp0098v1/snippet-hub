@@ -7,6 +7,7 @@ import {
   PaginationParams,
   PaginatedResponse,
   SnippetWithAuthorAndLanguage,
+  SnippetsSortOption,
 } from "@/db/types";
 import { getSession } from "@/lib/session";
 
@@ -49,16 +50,24 @@ export async function getSnippets(
     query?: string;
     languageId?: string;
     userId?: string;
+    sortBy?: SnippetsSortOption;
   } & PaginationParams = {}
 ): Promise<PaginatedResponse<SnippetWithAuthorAndLanguage>> {
-  const { query, languageId, userId, page = 1, limit = 12 } = params;
+  const {
+    query,
+    languageId,
+    userId,
+    sortBy = "newest",
+    page = 1,
+    limit = 12,
+  } = params;
   const offset = (page - 1) * limit;
 
   const conditions = [
     query
       ? or(
           ilike(snippets.title, `%${query}%`),
-          ilike(snippets.description, `%${query}%`)
+          ilike(snippets.content, `%${query}%`)
         )
       : undefined,
     languageId ? eq(snippets.languageId, languageId) : undefined,
@@ -80,7 +89,6 @@ export async function getSnippets(
       likes: true,
       savedBy: true,
     },
-    orderBy: desc(snippets.views),
   });
 
   // Get total count
@@ -94,19 +102,34 @@ export async function getSnippets(
   const totalPages = Math.ceil(totalItems / limit);
 
   // Transform data to include likes count and user's like/save status
-  const snippetsWithLikesAndSaves = data.map((snippet) => ({
-    ...snippet,
-    _count: {
-      likes: snippet.likes.length,
-      saves: snippet.savedBy.length,
-    },
-    isLiked: currentUserId
-      ? snippet.likes.some((like) => like.userId === currentUserId)
-      : false,
-    isSaved: currentUserId
-      ? snippet.savedBy.some((save) => save.userId === currentUserId)
-      : false,
-  }));
+  const snippetsWithLikesAndSaves = data
+    .map((snippet) => ({
+      ...snippet,
+      _count: {
+        likes: snippet.likes.length,
+        saves: snippet.savedBy.length,
+      },
+      isLiked: currentUserId
+        ? snippet.likes.some((like) => like.userId === currentUserId)
+        : false,
+      isSaved: currentUserId
+        ? snippet.savedBy.some((save) => save.userId === currentUserId)
+        : false,
+    }))
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "newest":
+          return b.createdAt.getTime() - a.createdAt.getTime();
+        case "oldest":
+          return a.createdAt.getTime() - b.createdAt.getTime();
+        case "views":
+          return b.views - a.views;
+        case "likes":
+          return b._count.likes - a._count.likes;
+        case "saves":
+          return b._count.saves - a._count.saves;
+      }
+    });
 
   return {
     data: snippetsWithLikesAndSaves,

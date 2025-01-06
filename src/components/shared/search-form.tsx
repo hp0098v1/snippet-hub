@@ -16,10 +16,13 @@ import { cn } from "@/lib/utils";
 type Props = {
   query: string;
   language?: string;
+  sortBy?: string;
   languages?: Language[];
   className?: string;
   action: string;
   hasLanguageFilter?: boolean;
+  hasSortFilter?: boolean;
+  sortOptions?: { label: string; value: string }[];
   searchPlaceholder?: string;
   searchButtonText?: string;
 };
@@ -27,17 +30,20 @@ type Props = {
 export function SearchForm({
   query,
   language,
-  languages,
+  sortBy,
   className,
   action,
   hasLanguageFilter = false,
+  hasSortFilter = false,
+  languages = [],
+  sortOptions = [],
   searchPlaceholder = "جستجو در قطعه کدها...",
   searchButtonText = "جستجو",
 }: Props) {
   return (
     <Form
       className={cn(
-        "flex flex-col max-sm:items-start gap-4 sm:flex-row",
+        "flex flex-wrap max-sm:items-start gap-4 sm:flex-row",
         className
       )}
       action={action}
@@ -52,15 +58,30 @@ export function SearchForm({
         />
       </div>
 
-      {hasLanguageFilter && languages && (
+      {hasLanguageFilter && languages.length > 0 && (
         <Select name="language" defaultValue={language}>
-          <SelectTrigger className="w-48">
-            <SelectValue className="w-48" placeholder="انتخاب زبان" />
+          <SelectTrigger className="w-32">
+            <SelectValue className="w-32" placeholder="انتخاب زبان" />
           </SelectTrigger>
           <SelectContent>
             {languages.map((lang) => (
               <SelectItem key={lang.id} value={lang.id}>
                 {lang.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+
+      {hasSortFilter && sortOptions.length > 0 && (
+        <Select name="sortBy" defaultValue={sortBy}>
+          <SelectTrigger className="w-32">
+            <SelectValue className="w-32" placeholder="مرتب‌سازی بر اساس" />
+          </SelectTrigger>
+          <SelectContent>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
               </SelectItem>
             ))}
           </SelectContent>

@@ -12,7 +12,7 @@ export default function UsersLoading() {
         description="پروفایل کاربران را مشاهده کنید و از قطعه کدهای آن‌ها استفاده کنید"
       />
 
-      <SearchFormSkeleton />
+      <SearchFormSkeleton btnCount={2} />
 
       <UserListSkeleton />
     </div>

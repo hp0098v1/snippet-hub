@@ -105,3 +105,16 @@ export const POPULAR_LANGUAGES = [
   { name: "HTML", image: "/languages/html.svg" },
   { name: "CSS", image: "/languages/css.svg" },
 ];
+
+export const SNIPPETS_SORT_OPTIONS = [
+  { label: "جدیدترین", value: "newest" },
+  { label: "قدیمی ترین", value: "oldest" },
+  { label: "بیشترین بازدید", value: "views" },
+  { label: "بیشترین لایک", value: "likes" },
+];
+
+export const USERS_SORT_OPTIONS = [
+  { label: "جدیدترین", value: "newest" },
+  { label: "قدیمی ترین", value: "oldest" },
+  { label: "بیشترین کد", value: "snippets" },
+];

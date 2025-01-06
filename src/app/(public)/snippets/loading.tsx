@@ -13,7 +13,7 @@ export default function SnippetsLoading() {
       />
 
       {/* Search and Filter Section */}
-      <SearchFormSkeleton btnCount={2} />
+      <SearchFormSkeleton btnCount={3} />
 
       {/* Snippets Grid */}
       <SnippetListSkeleton />

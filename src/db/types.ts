@@ -9,6 +9,20 @@ export type FormState = {
   };
 };
 
+export type SortOption = {
+  label: string;
+  value: string;
+};
+
+export type SnippetsSortOption =
+  | "newest"
+  | "oldest"
+  | "views"
+  | "likes"
+  | "saves";
+
+export type UsersSortOption = "newest" | "oldest" | "snippets";
+
 export type Stats = {
   usersCount: number;
   snippetsCount: number;

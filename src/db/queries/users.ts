@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { and, asc, count, eq, ilike, or } from "drizzle-orm";
+import { and, count, eq, ilike, or } from "drizzle-orm";
 import {
   PaginationParams,
   PaginatedResponse,
@@ -23,22 +23,18 @@ export async function getUserById(id: string): Promise<User | undefined> {
 export async function getUsers(
   params: {
     query?: string;
+    sortBy?: "snippets" | "newest" | "oldest";
   } & PaginationParams = {}
 ): Promise<PaginatedResponse<UserWithSnippets>> {
-  const { query, page = 1, limit = 6 } = params;
+  const { query, sortBy = "newest", page = 1, limit = 12 } = params;
   const offset = (page - 1) * limit;
 
   const conditions = [
     query
-      ? or(
-          ilike(users.name, `%${query.trim()}%`),
-          ilike(users.username, `%${query.trim()}%`)
-        )
+      ? or(ilike(users.name, `%${query}%`), ilike(users.username, `%${query}%`))
       : undefined,
-    eq(users.emailVerified, true),
-  ];
+  ].filter(Boolean);
 
-  // Base query
   const data = await db.query.users.findMany({
     where: and(...conditions),
     limit,
@@ -46,10 +42,8 @@ export async function getUsers(
     with: {
       snippets: true,
     },
-    orderBy: asc(users.createdAt),
   });
 
-  // Get total count
   const totalItems = await db
     .select({ count: count() })
     .from(users)
@@ -59,8 +53,26 @@ export async function getUsers(
 
   const totalPages = Math.ceil(totalItems / limit);
 
+  const usersWithSnippets = data
+    .map((user) => ({
+      ...user,
+      _count: {
+        snippets: user.snippets.length,
+      },
+    }))
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "snippets":
+          return b._count.snippets - a._count.snippets;
+        case "newest":
+          return b.createdAt.getTime() - a.createdAt.getTime();
+        case "oldest":
+          return a.createdAt.getTime() - b.createdAt.getTime();
+      }
+    });
+
   return {
-    data,
+    data: usersWithSnippets,
     metadata: {
       currentPage: page,
       totalPages,
