@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-import hljs from "highlight.js/lib/core";
+import hljs from "highlight.js/lib/common";
 import DOMPurify from "dompurify";
 
 import "highlight.js";
