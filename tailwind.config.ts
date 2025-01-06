@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
-
+import tailwindcssTypography from "@tailwindcss/typography";
 export default {
   darkMode: ["class"],
   content: [
@@ -14,6 +14,10 @@ export default {
       padding: "1rem",
     },
     extend: {
+      fontFamily: {
+        vazirmatn: ["var(--font-vazirmatn)"],
+        fira: ["var(--font-fira-code)", "var(--font-fira-mono)"],
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -63,5 +67,5 @@ export default {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [tailwindcssAnimate, tailwindcssTypography],
 } satisfies Config;

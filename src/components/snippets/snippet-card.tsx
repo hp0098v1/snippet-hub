@@ -12,6 +12,7 @@ import { formatDistanceToNow } from "date-fns-jalali";
 import { Eye } from "lucide-react";
 import { LikeButton } from "./like-button";
 import { SaveButton } from "@/components/snippets/save-button";
+import { RichTextContent } from "@/components/snippets/rich-text-content";
 
 type Props = {
   isAuth: boolean;
@@ -53,9 +54,10 @@ export function SnippetCard({ isAuth, snippet }: Props) {
         </Link>
       </CardHeader>
       <CardContent>
-        <p className="line-clamp-2 text-sm text-muted-foreground">
-          {snippet.description}
-        </p>
+        <RichTextContent
+          content={snippet.content?.slice(0, 100) || ""}
+          className="line-clamp-2 text-sm text-muted-foreground"
+        />
       </CardContent>
       <CardFooter>
         <div className="flex items-center gap-2">

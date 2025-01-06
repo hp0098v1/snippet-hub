@@ -99,6 +99,7 @@ export function ProfileForm({ user }: Props) {
               name="bio"
               placeholder="درباره خود بنویسید..."
               className="h-32 resize-none"
+              defaultValue={user.bio || ""}
             />
             <p className="text-[0.8rem] text-muted-foreground">
               بیوگرافی شما در پروفایل عمومی نمایش داده می‌شود.

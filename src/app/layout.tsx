@@ -1,14 +1,28 @@
 import React from "react";
-import { Vazirmatn } from "next/font/google";
+import { Vazirmatn, Fira_Code, Fira_Mono } from "next/font/google";
 import { Header } from "@/components/shared/header";
 import { Footer } from "@/components/shared/footer";
 import "./globals.css";
 import { SessionProvider } from "@/context/session-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-vazirmatn",
+});
+
+const firaCode = Fira_Code({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-fira-code",
+});
+
+const firaMono = Fira_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-fira-mono",
 });
 
 export const metadata = {
@@ -22,7 +36,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fa" dir="rtl" className={vazirmatn.className}>
+    <html
+      lang="fa"
+      dir="rtl"
+      className={cn(
+        "dark",
+        vazirmatn.variable,
+        firaCode.variable,
+        firaMono.variable
+      )}
+      suppressHydrationWarning
+    >
       <body className="min-h-screen relative flex flex-col bg-background antialiased dark">
         <SessionProvider>
           <Header />

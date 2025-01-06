@@ -39,8 +39,7 @@ export const languages = pgTable("languages", {
 export const snippets = pgTable("snippets", {
   id: text("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
-  description: text("description"),
-  code: text("code").notNull(),
+  content: text("content"),
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),

@@ -23,7 +23,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     title: `ویرایش ${snippet.title} | SnippetHub`,
-    description: snippet.description,
+    description: snippet.content,
   };
 }
 
@@ -47,9 +47,8 @@ export default async function EditSnippetPage(props: Props) {
         snippetId={params.id}
         defaultValues={{
           title: snippet.title,
-          description: snippet.description,
+          content: snippet.content,
           languageId: snippet.languageId,
-          code: snippet.code,
           userId: snippet.userId,
         }}
         languages={languages}

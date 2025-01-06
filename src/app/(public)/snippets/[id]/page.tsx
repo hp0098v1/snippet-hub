@@ -1,16 +1,15 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import dynamic from "next/dynamic";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns-jalali";
 import { Pencil, Eye } from "lucide-react";
 import { getSnippetById, getSnippetByLanguage } from "@/db/queries";
 import { SnippetCard } from "@/components/snippets/snippet-card";
+import { RichTextContent } from "@/components/snippets/rich-text-content";
 
 import { SnippetDeleteForm } from "@/components/snippets/forms/snippet-delete-form";
 import { getSession } from "@/lib/session";
@@ -18,10 +17,6 @@ import { incrementSnippetViews } from "@/db/actions";
 import { LikeButton } from "@/components/snippets/like-button";
 import { SaveButton } from "@/components/snippets/save-button";
 
-const CodeBlock = dynamic(
-  () => import("@/components/snippets/code-block").then((mod) => mod.CodeBlock),
-  { loading: () => <div>Loading...</div> }
-);
 
 type Props = {
   params: Promise<{
@@ -41,7 +36,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     title: `${snippet.title} | SnippetHub`,
-    description: snippet.description,
+    description: snippet.content,
   };
 }
 
@@ -129,15 +124,8 @@ export default async function SnippetPage(props: Props) {
       {/* Title and description */}
       <div className="space-y-4">
         <h1 className="text-3xl font-bold">{snippet.title}</h1>
-        <p className="text-muted-foreground">{snippet.description}</p>
+        <RichTextContent content={snippet.content || ""} />
       </div>
-
-      {/* Code section */}
-      <Card>
-        <CardContent dir="ltr" className="p-0">
-          <CodeBlock code={snippet.code} language={snippet.language.slug} />
-        </CardContent>
-      </Card>
 
       {/* Related snippets */}
       {relatedSnippets.length > 0 && (

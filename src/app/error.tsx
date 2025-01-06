@@ -16,7 +16,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="h-full flex flex-col items-center justify-center p-4">
+    <div className="h-full flex flex-col items-center justify-center p-4 mt-8">
       <div className="text-center space-y-6 max-w-md">
         <h1 className="text-4xl font-bold text-red-600">
           اوه! مشکلی پیش آمده است

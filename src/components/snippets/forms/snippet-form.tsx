@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -21,11 +20,14 @@ import { CreateSnippet, Language } from "@/db/types";
 import { useActionState, useState } from "react";
 import Form from "next/form";
 import { FormState } from "@/db/types";
+import { RichTextEditorSkeleton } from "@/components/shared/skeletons";
 
-const CodeEditor = dynamic(
+const RichTextEditor = dynamic(
   () =>
-    import("@/components/snippets/code-editor").then((mod) => mod.CodeEditor),
-  { ssr: false, loading: () => <div>Loading...</div> }
+    import("@/components/snippets/rich-text-editor").then(
+      (mod) => mod.RichTextEditor
+    ),
+  { ssr: false, loading: () => <RichTextEditorSkeleton /> }
 );
 
 interface SnippetFormProps {
@@ -49,9 +51,8 @@ export function SnippetForm({
 }: SnippetFormProps) {
   const isEditing = !!defaultValues;
 
-  const [code, setCode] = useState(defaultValues?.code || "");
+  const [content, setContent] = useState(defaultValues?.content || "");
   const [language, setLanguage] = useState(defaultValues?.languageId || "");
-  const handleCodeChange = (value: string) => setCode(value);
 
   const [state, formAction, isSubmitting] = useActionState(
     onSubmit,
@@ -67,12 +68,8 @@ export function SnippetForm({
         }
 
         newFormData.append("title", formData.get("title") as string);
-        newFormData.append(
-          "description",
-          formData.get("description") as string
-        );
         newFormData.append("languageId", formData.get("languageId") as string);
-        newFormData.append("code", code);
+        newFormData.append("content", content);
 
         formAction(newFormData);
       }}
@@ -115,34 +112,18 @@ export function SnippetForm({
             )}
           </div>
         </CardHeader>
+
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="description">توضیحات</Label>
-            <Textarea
-              id="description"
-              name="description"
-              defaultValue={defaultValues?.description || ""}
-              placeholder="توضیحات مختصری درباره قطعه کد و کاربرد آن بنویسید"
-              className="h-24 resize-none"
+            <Label htmlFor="content">محتوا</Label>
+            <RichTextEditor
+              languages={languages}
+              value={content}
+              onChange={setContent}
             />
-            {state.errors?.description && (
-              <p className="text-red-500 text-sm">{state.errors.description}</p>
+            {state.errors?.content && (
+              <p className="text-red-500 text-sm">{state.errors.content}</p>
             )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="code">کد</Label>
-            <CodeEditor
-              value={code}
-              onChange={handleCodeChange}
-              language={languages.find((lang) => lang.id === language)?.slug}
-            />
-            {state.errors?.code && (
-              <p className="text-red-500 text-sm">{state.errors.code}</p>
-            )}
-            <p className="text-[0.8rem] text-muted-foreground">
-              کد خود را با فرمت مناسب و توضیحات کافی وارد کنید.
-            </p>
           </div>
 
           {state.errors?.message && (
