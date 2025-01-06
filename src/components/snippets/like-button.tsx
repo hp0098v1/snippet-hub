@@ -1,8 +1,8 @@
 "use client";
 
+import { Heart } from "lucide-react";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { Heart } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { toggleSnippetLike } from "@/db/actions";
@@ -42,12 +42,12 @@ export function LikeButton({
 
   return (
     <Badge
-      variant="secondary"
       className={cn(
-        "gap-1.5 cursor-pointer transition-opacity",
-        isPending && "opacity-50 cursor-default",
+        "cursor-pointer gap-1.5 transition-opacity",
+        isPending && "cursor-default opacity-50",
         className
       )}
+      variant="secondary"
       onClick={!isPending ? handleLike : undefined}
     >
       <Heart

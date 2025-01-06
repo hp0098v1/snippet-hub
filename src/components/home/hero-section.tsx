@@ -1,7 +1,6 @@
+import { Search, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-import { Search } from "lucide-react";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
@@ -24,7 +23,7 @@ export function HeroSection() {
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <Button variant="outline" size="lg" asChild>
+          <Button asChild size="lg" variant="outline">
             <Link href="/snippets">
               جستجو در کد ها
               <Search className="h-4 w-4" />

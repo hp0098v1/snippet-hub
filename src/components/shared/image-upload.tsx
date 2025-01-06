@@ -1,8 +1,8 @@
 "use client";
 
+import { PencilIcon, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef } from "react";
-import { PencilIcon, ImageIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -57,17 +57,17 @@ export function ImageUpload({
         </Avatar>
 
         <input
-          ref={inputFileRef}
-          type="file"
           accept="image/*"
           className="hidden"
+          ref={inputFileRef}
+          type="file"
           onChange={handleChange}
         />
 
         <Button
+          className="absolute bottom-0 right-0"
           size="icon"
           variant="secondary"
-          className="absolute bottom-0 right-0"
           onClick={() => inputFileRef.current?.click()}
         >
           <PencilIcon className="h-4 w-4" />
@@ -88,27 +88,27 @@ export function ImageUpload({
       >
         {previewUrl ? (
           <Image
-            src={previewUrl}
+            fill
             alt="Preview"
             className="h-full w-full rounded-lg object-cover"
-            fill
+            src={previewUrl}
           />
         ) : (
           <ImageIcon className="h-8 w-8 text-muted-foreground" />
         )}
 
         <input
-          ref={inputFileRef}
-          type="file"
           accept="image/*"
           className="hidden"
+          ref={inputFileRef}
+          type="file"
           onChange={handleChange}
         />
 
         <Button
+          className="absolute bottom-2 right-2"
           size="icon"
           variant="secondary"
-          className="absolute bottom-2 right-2"
           onClick={() => inputFileRef.current?.click()}
         >
           <PencilIcon className="h-4 w-4" />

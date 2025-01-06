@@ -1,18 +1,20 @@
+import { formatDistanceToNow } from "date-fns-jalali";
+import { Eye } from "lucide-react";
+import Link from "next/link";
+
+import { RichTextContent } from "@/components/snippets/rich-text-content";
+import { SaveButton } from "@/components/snippets/save-button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import { SnippetWithAuthorAndLanguage } from "@/db/types";
-import { formatDistanceToNow } from "date-fns-jalali";
-import { Eye } from "lucide-react";
+
 import { LikeButton } from "./like-button";
-import { SaveButton } from "@/components/snippets/save-button";
-import { RichTextContent } from "@/components/snippets/rich-text-content";
 
 type Props = {
   isAuth: boolean;
@@ -31,8 +33,8 @@ export function SnippetCard({ isAuth, snippet }: Props) {
             </Avatar>
             <div className="space-y-1">
               <Link
-                href={`/users/${snippet.user.id}`}
                 className="text-sm font-medium hover:underline"
+                href={`/users/${snippet.user.id}`}
               >
                 {snippet.user.name}
               </Link>
@@ -43,7 +45,7 @@ export function SnippetCard({ isAuth, snippet }: Props) {
               </p>
             </div>
           </div>
-          <Badge variant="secondary" className="capitalize">
+          <Badge className="capitalize" variant="secondary">
             {snippet.language.name}
           </Badge>
         </div>
@@ -55,27 +57,27 @@ export function SnippetCard({ isAuth, snippet }: Props) {
       </CardHeader>
       <CardContent>
         <RichTextContent
-          content={snippet.content?.slice(0, 100) || ""}
           className="line-clamp-2 text-sm text-muted-foreground"
+          content={snippet.content?.slice(0, 100) || ""}
         />
       </CardContent>
       <CardFooter>
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="gap-1.5">
+          <Badge className="gap-1.5" variant="secondary">
             <Eye className="h-4 w-4" />
             {snippet.views.toLocaleString("fa")}
           </Badge>
           <LikeButton
             isAuth={isAuth}
-            snippetId={snippet.id}
             isLiked={snippet.isLiked ?? false}
             likesCount={snippet._count?.likes ?? 0}
+            snippetId={snippet.id}
           />
           {isAuth && (
             <SaveButton
-              snippetId={snippet.id}
               isAuth={isAuth}
               isSaved={snippet.isSaved ?? false}
+              snippetId={snippet.id}
             />
           )}
         </div>

@@ -1,5 +1,5 @@
-import Form from "next/form";
 import { Search } from "lucide-react";
+import Form from "next/form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,24 +42,24 @@ export function SearchForm({
 }: Props) {
   return (
     <Form
+      action={action}
       className={cn(
-        "flex flex-wrap max-sm:items-start gap-4 sm:flex-row",
+        "flex flex-wrap gap-4 max-sm:items-start sm:flex-row",
         className
       )}
-      action={action}
     >
-      <div className="relative max-w-md w-full">
+      <div className="relative w-full max-w-md">
         <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
-          name="query"
-          defaultValue={query}
-          placeholder={searchPlaceholder}
           className="w-full pr-9"
+          defaultValue={query}
+          name="query"
+          placeholder={searchPlaceholder}
         />
       </div>
 
       {hasLanguageFilter && languages.length > 0 && (
-        <Select name="language" defaultValue={language}>
+        <Select defaultValue={language} name="language">
           <SelectTrigger className="w-32">
             <SelectValue className="w-32" placeholder="انتخاب زبان" />
           </SelectTrigger>
@@ -74,7 +74,7 @@ export function SearchForm({
       )}
 
       {hasSortFilter && sortOptions.length > 0 && (
-        <Select name="sortBy" defaultValue={sortBy}>
+        <Select defaultValue={sortBy} name="sortBy">
           <SelectTrigger className="w-32">
             <SelectValue className="w-32" placeholder="مرتب‌سازی بر اساس" />
           </SelectTrigger>

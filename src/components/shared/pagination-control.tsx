@@ -1,5 +1,7 @@
 "use client";
 
+import { usePathname, useSearchParams } from "next/navigation";
+
 import {
   Pagination,
   PaginationContent,
@@ -9,7 +11,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { usePathname, useSearchParams } from "next/navigation";
 
 type Props = {
   totalPages: number;
@@ -57,8 +58,8 @@ export function PaginationControl({ totalPages, className }: Props) {
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            href={currentPage > 1 ? createPageURL(currentPage - 1) : "#"}
             className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+            href={currentPage > 1 ? createPageURL(currentPage - 1) : "#"}
           />
         </PaginationItem>
 
@@ -81,11 +82,11 @@ export function PaginationControl({ totalPages, className }: Props) {
 
         <PaginationItem>
           <PaginationNext
-            href={
-              currentPage < totalPages ? createPageURL(currentPage + 1) : "#"
-            }
             className={
               currentPage >= totalPages ? "pointer-events-none opacity-50" : ""
+            }
+            href={
+              currentPage < totalPages ? createPageURL(currentPage + 1) : "#"
             }
           />
         </PaginationItem>

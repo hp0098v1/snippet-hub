@@ -1,8 +1,8 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 import { AuthContainer } from "@/components/auth/auth-container";
 import { AuthVerifyEmailForm } from "@/components/auth/forms/auth-verify-email";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "تأیید ایمیل | SnippetHub",
@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 export default function VerifyEmailPage() {
   return (
     <AuthContainer
-      title="تأیید ایمیل"
       description="برای تکمیل ثبت‌نام، لطفاً کد تأیید ارسال شده به ایمیل خود را وارد کنید"
       showFooter={false}
+      title="تأیید ایمیل"
     >
       <Suspense fallback={<div>Loading...</div>}>
-      <AuthVerifyEmailForm />
+        <AuthVerifyEmailForm />
       </Suspense>
     </AuthContainer>
   );

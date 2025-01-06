@@ -1,10 +1,10 @@
 "use client";
 
+import { motion, useInView } from "framer-motion";
 import { Code2, Users, Heart, Eye } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
+
+import { Card } from "@/components/ui/card";
 import { Stats as StatsType } from "@/db/types";
 
 function formatNumber(num: number): string {
@@ -51,21 +51,21 @@ export function Stats({ stats }: Props) {
   ];
 
   return (
-    <div className="grid gap-8 grid-cols-2 lg:grid-cols-4 max-w-3xl mx-auto">
+    <div className="mx-auto grid max-w-3xl grid-cols-2 gap-8 lg:grid-cols-4">
       {STATS_DATA.map((stat, index) => (
         <motion.div
-          key={stat.label}
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          key={stat.label}
           transition={{ duration: 0.5, delay: index * 0.1 }}
+          viewport={{ once: true }}
+          whileInView={{ opacity: 1, y: 0 }}
         >
           <Card className="p-6 text-center">
             <motion.div
               initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              whileInView={{ scale: 1 }}
             >
               <stat.icon className="mx-auto h-8 w-8 text-primary/60" />
             </motion.div>
@@ -110,7 +110,7 @@ function Counter({
   }, [value, duration, inView]);
 
   return (
-    <span ref={ref} className="tabular-nums">
+    <span className="tabular-nums" ref={ref}>
       {convertToFarsiNumbers(formatNumber(count))}
     </span>
   );

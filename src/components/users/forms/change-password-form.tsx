@@ -1,12 +1,13 @@
 "use client";
 
+import Link from "next/link";
+import { useActionState } from "react";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Button } from "@/components/ui/button";
-import { useActionState } from "react";
 import { updatePassword } from "@/db/actions";
-import Link from "next/link";
 
 export function ChangePasswordForm() {
   const [state, formAction, isPending] = useActionState(updatePassword, {
@@ -23,10 +24,10 @@ export function ChangePasswordForm() {
           <div className="space-y-2">
             <Label htmlFor="currentPassword">رمز عبور فعلی</Label>
             <PasswordInput
+              className="text-left"
+              dir="ltr"
               id="currentPassword"
               name="currentPassword"
-              dir="ltr"
-              className="text-left"
             />
             {state.errors?.currentPassword && (
               <p className="text-sm text-destructive">
@@ -38,10 +39,10 @@ export function ChangePasswordForm() {
           <div className="space-y-2">
             <Label htmlFor="newPassword">رمز عبور جدید</Label>
             <PasswordInput
+              className="text-left"
+              dir="ltr"
               id="newPassword"
               name="newPassword"
-              dir="ltr"
-              className="text-left"
             />
             {state.errors?.newPassword && (
               <p className="text-sm text-destructive">
@@ -53,10 +54,10 @@ export function ChangePasswordForm() {
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">تکرار رمز عبور جدید</Label>
             <PasswordInput
+              className="text-left"
+              dir="ltr"
               id="confirmPassword"
               name="confirmPassword"
-              dir="ltr"
-              className="text-left"
             />
             {state.errors?.confirmPassword && (
               <p className="text-sm text-destructive">
@@ -70,10 +71,10 @@ export function ChangePasswordForm() {
           )}
 
           <div className="flex justify-end gap-4">
-            <Button variant="outline" asChild>
+            <Button asChild variant="outline">
               <Link href={`/dashboard`}>انصراف</Link>
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button disabled={isPending} type="submit">
               {isPending ? "در حال تغییر رمز عبور..." : "تغییر رمز عبور"}
             </Button>
           </div>

@@ -1,8 +1,9 @@
 import { Suspense } from "react";
-import { getSavedSnippets } from "@/db/queries";
-import { verifySession } from "@/lib/session";
+
 import { PageHeader } from "@/components/shared/page-header";
 import { SnippetsList } from "@/components/snippets/snippets-list";
+import { getSavedSnippets } from "@/db/queries";
+import { verifySession } from "@/lib/session";
 
 type Props = {
   searchParams: Promise<{
@@ -22,17 +23,17 @@ export default async function SavedSnippetsPage({ searchParams }: Props) {
   });
 
   return (
-    <div className="container py-8 space-y-8">
+    <div className="container space-y-8 py-8">
       <PageHeader
-        title="قطعه کدهای ذخیره شده"
         description="قطعه کدهایی که ذخیره کرده‌اید"
+        title="قطعه کدهای ذخیره شده"
       />
 
       <Suspense fallback={<div>Loading...</div>}>
         <SnippetsList
+          isAuth={isAuth}
           snippets={snippets}
           totalPages={metadata.totalPages}
-          isAuth={isAuth}
         />
       </Suspense>
     </div>

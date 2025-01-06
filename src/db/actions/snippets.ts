@@ -1,18 +1,18 @@
 "use server";
 
-import { db } from "@/db";
-import { snippets, likes, savedSnippets } from "@/db/schema";
 import { eq, sql, and } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+import { db } from "@/db";
+import { snippets, likes, savedSnippets } from "@/db/schema";
+import { FormState } from "@/db/types";
+import { verifySession } from "@/lib/session";
 import {
   createSnippetSchema,
   updateSnippetSchema,
 } from "@/lib/validations/snippets";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
-import { verifySession } from "@/lib/session";
-
-import { FormState } from "@/db/types";
 
 export async function createSnippet(
   prevState: FormState,

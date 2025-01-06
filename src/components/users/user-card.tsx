@@ -1,4 +1,8 @@
+import { ChevronLeft, Code2 } from "lucide-react";
 import Link from "next/link";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,10 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronLeft, Code2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 interface UserCardProps {
   id: string;
@@ -38,7 +39,7 @@ export function UserCard({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={image} alt={name} />
+              <AvatarImage alt={name} src={image} />
               <AvatarFallback>{name[0]}</AvatarFallback>
             </Avatar>
             <div className="flex-1 space-y-1">
@@ -57,7 +58,7 @@ export function UserCard({
               </CardDescription>
             </div>
           </div>
-          <Button variant="ghost" size="icon" asChild>
+          <Button asChild size="icon" variant="ghost">
             <Link href={`/users/${id}`}>
               <ChevronLeft className="size-5 text-muted-foreground" />
             </Link>

@@ -1,9 +1,10 @@
 import { Metadata } from "next";
-import { SnippetForm } from "@/components/snippets/forms/snippet-form";
 import { notFound } from "next/navigation";
-import { getLanguages, getSnippetById } from "@/db/queries";
-import { updateSnippet } from "@/db/actions";
+
 import { PageHeader } from "@/components/shared/page-header";
+import { SnippetForm } from "@/components/snippets/forms/snippet-form";
+import { updateSnippet } from "@/db/actions";
+import { getLanguages, getSnippetById } from "@/db/queries";
 
 type Props = {
   params: Promise<{
@@ -37,14 +38,14 @@ export default async function EditSnippetPage(props: Props) {
   }
 
   return (
-    <div className="container max-w-3xl py-8 space-y-8">
+    <div className="container max-w-3xl space-y-8 py-8">
       <PageHeader
-        title="ویرایش قطعه کد"
         description="تغییرات مورد نظر خود را اعمال کنید"
+        title="ویرایش قطعه کد"
       />
 
       <SnippetForm
-        snippetId={params.id}
+        cancelLink={`/snippets/${params.id}`}
         defaultValues={{
           title: snippet.title,
           content: snippet.content,
@@ -52,8 +53,8 @@ export default async function EditSnippetPage(props: Props) {
           userId: snippet.userId,
         }}
         languages={languages}
+        snippetId={params.id}
         onSubmit={updateSnippet}
-        cancelLink={`/snippets/${params.id}`}
       />
     </div>
   );

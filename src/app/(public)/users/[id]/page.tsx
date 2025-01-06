@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getUserById, getUserSnippets } from "@/db/queries";
 import { UserProfileHeader } from "@/components/users/user-profile-header";
 import { UserSnippets } from "@/components/users/user-snippets";
+import { getUserById, getUserSnippets } from "@/db/queries";
 import { getSession } from "@/lib/session";
 
 type Props = {
@@ -52,20 +52,20 @@ export default async function UserProfilePage({ params, searchParams }: Props) {
   const isOwnProfile = isAuth && userId === user.id;
 
   return (
-    <div className="container py-8 space-y-8">
+    <div className="container space-y-8 py-8">
       {/* Profile header */}
       <UserProfileHeader
+        userBio={user.bio}
         userImage={user.image}
         userName={user.name}
-        userUsername={user.username}
-        userBio={user.bio}
         userSnippetsCount={userSnippets.metadata.totalItems}
+        userUsername={user.username}
       />
 
       {/* User's snippets */}
       <UserSnippets
-        isOwnProfile={isOwnProfile}
         isAuth={isAuth}
+        isOwnProfile={isOwnProfile}
         totalPages={userSnippets.metadata.totalPages}
         userSnippets={userSnippets.data}
       />

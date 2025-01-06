@@ -9,12 +9,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function SearchFormSkeleton({ btnCount = 1 }: { btnCount?: number }) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-      <div className="max-w-md w-full">
+      <div className="w-full max-w-md">
         <Skeleton className="h-10 w-full rounded-lg bg-card" />
       </div>
       <div className="flex gap-2">
         {Array.from({ length: btnCount }).map((_, i) => (
-          <Skeleton key={i} className="h-10 w-24 rounded-lg bg-card" />
+          <Skeleton className="h-10 w-24 rounded-lg bg-card" key={i} />
         ))}
       </div>
     </div>
@@ -138,25 +138,25 @@ export function UserCardSkeleton() {
 
 export function RichTextEditorSkeleton() {
   return (
-    <div className="relative w-full rounded-lg border animate-pulse">
-      <div className="border-b p-2 flex gap-1 flex-wrap" dir="rtl">
+    <div className="relative w-full animate-pulse rounded-lg border">
+      <div className="flex flex-wrap gap-1 border-b p-2" dir="rtl">
         {/* Toolbar buttons */}
         <Skeleton className="h-8 w-8 rounded" />
         <Skeleton className="h-8 w-8 rounded" />
         <Skeleton className="h-8 w-8 rounded" />
-        <div className="w-px h-6 bg-border mx-2" />
+        <div className="mx-2 h-6 w-px bg-border" />
         <Skeleton className="h-8 w-8 rounded" />
         <Skeleton className="h-8 w-8 rounded" />
         <Skeleton className="h-8 w-8 rounded" />
-        <div className="w-px h-6 bg-border mx-2" />
+        <div className="mx-2 h-6 w-px bg-border" />
         <Skeleton className="h-8 w-8 rounded" />
         <Skeleton className="h-8 w-8 rounded" />
-        <div className="w-px h-6 bg-border mx-2" />
+        <div className="mx-2 h-6 w-px bg-border" />
         <Skeleton className="h-8 w-8 rounded" />
         <Skeleton className="h-8 w-8 rounded" />
         <Skeleton className="h-8 w-8 rounded" />
       </div>
-      <div className="p-4 space-y-3">
+      <div className="space-y-3 p-4">
         {/* Content area */}
         <Skeleton className="h-4 w-3/4" />
         <Skeleton className="h-4 w-full" />
@@ -169,8 +169,8 @@ export function RichTextEditorSkeleton() {
 
 export function CodeEditorSkeleton() {
   return (
-    <div className="relative w-full rounded-lg border animate-pulse">
-      <div className="border-b p-2 flex items-center justify-between">
+    <div className="relative w-full animate-pulse rounded-lg border">
+      <div className="flex items-center justify-between border-b p-2">
         <div className="flex gap-2">
           <Skeleton className="h-8 w-24 rounded" />
           <Skeleton className="h-8 w-24 rounded" />
@@ -181,15 +181,15 @@ export function CodeEditorSkeleton() {
         </div>
       </div>
       <div className="relative h-[300px] p-4">
-        <div className="absolute right-4 top-4 bottom-4 w-8">
+        <div className="absolute bottom-4 right-4 top-4 w-8">
           {/* Line numbers */}
           <div className="space-y-1">
             {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-4 w-6" />
+              <Skeleton className="h-4 w-6" key={i} />
             ))}
           </div>
         </div>
-        <div className="space-y-3 mr-10">
+        <div className="mr-10 space-y-3">
           {/* Code lines */}
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-4/5" />

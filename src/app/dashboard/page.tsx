@@ -1,7 +1,6 @@
 import { UserProfileHeader } from "@/components/users/user-profile-header";
 import { UserSnippets } from "@/components/users/user-snippets";
-import { getUserById } from "@/db/queries";
-import { getUserSnippets } from "@/db/queries";
+import { getUserById, getUserSnippets } from "@/db/queries";
 import { verifySession } from "@/lib/session";
 
 export type Props = {
@@ -29,20 +28,20 @@ export default async function DashboardPage(props: Props) {
   });
 
   return (
-    <div className="container py-8 space-y-8">
+    <div className="container space-y-8 py-8">
       {/* Profile header */}
       <UserProfileHeader
+        userBio={user.bio}
         userImage={user.image}
         userName={user.name}
-        userUsername={user.username}
-        userBio={user.bio}
         userSnippetsCount={userSnippets.metadata.totalItems}
+        userUsername={user.username}
       />
 
       {/* User's snippets */}
       <UserSnippets
-        isOwnProfile={true}
         isAuth={isAuth}
+        isOwnProfile={true}
         totalPages={userSnippets.metadata.totalPages}
         userSnippets={userSnippets.data}
       />

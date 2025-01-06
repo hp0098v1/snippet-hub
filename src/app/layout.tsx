@@ -1,10 +1,11 @@
-import React from "react";
 import { Vazirmatn, Fira_Code, Fira_Mono } from "next/font/google";
-import { Header } from "@/components/shared/header";
+import React from "react";
+
 import { Footer } from "@/components/shared/footer";
+import { Header } from "@/components/shared/header";
 import "./globals.css";
-import { SessionProvider } from "@/context/session-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { SessionProvider } from "@/context/session-provider";
 import { cn } from "@/lib/utils";
 
 const vazirmatn = Vazirmatn({
@@ -37,17 +38,17 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="fa"
-      dir="rtl"
+      suppressHydrationWarning
       className={cn(
         "dark",
         vazirmatn.variable,
         firaCode.variable,
         firaMono.variable
       )}
-      suppressHydrationWarning
+      dir="rtl"
+      lang="fa"
     >
-      <body className="min-h-screen relative flex flex-col bg-background antialiased dark">
+      <body className="dark relative flex min-h-screen flex-col bg-background antialiased">
         <SessionProvider>
           <Header />
           <main className="flex-1">{children}</main>

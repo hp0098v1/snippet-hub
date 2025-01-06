@@ -1,9 +1,9 @@
-import { SectionDivider } from "@/components/home/section-divider";
 import { AnimatedSection } from "@/components/home/animated-section";
-import { HeroSection } from "@/components/home/hero-section";
-import { FeaturesSection } from "@/components/home/features-section";
-import { PopularLanguagesSection } from "@/components/home/popular-languages-secion";
 import { CtaSection } from "@/components/home/cta-section";
+import { FeaturesSection } from "@/components/home/features-section";
+import { HeroSection } from "@/components/home/hero-section";
+import { PopularLanguagesSection } from "@/components/home/popular-languages-secion";
+import { SectionDivider } from "@/components/home/section-divider";
 import { StatsSection } from "@/components/home/stats-section";
 
 export default function HomePage() {

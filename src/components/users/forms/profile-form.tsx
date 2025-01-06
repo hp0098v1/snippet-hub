@@ -1,16 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
-import { useRef } from "react";
+import { useActionState, useRef } from "react";
 
+import { ImageUpload } from "@/components/shared/image-upload";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { ImageUpload } from "@/components/shared/image-upload";
-import { User } from "@/db/types";
 import { updateUser } from "@/db/actions";
+import { User } from "@/db/types";
 
 type Props = {
   user: User;
@@ -50,10 +49,10 @@ export function ProfileForm({ user }: Props) {
       <CardHeader className="space-y-4">
         <div className="flex flex-col items-center gap-4">
           <ImageUpload
-            defaultImage={user.image ?? undefined}
             defaultFallback={user.name.slice(0, 2)}
-            onChange={handleImageChange}
+            defaultImage={user.image ?? undefined}
             variant="avatar"
+            onChange={handleImageChange}
           />
           <div className="text-center">
             <p className="text-sm text-muted-foreground">
@@ -63,16 +62,16 @@ export function ProfileForm({ user }: Props) {
         </div>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} className="space-y-6" action={formAction}>
+        <form action={formAction} className="space-y-6" ref={formRef}>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">
+              <label className="text-sm font-medium" htmlFor="name">
                 نام
               </label>
               <Input
+                defaultValue={user.name}
                 id="name"
                 name="name"
-                defaultValue={user.name}
                 placeholder="نام خود را وارد کنید"
               />
               {state.errors?.name && (
@@ -80,16 +79,16 @@ export function ProfileForm({ user }: Props) {
               )}
             </div>
             <div className="space-y-2">
-              <label htmlFor="username" className="text-sm font-medium">
+              <label className="text-sm font-medium" htmlFor="username">
                 نام کاربری
               </label>
               <Input
+                className="text-left"
+                defaultValue={user.username}
+                dir="ltr"
                 id="username"
                 name="username"
-                defaultValue={user.username}
                 placeholder="نام کاربری خود را وارد کنید"
-                dir="ltr"
-                className="text-left"
               />
               {state.errors?.username && (
                 <p className="text-sm text-red-500">{state.errors.username}</p>
@@ -98,15 +97,15 @@ export function ProfileForm({ user }: Props) {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="bio" className="text-sm font-medium">
+            <label className="text-sm font-medium" htmlFor="bio">
               بیوگرافی
             </label>
             <Textarea
+              className="h-32 resize-none"
+              defaultValue={user.bio || ""}
               id="bio"
               name="bio"
               placeholder="درباره خود بنویسید..."
-              className="h-32 resize-none"
-              defaultValue={user.bio || ""}
             />
             <p className="text-[0.8rem] text-muted-foreground">
               بیوگرافی شما در پروفایل عمومی نمایش داده می‌شود.
@@ -121,10 +120,10 @@ export function ProfileForm({ user }: Props) {
           )}
 
           <div className="flex justify-end gap-4">
-            <Button variant="outline" asChild>
+            <Button asChild variant="outline">
               <Link href={`/dashboard`}>انصراف</Link>
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button disabled={isPending} type="submit">
               {isPending ? "در حال ذخیره..." : "ذخیره تغییرات"}
             </Button>
           </div>

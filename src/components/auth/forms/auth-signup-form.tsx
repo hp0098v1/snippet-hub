@@ -1,14 +1,15 @@
 "use client";
 
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { signup } from "@/db/actions";
 import { useActionState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
+import { signup } from "@/db/actions";
 
 export function AuthSignupForm() {
   const [state, formAction, isPending] = useActionState(signup, { errors: {} });
@@ -20,13 +21,7 @@ export function AuthSignupForm() {
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="name">نام و نام خانوادگی</Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                autoComplete="name"
-               
-              />
+              <Input autoComplete="name" id="name" name="name" type="text" />
               {state.errors?.name && (
                 <p className="text-sm text-destructive">{state.errors.name}</p>
               )}
@@ -34,13 +29,12 @@ export function AuthSignupForm() {
             <div className="grid gap-2">
               <Label htmlFor="email">ایمیل</Label>
               <Input
+                autoComplete="email"
+                className="text-left"
+                dir="ltr"
                 id="email"
                 name="email"
                 placeholder="example@domain.com"
-                dir="ltr"
-                className="text-left"
-                autoComplete="email"
-               
               />
               {state.errors?.email && (
                 <p className="text-sm text-destructive">{state.errors.email}</p>
@@ -49,11 +43,11 @@ export function AuthSignupForm() {
             <div className="grid gap-2">
               <Label htmlFor="password">رمز عبور</Label>
               <PasswordInput
+                autoComplete="current-password"
+                className="text-left"
+                dir="ltr"
                 id="password"
                 name="password"
-                dir="ltr"
-                className="text-left"
-                autoComplete="current-password"
               />
               {state.errors?.password && (
                 <p className="text-sm text-destructive">
@@ -64,11 +58,11 @@ export function AuthSignupForm() {
             <div className="grid gap-2">
               <Label htmlFor="confirm-password">تکرار رمز عبور</Label>
               <PasswordInput
+                autoComplete="new-password"
+                className="text-left"
+                dir="ltr"
                 id="confirm-password"
                 name="confirmPassword"
-                dir="ltr"
-                className="text-left"
-                autoComplete="new-password"
               />
               {state.errors?.confirmPassword && (
                 <p className="text-sm text-destructive">
@@ -87,9 +81,9 @@ export function AuthSignupForm() {
         </form>
       </CardContent>
       <CardFooter className="border-t p-6">
-        <p className="text-center text-sm text-muted-foreground w-full">
+        <p className="w-full text-center text-sm text-muted-foreground">
           قبلاً ثبت‌نام کرده‌اید؟{" "}
-          <Link href="/login" className="text-primary hover:underline">
+          <Link className="text-primary hover:underline" href="/login">
             وارد شوید
           </Link>
         </p>

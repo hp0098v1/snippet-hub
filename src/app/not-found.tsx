@@ -1,6 +1,7 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft, Home, XCircle } from "lucide-react";
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
@@ -29,8 +30,8 @@ export default function NotFound() {
           </Link>
         </Button>
         <Button
-          variant="outline"
           size="lg"
+          variant="outline"
           //   onClick={() => window.history.back()}
         >
           <ArrowLeft className="ml-2 h-5 w-5" />

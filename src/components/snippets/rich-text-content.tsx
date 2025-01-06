@@ -13,10 +13,10 @@ export function RichTextContent({ content, className }: Props) {
     <div
       className={cn(
         "prose max-w-full dark:prose-invert",
-        "rtl:prose-p:text-right rtl:prose-headings:text-right",
-        "rtl:prose-ul:pr-4 rtl:prose-ol:pr-4",
-        "[&_pre]:!dir-ltr [&_pre]:!text-left [&_pre]:rounded-lg [&_pre]:!my-3",
-        "[&_code]:!dir-ltr [&_code]:!text-sm [&_code]:!font-fira",
+        "rtl:prose-headings:text-right rtl:prose-p:text-right",
+        "rtl:prose-ol:pr-4 rtl:prose-ul:pr-4",
+        "[&_pre]:!dir-ltr [&_pre]:!my-3 [&_pre]:rounded-lg [&_pre]:!text-left",
+        "[&_code]:!dir-ltr [&_code]:!font-fira [&_code]:!text-sm",
         "prose-pre:!bg-transparent prose-pre:!p-0",
         className
       )}

@@ -1,5 +1,8 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
+import { useState, useTransition } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,8 +16,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { deleteSnippet } from "@/db/actions";
-import { Trash2 } from "lucide-react";
-import { useState, useTransition } from "react";
 
 type Props = {
   id: string;
@@ -40,9 +41,9 @@ export function SnippetDeleteForm({ id }: Props) {
     <AlertDialog open={isOpen}>
       <AlertDialogTrigger asChild>
         <Button
-          variant="ghost"
-          size="icon"
           className="text-destructive hover:text-destructive"
+          size="icon"
+          variant="ghost"
           onClick={() => setIsOpen(true)}
         >
           <Trash2 className="h-4 w-4" />
@@ -68,9 +69,9 @@ export function SnippetDeleteForm({ id }: Props) {
             انصراف
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleDelete}
-            disabled={isPending}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50"
+            disabled={isPending}
+            onClick={handleDelete}
           >
             {isPending ? "در حال حذف..." : "حذف"}
           </AlertDialogAction>

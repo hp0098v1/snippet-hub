@@ -3,10 +3,10 @@ import { SnippetListSkeleton } from "@/components/shared/skeletons";
 
 export default function SavedSnippetsLoading() {
   return (
-    <div className="container py-8 space-y-8">
+    <div className="container space-y-8 py-8">
       <PageHeader
-        title="قطعه کدهای ذخیره شده"
         description="قطعه کدهایی که ذخیره کرده‌اید"
+        title="قطعه کدهای ذخیره شده"
       />
 
       <SnippetListSkeleton />

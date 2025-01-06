@@ -25,11 +25,11 @@ export function SnippetsList({
           className={cn("grid gap-4 sm:grid-cols-2 lg:grid-cols-3", className)}
         >
           {snippets.map((snippet) => (
-            <SnippetCard key={snippet.id} isAuth={isAuth} snippet={snippet} />
+            <SnippetCard isAuth={isAuth} key={snippet.id} snippet={snippet} />
           ))}
         </section>
       ) : (
-        <section className="rounded-lg border border-dashed py-32 md:py-48 text-center">
+        <section className="rounded-lg border border-dashed py-32 text-center md:py-48">
           <p className="text-lg text-muted-foreground">{noSnippetMessage}</p>
         </section>
       )}

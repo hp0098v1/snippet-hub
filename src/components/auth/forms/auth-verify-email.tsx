@@ -1,17 +1,17 @@
 "use client";
 
+import { useSearchParams, useRouter } from "next/navigation";
+import { useActionState, useState, useEffect } from "react";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { verifyEmail, resendVerificationCode } from "@/db/actions";
-import { useActionState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 
 export function AuthVerifyEmailForm() {
   const searchParams = useSearchParams();
@@ -60,11 +60,11 @@ export function AuthVerifyEmailForm() {
     <Card>
       <CardContent className="pt-6">
         <form action={formAction} className="space-y-4">
-          <input type="hidden" name="email" value={email} />
+          <input name="email" type="hidden" value={email} />
           {/* OTP Input */}
           <div className="space-y-2">
             <Label htmlFor="code">کد تأیید</Label>
-            <InputOTP id="code" name="code" maxLength={6}>
+            <InputOTP id="code" maxLength={6} name="code">
               <InputOTPGroup>
                 <InputOTPSlot index={0} />
                 <InputOTPSlot index={1} />
@@ -83,7 +83,7 @@ export function AuthVerifyEmailForm() {
           </div>
 
           {/* Submit Button */}
-          <Button type="submit" disabled={isPending} className="w-full">
+          <Button className="w-full" disabled={isPending} type="submit">
             {isPending ? "در حال تأیید..." : "تأیید ایمیل"}
           </Button>
 
@@ -97,7 +97,7 @@ export function AuthVerifyEmailForm() {
           )}
         </form>
 
-        <div className="space-y-2 mt-4">
+        <div className="mt-4 space-y-2">
           <p className="text-center text-sm text-muted-foreground">
             کد را دریافت نکردید؟
             {!canResend && timeLeft > 0 ? (
@@ -108,12 +108,12 @@ export function AuthVerifyEmailForm() {
             ) : (
               <>
                 <form action={handleResend}>
-                  <input type="hidden" name="email" value={email} />
+                  <input name="email" type="hidden" value={email} />
                   <Button
-                    type="submit"
-                    variant="ghost"
                     className="w-full"
                     disabled={!canResend || resendPending}
+                    type="submit"
+                    variant="ghost"
                   >
                     {resendPending ? "در حال ارسال..." : "ارسال مجدد کد"}
                   </Button>

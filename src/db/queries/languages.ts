@@ -1,8 +1,9 @@
 "use server";
 
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { languages } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import { Language } from "@/db/types";
 
 export async function getLanguages(): Promise<Language[]> {

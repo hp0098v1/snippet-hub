@@ -1,12 +1,10 @@
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-import hljs from "highlight.js/lib/common";
 import DOMPurify from "dompurify";
+import hljs from "highlight.js/lib/common";
+import { twMerge } from "tailwind-merge";
 
 import "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
-
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

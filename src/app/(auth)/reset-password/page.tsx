@@ -1,6 +1,7 @@
 import { Metadata } from "next";
-import { ResetPasswordForm } from "@/components/auth/forms/reset-password-form";
 import { redirect } from "next/navigation";
+
+import { ResetPasswordForm } from "@/components/auth/forms/reset-password-form";
 
 export const metadata: Metadata = {
   title: "تغییر رمز عبور | SnippetHub",

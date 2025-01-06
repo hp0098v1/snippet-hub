@@ -1,18 +1,11 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { common, createLowlight } from "lowlight";
 import {
   Bold,
   Italic,
@@ -25,10 +18,17 @@ import {
   Code as CodeIcon,
   type LucideIcon,
 } from "lucide-react";
-import { common, createLowlight } from "lowlight";
 
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Language } from "@/db/types";
+import { cn } from "@/lib/utils";
 
 import "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
@@ -55,12 +55,12 @@ const ToolbarButton = ({
 }) => {
   return (
     <Button
+      className={cn("h-8 w-8", isActive && "bg-muted")}
+      size="icon"
+      title={title}
       type="button"
       variant="ghost"
-      size="icon"
-      className={cn("h-8 w-8", isActive && "bg-muted")}
       onClick={onClick}
-      title={title}
     >
       <Icon className="h-4 w-4" />
     </Button>
@@ -95,11 +95,11 @@ export function RichTextEditor({ value, onChange, languages }: Props) {
         class: cn(
           "h-[350px] overflow-y-auto p-4 outline-none",
           "prose prose-sm max-w-none dark:prose-invert",
-          "rtl:prose-p:text-right rtl:prose-headings:text-right",
-          "rtl:prose-ul:pr-4 rtl:prose-ol:pr-4",
-          "[&_pre]:!dir-ltr [&_pre]:!text-left [&_pre]:rounded-lg [&_pre]:!my-3",
-          "[&_code]:!dir-ltr [&_code]:!text-xs [&_code]:!font-fira",
-          "prose-pre:!p-0 prose-code:!p-0"
+          "rtl:prose-headings:text-right rtl:prose-p:text-right",
+          "rtl:prose-ol:pr-4 rtl:prose-ul:pr-4",
+          "[&_pre]:!dir-ltr [&_pre]:!my-3 [&_pre]:rounded-lg [&_pre]:!text-left",
+          "[&_code]:!dir-ltr [&_code]:!font-fira [&_code]:!text-xs",
+          "prose-code:!p-0 prose-pre:!p-0"
         ),
         dir: "rtl",
       },
@@ -113,65 +113,65 @@ export function RichTextEditor({ value, onChange, languages }: Props) {
   return (
     <div className="relative w-full rounded-lg border border-input">
       <div
-        className="border-b border-input p-2 flex gap-1 flex-wrap items-center"
+        className="flex flex-wrap items-center gap-1 border-b border-input p-2"
         dir="rtl"
       >
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBold().run()}
           icon={Bold}
           isActive={editor.isActive("bold")}
           title="درشت"
+          onClick={() => editor.chain().focus().toggleBold().run()}
         />
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleItalic().run()}
           icon={Italic}
           isActive={editor.isActive("italic")}
           title="مورب"
+          onClick={() => editor.chain().focus().toggleItalic().run()}
         />
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
           icon={UnderlineIcon}
           isActive={editor.isActive("underline")}
           title="زیر خط"
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
         />
-        <div className="w-px h-6 bg-border mx-2" />
+        <div className="mx-2 h-6 w-px bg-border" />
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
           icon={List}
           isActive={editor.isActive("bulletList")}
           title="لیست نامرتب"
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
         />
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
           icon={ListOrdered}
           isActive={editor.isActive("orderedList")}
           title="لیست مرتب"
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
         />
-        <div className="w-px h-6 bg-border mx-2" />
+        <div className="mx-2 h-6 w-px bg-border" />
         <ToolbarButton
-          onClick={() => editor.chain().focus().setTextAlign("right").run()}
           icon={AlignRight}
           isActive={editor.isActive({ textAlign: "right" })}
           title="راست چین"
+          onClick={() => editor.chain().focus().setTextAlign("right").run()}
         />
         <ToolbarButton
-          onClick={() => editor.chain().focus().setTextAlign("center").run()}
           icon={AlignCenter}
           isActive={editor.isActive({ textAlign: "center" })}
           title="وسط چین"
+          onClick={() => editor.chain().focus().setTextAlign("center").run()}
         />
         <ToolbarButton
-          onClick={() => editor.chain().focus().setTextAlign("left").run()}
           icon={AlignLeft}
           isActive={editor.isActive({ textAlign: "left" })}
           title="چپ چین"
+          onClick={() => editor.chain().focus().setTextAlign("left").run()}
         />
-        <div className="w-px h-6 bg-border mx-2" />
+        <div className="mx-2 h-6 w-px bg-border" />
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           icon={CodeIcon}
           isActive={editor.isActive("codeBlock")}
           title="بلوک کد"
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         />
         {editor.isActive("codeBlock") && (
           <Select
@@ -194,9 +194,9 @@ export function RichTextEditor({ value, onChange, languages }: Props) {
         )}
       </div>
       <EditorContent
-        editor={editor}
-        dir="rtl"
         className="[&_.ProseMirror]:outline-none"
+        dir="rtl"
+        editor={editor}
       />
     </div>
   );

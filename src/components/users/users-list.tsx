@@ -17,13 +17,13 @@ export function UsersList({ users, totalPages, className }: Props) {
       >
         {users.map((user) => (
           <UserCard
-            key={user.id}
-            id={user.id}
-            name={user.name}
-            username={user.username}
             bio={user.bio ?? undefined}
+            id={user.id}
             image={user.image ?? undefined}
+            key={user.id}
+            name={user.name}
             snippetsCount={user.snippets.length}
+            username={user.username}
           />
         ))}
       </div>

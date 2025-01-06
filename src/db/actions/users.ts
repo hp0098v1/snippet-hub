@@ -1,17 +1,16 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
 import { hash, compare } from "bcryptjs";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { db } from "@/db";
-import { users } from "@/db/schema";
-import { updatePasswordSchema, updateUserSchema } from "@/lib/validations/user";
-import { verifySession } from "@/lib/session";
 import { uploadFile } from "@/db/actions/upload";
-
+import { users } from "@/db/schema";
 import { FormState } from "@/db/types";
+import { verifySession } from "@/lib/session";
+import { updatePasswordSchema, updateUserSchema } from "@/lib/validations/user";
 
 export async function updateUser(
   prevState: FormState,
@@ -95,8 +94,6 @@ export async function updateUser(
   redirect(`/dashboard`);
 }
 
-
-
 export async function updatePassword(
   prevState: FormState,
   formData: FormData
@@ -156,4 +153,3 @@ export async function updatePassword(
 
   redirect("/dashboard");
 }
-

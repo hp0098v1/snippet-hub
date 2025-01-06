@@ -1,7 +1,9 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useActionState } from "react";
-import { forgotPassword } from "@/db/actions";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,8 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
+import { forgotPassword } from "@/db/actions";
 
 export function ForgotPasswordForm() {
   const [state, formAction, isPending] = useActionState(forgotPassword, {});
@@ -29,12 +30,12 @@ export function ForgotPasswordForm() {
         <form action={formAction} className="space-y-4">
           <div className="space-y-2">
             <Input
+              className="text-left"
+              dir="ltr"
               id="email"
               name="email"
-              type="email"
               placeholder="ایمیل خود را وارد کنید"
-              dir="ltr"
-              className="text-left"
+              type="email"
             />
             {state.errors?.email && (
               <p className="text-sm text-red-500">{state.errors.email}</p>
@@ -52,7 +53,7 @@ export function ForgotPasswordForm() {
           )}
 
           <div className="flex flex-col gap-4">
-            <Button type="submit" disabled={isPending}>
+            <Button disabled={isPending} type="submit">
               {isPending ? (
                 <>
                   <Loader2 className="ml-2 h-4 w-4 animate-spin" />
@@ -63,7 +64,7 @@ export function ForgotPasswordForm() {
               )}
             </Button>
 
-            <Button variant="ghost" asChild>
+            <Button asChild variant="ghost">
               <Link href="/login">بازگشت به صفحه ورود</Link>
             </Button>
           </div>

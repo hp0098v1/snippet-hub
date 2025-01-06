@@ -28,15 +28,15 @@ export function AuthContainer({
           <p className="px-8 text-center text-sm text-muted-foreground">
             با ورود به سایت، شما{" "}
             <Link
+              className="underline underline-offset-4 hover:text-primary"
               href="/legal"
-              className="hover:text-primary underline underline-offset-4"
             >
               قوانین و مقررات
             </Link>{" "}
             و{" "}
             <Link
+              className="underline underline-offset-4 hover:text-primary"
               href="/legal"
-              className="hover:text-primary underline underline-offset-4"
             >
               حریم خصوصی
             </Link>{" "}

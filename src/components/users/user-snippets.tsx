@@ -1,8 +1,8 @@
 import Link from "next/link";
 
+import { SnippetsList } from "@/components/snippets/snippets-list";
 import { Button } from "@/components/ui/button";
 import { SnippetWithAuthorAndLanguage } from "@/db/types";
-import { SnippetsList } from "@/components/snippets/snippets-list";
 
 type Props = {
   isOwnProfile?: boolean;
@@ -30,13 +30,13 @@ export function UserSnippets({
 
       <SnippetsList
         isAuth={isAuth}
-        snippets={userSnippets}
-        totalPages={totalPages}
         noSnippetMessage={
           isOwnProfile
             ? "شما هنوز هیچ قطعه کدی ایجاد نکرده‌اید"
             : "این کاربر هنوز هیچ قطعه کدی ایجاد نکرده است"
         }
+        snippets={userSnippets}
+        totalPages={totalPages}
       />
     </div>
   );

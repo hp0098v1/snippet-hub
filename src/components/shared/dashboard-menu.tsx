@@ -1,20 +1,20 @@
+import { User } from "lucide-react";
 import Link from "next/link";
 
-import { DASHBOARD_LINKS } from "@/constants";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
+import { DASHBOARD_LINKS } from "@/constants";
 
 export function DashboardMenu() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger title="منوی کاربری" aria-label="منوی کاربری" asChild>
-        <Button variant="ghost" size="icon">
+      <DropdownMenuTrigger asChild aria-label="منوی کاربری" title="منوی کاربری">
+        <Button size="icon" variant="ghost">
           <User className="h-4 w-4" />
           <span className="sr-only">منوی کاربری</span>
         </Button>
@@ -22,11 +22,11 @@ export function DashboardMenu() {
       <DropdownMenuContent align="end" className="w-48">
         {DASHBOARD_LINKS.map((link) => (
           <DropdownMenuItem
+            asChild
             dir="rtl"
             key={`dashboard-link-${link.href}`}
-            asChild
           >
-            <Link href={link.href} className="flex w-full items-center">
+            <Link className="flex w-full items-center" href={link.href}>
               <link.icon className="ml-2 h-4 w-4" />
               {link.label}
             </Link>

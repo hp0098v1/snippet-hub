@@ -1,9 +1,8 @@
+import { Github, Mail, MessageSquare, Phone, Send } from "lucide-react";
 import { Metadata } from "next";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
@@ -11,14 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Github,
-  Mail,
-  MessageSquare,
-  Phone,
-  Send,
-} from "lucide-react";
-import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export const metadata: Metadata = {
   title: "تماس با ما | SnippetHub",
@@ -27,9 +21,9 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="container flex-1 space-y-8 p-8 max-w-7xl mx-auto">
+    <div className="container mx-auto max-w-7xl flex-1 space-y-8 p-8">
       {/* Header */}
-      <div className="space-y-4 text-center max-w-2xl mx-auto">
+      <div className="mx-auto max-w-2xl space-y-4 text-center">
         <h1 className="text-4xl font-bold tracking-tight">تماس با ما</h1>
         <p className="text-lg text-muted-foreground">
           برای ارتباط با تیم پشتیبانی SnippetHub، لطفاً فرم زیر را تکمیل کنید یا
@@ -55,9 +49,9 @@ export default function ContactPage() {
               <div className="space-y-2">
                 <Label htmlFor="name">نام و نام خانوادگی</Label>
                 <Input
+                  required
                   id="name"
                   placeholder="نام و نام خانوادگی خود را وارد کنید"
-                  required
                 />
               </div>
 
@@ -65,10 +59,10 @@ export default function ContactPage() {
               <div className="space-y-2">
                 <Label htmlFor="email">ایمیل</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="ایمیل خود را وارد کنید"
                   required
+                  id="email"
+                  placeholder="ایمیل خود را وارد کنید"
+                  type="email"
                 />
               </div>
 
@@ -76,15 +70,15 @@ export default function ContactPage() {
               <div className="space-y-2">
                 <Label htmlFor="message">پیام</Label>
                 <Textarea
+                  required
+                  className="min-h-[150px] resize-y"
                   id="message"
                   placeholder="پیام خود را بنویسید"
-                  className="min-h-[150px] resize-y"
-                  required
                 />
               </div>
 
               {/* Submit Button */}
-              <Button type="submit" className="w-full">
+              <Button className="w-full" type="submit">
                 <Send className="ml-2 h-4 w-4" />
                 ارسال پیام
               </Button>
@@ -113,8 +107,8 @@ export default function ContactPage() {
                 <div>
                   <p className="font-medium">ایمیل پشتیبانی</p>
                   <Link
-                    href="mailto:erfanpaya2021@gmail.com"
                     className="text-sm text-muted-foreground hover:text-primary"
+                    href="mailto:erfanpaya2021@gmail.com"
                   >
                     erfanpaya2021@gmail.com
                   </Link>
@@ -147,10 +141,10 @@ export default function ContactPage() {
                 <div>
                   <p className="font-medium">گیت‌هاب</p>
                   <Link
-                    href="https://github.com/hp0098v1/snippet-hub"
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="text-sm text-muted-foreground hover:text-primary"
+                    href="https://github.com/hp0098v1/snippet-hub"
+                    rel="noopener noreferrer"
+                    target="_blank"
                   >
                     github.com/hp0098v1/snippet-hub
                   </Link>

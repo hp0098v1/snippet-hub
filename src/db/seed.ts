@@ -1,6 +1,7 @@
+import { nanoid } from "nanoid";
+
 import { db } from "@/db";
 import { languages, snippets, users } from "@/db/schema";
-import { nanoid } from "nanoid";
 
 async function main() {
   console.log("🌱 Seeding database...");
@@ -59,7 +60,8 @@ async function main() {
     {
       id: nanoid(),
       title: "تابع فیلتر آرایه با استفاده از reduce",
-      description: "پیاده‌سازی تابع filter با استفاده از متد reduce در جاوااسکریپت",
+      description:
+        "پیاده‌سازی تابع filter با استفاده از متد reduce در جاوااسکریپت",
       code: `function filter(arr, predicate) {
   return arr.reduce((acc, item) => {
     if (predicate(item)) {
@@ -123,4 +125,4 @@ main()
   })
   .finally(() => {
     process.exit(0);
-  }); 
+  });

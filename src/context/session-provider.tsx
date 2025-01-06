@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { createContext, useContext, useEffect, useState } from "react";
 
 type SessionContextType = {
   isAuth: boolean;

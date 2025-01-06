@@ -1,10 +1,10 @@
 import { Metadata } from "next";
 
-import { getUsers } from "@/db/queries";
 import { PageHeader } from "@/components/shared/page-header";
-import { UsersList } from "@/components/users/users-list";
 import { SearchForm } from "@/components/shared/search-form";
+import { UsersList } from "@/components/users/users-list";
 import { USERS_SORT_OPTIONS } from "@/constants";
+import { getUsers } from "@/db/queries";
 import { UsersSortOption } from "@/db/types";
 export const metadata: Metadata = {
   title: "کاربران | SnippetHub",
@@ -32,21 +32,21 @@ export default async function UsersPage(props: Props) {
   return (
     <div className="container space-y-8 py-8">
       <PageHeader
-        title="کاربران"
         description="پروفایل کاربران را مشاهده کنید و از قطعه کدهای آن‌ها استفاده کنید"
+        title="کاربران"
       />
 
       <SearchForm
-        query={query || ""}
-        action="/users"
-        searchPlaceholder="جستجو در کاربران..."
-        searchButtonText="جستجو"
         hasSortFilter
-        sortOptions={USERS_SORT_OPTIONS}
+        action="/users"
+        query={query || ""}
+        searchButtonText="جستجو"
+        searchPlaceholder="جستجو در کاربران..."
         sortBy={sortBy || "newest"}
+        sortOptions={USERS_SORT_OPTIONS}
       />
 
-      <UsersList users={users} totalPages={metadata.totalPages} />
+      <UsersList totalPages={metadata.totalPages} users={users} />
     </div>
   );
 }

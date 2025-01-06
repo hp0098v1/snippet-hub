@@ -1,7 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
-import {  resetPassword } from "@/db/actions";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,11 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { PasswordInput } from "@/components/ui/password-input";
-import { toast } from "sonner";
+import { resetPassword } from "@/db/actions";
 
 type Props = {
   token: string;
@@ -23,7 +23,10 @@ type Props = {
 export function ResetPasswordForm({ token }: Props) {
   const router = useRouter();
   const resetPasswordBinded = resetPassword.bind(null, token);
-  const [state, formAction, isPending] = useActionState(resetPasswordBinded, {});
+  const [state, formAction, isPending] = useActionState(
+    resetPasswordBinded,
+    {}
+  );
 
   useEffect(() => {
     if (state.success) {
@@ -42,11 +45,11 @@ export function ResetPasswordForm({ token }: Props) {
         <form action={formAction} className="space-y-4">
           <div className="space-y-2">
             <PasswordInput
+              className="text-left"
+              dir="ltr"
               id="password"
               name="password"
               placeholder="رمز عبور جدید"
-              dir="ltr"
-              className="text-left"
             />
             {state.errors?.password && (
               <p className="text-sm text-red-500">{state.errors.password}</p>
@@ -55,11 +58,11 @@ export function ResetPasswordForm({ token }: Props) {
 
           <div className="space-y-2">
             <PasswordInput
+              className="text-left"
+              dir="ltr"
               id="confirmPassword"
               name="confirmPassword"
               placeholder="تکرار رمز عبور جدید"
-              dir="ltr"
-              className="text-left"
             />
             {state.errors?.confirmPassword && (
               <p className="text-sm text-red-500">
@@ -72,7 +75,7 @@ export function ResetPasswordForm({ token }: Props) {
             <p className="text-sm text-red-500">{state.errors.message}</p>
           )}
 
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button className="w-full" disabled={isPending} type="submit">
             {isPending ? (
               <>
                 <Loader2 className="ml-2 h-4 w-4 animate-spin" />

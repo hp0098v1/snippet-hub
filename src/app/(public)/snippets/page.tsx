@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 
-import { getLanguages, getSnippets } from "@/db/queries";
-import { getSession } from "@/lib/session";
 import { PageHeader } from "@/components/shared/page-header";
-import { SnippetsList } from "@/components/snippets/snippets-list";
 import { SearchForm } from "@/components/shared/search-form";
+import { SnippetsList } from "@/components/snippets/snippets-list";
 import { SNIPPETS_SORT_OPTIONS } from "@/constants";
+import { getLanguages, getSnippets } from "@/db/queries";
 import { SnippetsSortOption } from "@/db/types";
+import { getSession } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "قطعه کدها | SnippetHub",
@@ -40,27 +40,27 @@ export default async function SnippetsPage(props: Props) {
   return (
     <div className="container space-y-8 py-8">
       <PageHeader
-        title="قطعه کدها"
         description="در قطعه کدهای برنامه‌نویسی جستجو کنید و از آن‌ها استفاده کنید"
+        title="قطعه کدها"
       />
 
       <SearchForm
-        query={query || ""}
         hasLanguageFilter
+        hasSortFilter
+        action="/snippets"
         language={language || "all"}
         languages={languages}
-        hasSortFilter
-        sortOptions={SNIPPETS_SORT_OPTIONS}
-        sortBy={sortBy || "newest"}
-        action="/snippets"
-        searchPlaceholder="جستجو در قطعه کدها..."
+        query={query || ""}
         searchButtonText="جستجو"
+        searchPlaceholder="جستجو در قطعه کدها..."
+        sortBy={sortBy || "newest"}
+        sortOptions={SNIPPETS_SORT_OPTIONS}
       />
 
       <SnippetsList
+        isAuth={isAuth}
         snippets={snippets}
         totalPages={metadata.totalPages}
-        isAuth={isAuth}
       />
     </div>
   );

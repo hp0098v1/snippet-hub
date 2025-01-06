@@ -1,4 +1,5 @@
 import { type InferSelectModel } from "drizzle-orm";
+
 import { languages, snippets, users, likes, savedSnippets } from "./schema";
 
 export type FormState = {

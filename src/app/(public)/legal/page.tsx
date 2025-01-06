@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
@@ -26,7 +27,7 @@ export default function LegalPage() {
           <CardHeader>
             <CardTitle className="text-2xl">قوانین استفاده</CardTitle>
           </CardHeader>
-          <CardContent className="prose prose-stone dark:prose-invert max-w-none rtl">
+          <CardContent className="rtl prose prose-stone max-w-none dark:prose-invert">
             <h3>۱. پذیرش قوانین</h3>
             <p>
               با استفاده از SnippetHub، شما موافقت خود را با این قوانین اعلام
@@ -67,7 +68,7 @@ export default function LegalPage() {
           <CardHeader>
             <CardTitle className="text-2xl">حریم خصوصی</CardTitle>
           </CardHeader>
-          <CardContent className="prose prose-stone dark:prose-invert max-w-none rtl">
+          <CardContent className="rtl prose prose-stone max-w-none dark:prose-invert">
             <h3>۱. جمع‌آوری اطلاعات</h3>
             <p>
               ما اطلاعات شخصی شما را تنها با رضایت شما و برای بهبود خدمات‌رسانی
@@ -110,7 +111,7 @@ export default function LegalPage() {
           <CardHeader>
             <CardTitle className="text-2xl">تماس با ما</CardTitle>
           </CardHeader>
-          <CardContent className="prose prose-stone dark:prose-invert max-w-none rtl">
+          <CardContent className="rtl prose prose-stone max-w-none dark:prose-invert">
             <p>
               اگر سؤالی درباره قوانین یا حریم خصوصی دارید، لطفاً با ما تماس
               بگیرید:

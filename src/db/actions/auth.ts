@@ -1,12 +1,15 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import { nanoid } from "nanoid";
-import { and, eq, sql } from "drizzle-orm";
 import { hash, compare } from "bcryptjs";
+import { and, eq, sql } from "drizzle-orm";
+import { nanoid } from "nanoid";
+import { redirect } from "next/navigation";
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { FormState } from "@/db/types";
+import { sendVerificationEmail, sendResetPasswordEmail } from "@/lib/email";
+import { createSession, deleteSession } from "@/lib/session";
 import {
   loginSchema,
   signupSchema,
@@ -14,10 +17,6 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
 } from "@/lib/validations/auth";
-import { sendVerificationEmail, sendResetPasswordEmail } from "@/lib/email";
-import { createSession, deleteSession } from "@/lib/session";
-
-import { FormState } from "@/db/types";
 
 export async function signup(
   prevState: FormState,

@@ -1,8 +1,9 @@
 "use server";
 
+import { eq, sql } from "drizzle-orm";
+
 import { db } from "@/db";
 import { users, snippets, likes } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
 import { Stats } from "@/db/types";
 
 export async function getStats(): Promise<Stats> {

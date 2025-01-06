@@ -1,10 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Form from "next/form";
+import Link from "next/link";
+import { useActionState, useState } from "react";
 
+import { RichTextEditorSkeleton } from "@/components/shared/skeletons";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectTrigger,
@@ -12,15 +17,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-
-import Link from "next/link";
-import { CreateSnippet, Language } from "@/db/types";
-
-import { useActionState, useState } from "react";
-import Form from "next/form";
-import { FormState } from "@/db/types";
-import { RichTextEditorSkeleton } from "@/components/shared/skeletons";
+import { CreateSnippet, Language, FormState } from "@/db/types";
 
 const RichTextEditor = dynamic(
   () =>
@@ -79,22 +76,22 @@ export function SnippetForm({
           <div className="space-y-2">
             <Label htmlFor="title">عنوان</Label>
             <Input
+              defaultValue={defaultValues?.title}
               id="title"
               name="title"
-              defaultValue={defaultValues?.title}
               placeholder="یک عنوان توصیفی برای قطعه کد خود وارد کنید"
             />
             {state.errors?.title && (
-              <p className="text-red-500 text-sm">{state.errors.title}</p>
+              <p className="text-sm text-red-500">{state.errors.title}</p>
             )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="language">زبان برنامه‌نویسی</Label>
             <Select
+              defaultValue={defaultValues?.languageId}
+              name="languageId"
               value={language}
               onValueChange={setLanguage}
-              name="languageId"
-              defaultValue={defaultValues?.languageId}
             >
               <SelectTrigger>
                 <SelectValue placeholder="انتخاب زبان برنامه‌نویسی" />
@@ -108,7 +105,7 @@ export function SnippetForm({
               </SelectContent>
             </Select>
             {state.errors?.languageId && (
-              <p className="text-red-500 text-sm">{state.errors.languageId}</p>
+              <p className="text-sm text-red-500">{state.errors.languageId}</p>
             )}
           </div>
         </CardHeader>
@@ -122,29 +119,29 @@ export function SnippetForm({
               onChange={setContent}
             />
             {state.errors?.content && (
-              <p className="text-red-500 text-sm">{state.errors.content}</p>
+              <p className="text-sm text-red-500">{state.errors.content}</p>
             )}
           </div>
 
           {state.errors?.message && (
-            <p className="text-red-500 text-sm">{state.errors.message}</p>
+            <p className="text-sm text-red-500">{state.errors.message}</p>
           )}
 
           <div className="flex justify-end gap-4">
             <Button
-              variant="outline"
-              type="button"
-              disabled={isSubmitting}
               asChild
+              disabled={isSubmitting}
+              type="button"
+              variant="outline"
             >
               <Link href={cancelLink}>انصراف</Link>
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button disabled={isSubmitting} type="submit">
               {isSubmitting
                 ? "در حال ارسال..."
                 : isEditing
-                ? "ذخیره تغییرات"
-                : "ایجاد قطعه کد"}
+                  ? "ذخیره تغییرات"
+                  : "ایجاد قطعه کد"}
             </Button>
           </div>
         </CardContent>

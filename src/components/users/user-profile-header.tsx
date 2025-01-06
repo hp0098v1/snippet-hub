@@ -1,5 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Code2 } from "lucide-react";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Props = {
   userImage: string | null;
@@ -33,7 +34,7 @@ export function UserProfileHeader({
 
         {userBio && <p className="text-muted-foreground">{userBio}</p>}
 
-        <div className="flex gap-2 items-center text-sm">
+        <div className="flex items-center gap-2 text-sm">
           <Code2 className="h-4 w-4 text-primary" />
           {userSnippetsCount} قطعه کد
         </div>

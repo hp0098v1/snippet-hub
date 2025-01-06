@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 export default function SignupPage() {
   return (
     <AuthContainer
-      title="ایجاد حساب کاربری"
       description="برای استفاده از امکانات SnippetHub ثبت‌نام کنید"
+      title="ایجاد حساب کاربری"
     >
       <AuthSignupForm />
     </AuthContainer>

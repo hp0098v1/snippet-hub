@@ -1,7 +1,6 @@
-import "server-only";
+"use server";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-
 import { redirect } from "next/navigation";
 
 export type SessionPayload = {
@@ -48,7 +47,7 @@ export const verifySession = async (): Promise<{
 export async function getSession() {
   const cookie = (await cookies()).get("session")?.value;
   const session = await decrypt(cookie);
-  
+
   return { isAuth: !!session?.userId, userId: session?.userId as string };
 }
 

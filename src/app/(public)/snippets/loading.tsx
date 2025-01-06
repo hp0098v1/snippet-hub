@@ -6,10 +6,10 @@ import {
 
 export default function SnippetsLoading() {
   return (
-    <div className="container py-8 space-y-8">
+    <div className="container space-y-8 py-8">
       <PageHeader
-        title="قطعه کدها"
         description="قطعه کدهای به اشتراک گذاشته شده توسط کاربران"
+        title="قطعه کدها"
       />
 
       {/* Search and Filter Section */}
