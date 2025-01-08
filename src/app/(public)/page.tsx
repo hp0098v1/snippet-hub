@@ -6,6 +6,8 @@ import { PopularLanguagesSection } from "@/components/home/popular-languages-sec
 import { SectionDivider } from "@/components/home/section-divider";
 import { StatsSection } from "@/components/home/stats-section";
 
+export const revalidate = 86400;
+
 export default function HomePage() {
   return (
     <div className="flex flex-col">
