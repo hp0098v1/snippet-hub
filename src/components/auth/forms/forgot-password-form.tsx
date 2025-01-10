@@ -30,7 +30,9 @@ export function ForgotPasswordForm() {
         <form action={formAction} className="space-y-4">
           <div className="space-y-2">
             <Input
+              autoComplete="email"
               className="text-left"
+              defaultValue={state.data?.email ?? ""}
               dir="ltr"
               id="email"
               name="email"

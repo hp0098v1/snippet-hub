@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { signup } from "@/db/actions";
 
-export function AuthSignupForm() {
+export function SignupForm() {
   const [state, formAction, isPending] = useActionState(signup, { errors: {} });
 
   return (
@@ -21,7 +21,13 @@ export function AuthSignupForm() {
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="name">نام و نام خانوادگی</Label>
-              <Input autoComplete="name" id="name" name="name" type="text" />
+              <Input
+                autoComplete="name"
+                defaultValue={state.data?.name ?? ""}
+                id="name"
+                name="name"
+                type="text"
+              />
               {state.errors?.name && (
                 <p className="text-sm text-destructive">{state.errors.name}</p>
               )}
@@ -31,6 +37,7 @@ export function AuthSignupForm() {
               <Input
                 autoComplete="email"
                 className="text-left"
+                defaultValue={state.data?.email ?? ""}
                 dir="ltr"
                 id="email"
                 name="email"
@@ -43,8 +50,8 @@ export function AuthSignupForm() {
             <div className="grid gap-2">
               <Label htmlFor="password">رمز عبور</Label>
               <PasswordInput
-                autoComplete="current-password"
                 className="text-left"
+                defaultValue={state.data?.password ?? ""}
                 dir="ltr"
                 id="password"
                 name="password"
@@ -58,8 +65,8 @@ export function AuthSignupForm() {
             <div className="grid gap-2">
               <Label htmlFor="confirm-password">تکرار رمز عبور</Label>
               <PasswordInput
-                autoComplete="new-password"
                 className="text-left"
+                defaultValue={state.data?.confirmPassword ?? ""}
                 dir="ltr"
                 id="confirm-password"
                 name="confirmPassword"

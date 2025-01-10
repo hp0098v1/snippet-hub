@@ -13,7 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { verifyEmail, resendVerificationCode } from "@/db/actions";
 
-export function AuthVerifyEmailForm() {
+export function VerifyEmailForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const email = searchParams.get("email");
@@ -64,7 +64,12 @@ export function AuthVerifyEmailForm() {
           {/* OTP Input */}
           <div className="space-y-2">
             <Label htmlFor="code">کد تأیید</Label>
-            <InputOTP id="code" maxLength={6} name="code">
+            <InputOTP
+              defaultValue={state.data?.code ?? ""}
+              id="code"
+              maxLength={6}
+              name="code"
+            >
               <InputOTPGroup>
                 <InputOTPSlot index={0} />
                 <InputOTPSlot index={1} />

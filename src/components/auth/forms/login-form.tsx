@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { login } from "@/db/actions";
 
-export function AuthLoginForm() {
+export function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, { errors: {} });
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -28,6 +28,7 @@ export function AuthLoginForm() {
               <Input
                 autoComplete="email"
                 className="text-left"
+                defaultValue={state.data?.email ?? ""}
                 dir="ltr"
                 id="email"
                 name="email"
@@ -51,6 +52,7 @@ export function AuthLoginForm() {
               <PasswordInput
                 autoComplete="current-password"
                 className="text-left"
+                defaultValue={state.data?.password ?? ""}
                 dir="ltr"
                 id="password"
                 name="password"

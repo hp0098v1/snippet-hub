@@ -28,6 +28,7 @@ export async function signup(
   if (!parsedData.success) {
     return {
       errors: parsedData.error.flatten().fieldErrors,
+      data: formDataObj as { [key: string]: string | undefined },
     };
   }
 
@@ -50,6 +51,7 @@ export async function signup(
         errors: {
           email: "این ایمیل قبلاً ثبت شده است",
         },
+        data: parsedData.data,
       };
     } else if (existingUser && !existingUser.emailVerified) {
       await db
@@ -86,6 +88,7 @@ export async function signup(
           errors: {
             message: "خطایی رخ داده است",
           },
+          data: parsedData.data,
         };
       }
     }
@@ -97,6 +100,7 @@ export async function signup(
       errors: {
         message: "خطایی رخ داده است",
       },
+      data: parsedData.data,
     };
   }
 
@@ -114,6 +118,7 @@ export async function login(
   if (!parsedData.success) {
     return {
       errors: parsedData.error.flatten().fieldErrors,
+      data: formDataObj as { [key: string]: string | undefined },
     };
   }
 
@@ -126,6 +131,7 @@ export async function login(
       errors: {
         message: "ایمیل یا رمز عبور اشتباه است",
       },
+      data: parsedData.data,
     };
   }
 
@@ -139,6 +145,7 @@ export async function login(
       errors: {
         message: "ایمیل یا رمز عبور اشتباه است",
       },
+      data: parsedData.data,
     };
   }
 
@@ -160,6 +167,7 @@ export async function verifyEmail(
   if (!parsedData.success) {
     return {
       errors: parsedData.error.flatten().fieldErrors,
+      data: { code },
     };
   }
 
@@ -175,6 +183,7 @@ export async function verifyEmail(
         errors: {
           code: "کد تأیید نامعتبر است",
         },
+        data: { code },
       };
     }
 
@@ -186,6 +195,7 @@ export async function verifyEmail(
         errors: {
           code: "کد تأیید منقضی شده است",
         },
+        data: { code },
       };
     }
 
@@ -206,6 +216,7 @@ export async function verifyEmail(
       errors: {
         message: "خطایی رخ داده است",
       },
+      data: { code },
     };
   }
 
@@ -272,6 +283,7 @@ export async function forgotPassword(
   if (!parsedData.success) {
     return {
       errors: parsedData.error.flatten().fieldErrors,
+      data: formDataObj as { [key: string]: string | undefined },
     };
   }
 
@@ -285,6 +297,7 @@ export async function forgotPassword(
         errors: {
           email: "کاربری با این ایمیل یافت نشد",
         },
+        data: parsedData.data,
       };
     }
 
@@ -313,6 +326,7 @@ export async function forgotPassword(
       errors: {
         message: "خطایی رخ داده است",
       },
+      data: parsedData.data,
     };
   }
 }
@@ -328,6 +342,7 @@ export async function resetPassword(
   if (!parsedData.success) {
     return {
       errors: parsedData.error.flatten().fieldErrors,
+      data: formDataObj as { [key: string]: string | undefined },
     };
   }
 
@@ -345,6 +360,7 @@ export async function resetPassword(
         errors: {
           message: "لینک بازیابی رمز عبور نامعتبر یا منقضی شده است",
         },
+        data: parsedData.data,
       };
     }
 
@@ -370,6 +386,7 @@ export async function resetPassword(
       errors: {
         message: "خطایی رخ داده است",
       },
+      data: parsedData.data,
     };
   }
 }

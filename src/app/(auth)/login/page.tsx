@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 
 import { AuthContainer } from "@/components/auth/auth-container";
-import { AuthLoginForm } from "@/components/auth/forms/auth-login-form";
+import { LoginForm } from "@/components/auth/forms/login-form";
 
 export const metadata: Metadata = {
   title: "ورود | SnippetHub",
@@ -16,7 +16,7 @@ export default function LoginPage() {
       title="ورود به حساب کاربری"
     >
       <Suspense fallback={<div>Loading...</div>}>
-        <AuthLoginForm />
+        <LoginForm />
       </Suspense>
     </AuthContainer>
   );

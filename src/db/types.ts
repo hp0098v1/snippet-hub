@@ -8,6 +8,9 @@ export type FormState = {
     message?: string;
     [key: string]: string[] | string | undefined;
   };
+  data?: {
+    [key: string]: string | undefined;
+  };
 };
 
 export type SortOption = {

@@ -46,6 +46,7 @@ export function ResetPasswordForm({ token }: Props) {
           <div className="space-y-2">
             <PasswordInput
               className="text-left"
+              defaultValue={state.data?.password ?? ""}
               dir="ltr"
               id="password"
               name="password"
@@ -59,6 +60,7 @@ export function ResetPasswordForm({ token }: Props) {
           <div className="space-y-2">
             <PasswordInput
               className="text-left"
+              defaultValue={state.data?.confirmPassword ?? ""}
               dir="ltr"
               id="confirmPassword"
               name="confirmPassword"

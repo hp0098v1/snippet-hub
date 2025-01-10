@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 
 import { AuthContainer } from "@/components/auth/auth-container";
-import { AuthVerifyEmailForm } from "@/components/auth/forms/auth-verify-email";
+import { VerifyEmailForm } from "@/components/auth/forms/verify-email-form";
 
 export const metadata: Metadata = {
   title: "تأیید ایمیل | SnippetHub",
@@ -17,7 +17,7 @@ export default function VerifyEmailPage() {
       title="تأیید ایمیل"
     >
       <Suspense fallback={<div>Loading...</div>}>
-        <AuthVerifyEmailForm />
+        <VerifyEmailForm />
       </Suspense>
     </AuthContainer>
   );

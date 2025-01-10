@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import { AuthContainer } from "@/components/auth/auth-container";
-import { AuthSignupForm } from "@/components/auth/forms/auth-signup-form";
+import { SignupForm } from "@/components/auth/forms/signup-form";
 
 export const metadata: Metadata = {
   title: "ثبت‌نام | SnippetHub",
@@ -14,7 +14,7 @@ export default function SignupPage() {
       description="برای استفاده از امکانات SnippetHub ثبت‌نام کنید"
       title="ایجاد حساب کاربری"
     >
-      <AuthSignupForm />
+      <SignupForm />
     </AuthContainer>
   );
 }
