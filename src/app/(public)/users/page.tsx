@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
 import { SearchForm } from "@/components/shared/search-form";
 import { UsersList } from "@/components/users/users-list";
-import { USERS_SORT_OPTIONS } from "@/constants";
 import { getUsers } from "@/db/queries";
 import { UsersSortOption } from "@/db/types";
+import { USERS_SORT_OPTIONS } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "کاربران | SnippetHub",
   description: "مشاهده لیست کاربران و پروفایل‌های عمومی",

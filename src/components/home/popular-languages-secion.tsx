@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { Badge } from "@/components/ui/badge";
-import { POPULAR_LANGUAGES } from "@/constants";
+import { POPULAR_LANGUAGES } from "@/lib/constants";
 
 export function PopularLanguagesSection() {
   return (

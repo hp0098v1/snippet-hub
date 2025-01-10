@@ -1,9 +1,6 @@
 import {
   Bookmark,
   Code,
-  Code2,
-  Eye,
-  Heart,
   Home,
   Lock,
   Pencil,
@@ -69,29 +66,6 @@ export const FEATURES = [
     title: "حریم خصوصی",
     description: "کدهای خود را به صورت سازمان‌یافته و در امنیت ذخیره کنید",
     icon: Lock,
-  },
-];
-
-export const STATS = [
-  {
-    label: "کاربر فعال",
-    value: "۱۰۰۰+",
-    icon: Users,
-  },
-  {
-    label: "قطعه کد",
-    value: "۵۰۰۰+",
-    icon: Code2,
-  },
-  {
-    label: "لایک",
-    value: "۱۰۰۰۰+",
-    icon: Heart,
-  },
-  {
-    label: "بازدید",
-    value: "۵۰۰۰۰+",
-    icon: Eye,
   },
 ];
 

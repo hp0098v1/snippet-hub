@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
 import { SearchForm } from "@/components/shared/search-form";
 import { SnippetsList } from "@/components/snippets/snippets-list";
-import { SNIPPETS_SORT_OPTIONS } from "@/constants";
 import { getLanguages, getSnippets } from "@/db/queries";
 import { SnippetsSortOption } from "@/db/types";
+import { SNIPPETS_SORT_OPTIONS } from "@/lib/constants";
 import { getSession } from "@/lib/session";
 
 export const metadata: Metadata = {

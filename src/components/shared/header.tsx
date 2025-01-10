@@ -10,7 +10,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { NAVIGATION_LINKS } from "@/constants";
+import { NAVIGATION_LINKS } from "@/lib/constants";
 
 export async function Header() {
   return (

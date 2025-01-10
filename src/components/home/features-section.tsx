@@ -1,4 +1,4 @@
-import { FEATURES } from "@/constants";
+import { FEATURES } from "@/lib/constants";
 
 export function FeaturesSection() {
   return (

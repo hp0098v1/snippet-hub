@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DASHBOARD_LINKS } from "@/constants";
+import { DASHBOARD_LINKS } from "@/lib/constants";
 
 export function DashboardMenu() {
   return (
