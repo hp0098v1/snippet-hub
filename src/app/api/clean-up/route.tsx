@@ -1,4 +1,4 @@
-import { cleanupUnverifiedUsers } from "@/scripts/cleanup-unverified-users";
+import { cleanupUnverifiedUsers } from "@/db/actions";
 
 export async function GET() {
   try {

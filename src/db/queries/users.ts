@@ -34,6 +34,7 @@ export async function getUsers(
     query
       ? or(ilike(users.name, `%${query}%`), ilike(users.username, `%${query}%`))
       : undefined,
+    eq(users.emailVerified, true),
   ].filter(Boolean);
 
   const data = await db.query.users.findMany({

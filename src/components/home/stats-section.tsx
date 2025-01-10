@@ -1,5 +1,5 @@
 import { Stats } from "@/components/home/stats";
-import { getStats } from "@/db/actions/stats";
+import { getStats } from "@/db/queries";
 
 export async function StatsSection() {
   const stats = await getStats();

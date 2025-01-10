@@ -1,7 +1,7 @@
 "use server";
 
 import { hash, compare } from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { eq, lt, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -152,4 +152,16 @@ export async function updatePassword(
   }
 
   redirect("/dashboard");
+}
+
+export async function cleanupUnverifiedUsers() {
+  const now = new Date();
+
+  // Delete users who haven't verified their email within the deletion timeframe
+  await db.delete(users).where(
+    and(
+      lt(users.deleteAt, now), // deleteAt is less than current time
+      eq(users.emailVerified, false) // and email is not verified
+    )
+  );
 }
