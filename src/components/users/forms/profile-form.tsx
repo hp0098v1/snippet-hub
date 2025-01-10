@@ -59,6 +59,9 @@ export function ProfileForm({ user }: Props) {
               تصویر پروفایل خود را تغییر دهید
             </p>
           </div>
+          {state.errors?.image && (
+            <p className="text-sm text-red-500">{state.errors.image}</p>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -69,7 +72,7 @@ export function ProfileForm({ user }: Props) {
                 نام
               </label>
               <Input
-                defaultValue={user.name}
+                defaultValue={state.data?.name ?? user.name}
                 id="name"
                 name="name"
                 placeholder="نام خود را وارد کنید"
@@ -84,7 +87,7 @@ export function ProfileForm({ user }: Props) {
               </label>
               <Input
                 className="text-left"
-                defaultValue={user.username}
+                defaultValue={state.data?.username ?? user.username}
                 dir="ltr"
                 id="username"
                 name="username"
@@ -102,7 +105,7 @@ export function ProfileForm({ user }: Props) {
             </label>
             <Textarea
               className="h-32 resize-none"
-              defaultValue={user.bio || ""}
+              defaultValue={state.data?.bio ?? (user.bio || "")}
               id="bio"
               name="bio"
               placeholder="درباره خود بنویسید..."

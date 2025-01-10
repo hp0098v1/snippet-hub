@@ -4,7 +4,6 @@ export const updateUserSchema = z.object({
   username: z.string().min(3, "نام کاربری باید حداقل ۳ کاراکتر باشد"),
   name: z.string().min(1, "نام و نام خانوادگی الزامی است"),
   bio: z.string().optional(),
-  image: z.string().optional(),
 });
 
 export const updatePasswordSchema = z

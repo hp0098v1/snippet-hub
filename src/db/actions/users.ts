@@ -18,18 +18,39 @@ export async function updateUser(
 ): Promise<FormState> {
   const { userId } = await verifySession();
 
+  let imageUrl: string | undefined = undefined;
+  const imageFile = formData.get("image") as File | null;
+
+  formData.delete("image");
+  const formDataObj = Object.fromEntries(formData.entries());
+  const parsedFormData = updateUserSchema.safeParse(formDataObj);
+
+  if (!parsedFormData.success) {
+    return {
+      errors: parsedFormData.error.flatten().fieldErrors,
+      data: formDataObj as { [key: string]: string | undefined },
+    };
+  }
+
   try {
-    // Handle image upload first
-    let imageUrl: string | undefined = undefined;
-    const imageFile = formData.get("image") as File | null;
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.username, parsedFormData.data.username),
+    });
+
+    if (existingUser && existingUser.id !== userId) {
+      return {
+        errors: {
+          username: "این نام کاربری قبلاً استفاده شده است",
+        },
+        data: parsedFormData.data,
+      };
+    }
 
     if (imageFile && typeof imageFile !== "string") {
       // Get current user to check if we need to delete old image
       const user = await db.query.users.findFirst({
         where: eq(users.id, userId),
       });
-
-      console.log("user image", user?.image);
 
       const uploadResult = await uploadFile(imageFile, {
         oldUrl: user?.image,
@@ -42,33 +63,11 @@ export async function updateUser(
           errors: {
             image: uploadResult.error,
           },
+          data: parsedFormData.data,
         };
       }
 
       imageUrl = uploadResult.url;
-    }
-
-    // Remove image from formData to parse remaining fields
-    formData.delete("image");
-    const formDataObj = Object.fromEntries(formData.entries());
-    const parsedFormData = updateUserSchema.safeParse(formDataObj);
-
-    if (!parsedFormData.success) {
-      return {
-        errors: parsedFormData.error.flatten().fieldErrors,
-      };
-    }
-
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.username, parsedFormData.data.username),
-    });
-
-    if (existingUser && existingUser.id !== userId) {
-      return {
-        errors: {
-          username: "این نام کاربری قبلاً استفاده شده است",
-        },
-      };
     }
 
     await db
@@ -85,6 +84,7 @@ export async function updateUser(
       errors: {
         message: "خطایی رخ داده است",
       },
+      data: parsedFormData.data,
     };
   }
 
@@ -104,6 +104,7 @@ export async function updatePassword(
   if (!parsedData.success) {
     return {
       errors: parsedData.error.flatten().fieldErrors,
+      data: formDataObj as { [key: string]: string | undefined },
     };
   }
 
@@ -118,6 +119,7 @@ export async function updatePassword(
         errors: {
           message: "کاربر یافت نشد",
         },
+        data: parsedData.data,
       };
     }
 
@@ -131,6 +133,7 @@ export async function updatePassword(
         errors: {
           currentPassword: "رمز عبور فعلی اشتباه است",
         },
+        data: parsedData.data,
       };
     }
 
@@ -148,6 +151,7 @@ export async function updatePassword(
       errors: {
         message: "خطایی رخ داده است",
       },
+      data: parsedData.data,
     };
   }
 

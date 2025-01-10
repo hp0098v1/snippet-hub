@@ -28,9 +28,7 @@ export async function uploadFile(
       return {
         url: "",
         success: false,
-        error: `File size must be less than ${Math.floor(
-          maxSize / 1024 / 1024
-        )}MB`,
+        error: `فایل باید کمتر از ${Math.floor(maxSize / 1024 / 1024)}MB باشد`,
       };
     }
 
@@ -38,7 +36,7 @@ export async function uploadFile(
       return {
         url: "",
         success: false,
-        error: "Invalid file type",
+        error: "فرمت فایل مجاز نیست",
       };
     }
 
@@ -74,7 +72,7 @@ export async function uploadFile(
     return {
       url: "",
       success: false,
-      error: "Failed to upload file",
+      error: "خطایی رخ داده است",
     };
   }
 }

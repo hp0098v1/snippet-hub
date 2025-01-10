@@ -25,6 +25,7 @@ export function ChangePasswordForm() {
             <Label htmlFor="currentPassword">رمز عبور فعلی</Label>
             <PasswordInput
               className="text-left"
+              defaultValue={state.data?.currentPassword ?? ""}
               dir="ltr"
               id="currentPassword"
               name="currentPassword"
@@ -40,6 +41,7 @@ export function ChangePasswordForm() {
             <Label htmlFor="newPassword">رمز عبور جدید</Label>
             <PasswordInput
               className="text-left"
+              defaultValue={state.data?.newPassword ?? ""}
               dir="ltr"
               id="newPassword"
               name="newPassword"
@@ -55,6 +57,7 @@ export function ChangePasswordForm() {
             <Label htmlFor="confirmPassword">تکرار رمز عبور جدید</Label>
             <PasswordInput
               className="text-left"
+              defaultValue={state.data?.confirmPassword ?? ""}
               dir="ltr"
               id="confirmPassword"
               name="confirmPassword"
