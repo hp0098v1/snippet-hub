@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { ImageUpload } from "@/components/shared/image-upload";
 import { Button } from "@/components/ui/button";
@@ -39,11 +38,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
   const { execute, isPending } = useAction(updateUser, {
     onSuccess: () => {
-      toast.success("اطلاعات کاربری با موفقیت بروزرسانی شد");
       router.push(config.routes.dashboard.home());
-    },
-    onError: (error) => {
-      toast.error(error);
     },
   });
 

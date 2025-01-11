@@ -5,7 +5,6 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -29,11 +28,7 @@ export function SignUpForm() {
 
   const { execute, isPending } = useAction(signup, {
     onSuccess: () => {
-      toast.success("ایمیل تاییدی برای شما ارسال شد");
       router.push(config.routes.auth.verifyEmail(form.getValues("email")));
-    },
-    onError: (error) => {
-      toast.error(error);
     },
   });
 

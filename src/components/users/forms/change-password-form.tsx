@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,11 +29,7 @@ export function ChangePasswordForm() {
 
   const { execute, isPending } = useAction(updatePassword, {
     onSuccess: () => {
-      toast.success("رمز عبور با موفقیت تغییر کرد");
       router.push(config.routes.dashboard.home());
-    },
-    onError: (error) => {
-      toast.error(error);
     },
   });
 

@@ -3,7 +3,6 @@
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -30,11 +29,7 @@ export function SnippetDeleteForm({ id }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const { execute, isPending } = useAction(deleteSnippet, {
     onSuccess: () => {
-      toast.success("قطعه کد با موفقیت حذف شد");
       router.push(config.routes.public.snippets());
-    },
-    onError: (error) => {
-      toast.error(error);
     },
   });
 

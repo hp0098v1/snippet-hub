@@ -37,10 +37,10 @@ export function AuthButtons() {
       ) : (
         <>
           <Button asChild variant="ghost">
-            <Link href={config.routes.auth.login()}>ورود</Link>
+            <Link href={config.routes.auth.signUp()}>ثبت‌نام</Link>
           </Button>
           <Button asChild>
-            <Link href={config.routes.auth.signUp()}>ثبت‌نام</Link>
+            <Link href={config.routes.auth.login()}>ورود</Link>
           </Button>
         </>
       )}

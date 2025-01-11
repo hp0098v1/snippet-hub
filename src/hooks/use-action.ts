@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { toast } from "sonner";
 
 import { getSession } from "@/lib/session";
+import { ActionResult } from "@/types";
 
 type Status = "idle" | "pending" | "success" | "error";
 
@@ -12,15 +14,18 @@ interface State<TData> {
   error: string | null;
 }
 
-interface Options<TData> {
+interface Options<TInput, TData> {
   onSuccess?: (data: TData) => void;
   onError?: (error: string) => void;
+  onRequest?: (data: TInput) => void;
+  onResponse?: (result: ActionResult<TData>) => void;
   isProtected?: boolean;
+  showSuccessMessage?: boolean;
 }
 
 export function useAction<TInput, TData>(
-  action: (data: TInput) => Promise<TData>,
-  options: Options<TData> = {}
+  action: (data: TInput) => Promise<ActionResult<TData>>,
+  options: Options<TInput, TData> = {}
 ) {
   const [state, setState] = useState<State<TData>>({
     status: "idle",
@@ -32,8 +37,8 @@ export function useAction<TInput, TData>(
     async (data: TInput) => {
       try {
         setState((prev) => ({ ...prev, status: "pending", error: null }));
+        options.onRequest?.(data);
 
-        // Check authentication if action is protected
         if (options.isProtected) {
           const { isAuth } = await getSession();
 
@@ -43,15 +48,32 @@ export function useAction<TInput, TData>(
         }
 
         const result = await action(data);
+        options.onResponse?.(result);
+
+        if (result.type === "error") {
+          setState((prev) => ({
+            ...prev,
+            status: "error",
+            error: result.error,
+          }));
+          toast.error(result.error);
+          options.onError?.(result.error);
+          return;
+        }
 
         setState((prev) => ({
           ...prev,
           status: "success",
-          data: result,
+          data: result.data,
           error: null,
         }));
 
-        options.onSuccess?.(result);
+        if (options.showSuccessMessage !== false && result.message) {
+          toast.success(result.message);
+        }
+
+        options.onSuccess?.(result.data);
+        return result.data;
       } catch (err) {
         const message = err instanceof Error ? err.message : "خطایی رخ داد";
 
@@ -61,6 +83,7 @@ export function useAction<TInput, TData>(
           error: message,
         }));
 
+        toast.error(message);
         options.onError?.(message);
       }
     },

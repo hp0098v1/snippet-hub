@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,11 +33,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
   const { execute, isPending } = useAction(resetPassword, {
     onSuccess: () => {
-      toast.success("رمز عبور با موفقیت تغییر کرد");
       router.push(config.routes.auth.login());
-    },
-    onError: (error) => {
-      toast.error(error);
     },
   });
 

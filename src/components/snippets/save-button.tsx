@@ -21,14 +21,7 @@ export function SaveButton({
   isAuth = false,
   className,
 }: Props) {
-  const { execute, isPending } = useAction(toggleSaveSnippet, {
-    onSuccess: (data) => {
-      toast.success(data.message);
-    },
-    onError: (error) => {
-      toast.error(error);
-    },
-  });
+  const { execute, isPending } = useAction(toggleSaveSnippet);
 
   function handleSave() {
     if (!isAuth) {

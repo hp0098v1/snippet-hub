@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -27,7 +26,7 @@ import {
 } from "@/lib/validations/auth";
 
 interface VerifyEmailFormProps {
-  email: string | null;
+  email: string;
 }
 
 export function VerifyEmailForm({ email }: VerifyEmailFormProps) {
@@ -35,11 +34,7 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps) {
 
   const { execute, isPending } = useAction(verifyEmail, {
     onSuccess: () => {
-      toast.success("ایمیل شما با موفقیت تأیید شد");
       router.push(config.routes.dashboard.home());
-    },
-    onError: (error) => {
-      toast.error(error);
     },
   });
 
@@ -51,11 +46,6 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps) {
   });
 
   function onSubmit(data: VerifyEmailSchema) {
-    if (!email) {
-      toast.error("ایمیل یافت نشد");
-      return;
-    }
-
     execute({ ...data, email });
   }
 
@@ -104,17 +94,13 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps) {
 }
 
 interface ResendVerificationFormProps {
-  email: string | null;
+  email: string;
 }
 
 function ResendVerificationForm({ email }: ResendVerificationFormProps) {
   const { execute, isPending } = useAction(resendVerificationCode, {
     onSuccess: () => {
-      toast.success("کد تأیید جدید ارسال شد");
       restart();
-    },
-    onError: (error) => {
-      toast.error(error);
     },
   });
 
@@ -123,11 +109,6 @@ function ResendVerificationForm({ email }: ResendVerificationFormProps) {
   });
 
   function handleResend() {
-    if (!email) {
-      toast.error("ایمیل یافت نشد");
-      return;
-    }
-
     execute({ email });
   }
 

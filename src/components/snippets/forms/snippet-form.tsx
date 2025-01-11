@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { RichTextEditorSkeleton } from "@/components/shared/skeletons";
 import { Button } from "@/components/ui/button";
@@ -63,11 +62,7 @@ export function SnippetForm({
     createSnippet,
     {
       onSuccess: (data) => {
-        toast.success("قطعه کد با موفقیت ایجاد شد");
         router.push(config.routes.public.snippetsDetail(data.id));
-      },
-      onError: (error) => {
-        toast.error(error);
       },
     }
   );
@@ -76,11 +71,7 @@ export function SnippetForm({
     updateSnippet,
     {
       onSuccess: () => {
-        toast.success("قطعه کد با موفقیت ویرایش شد");
         router.push(config.routes.public.snippetsDetail(snippetId!));
-      },
-      onError: (error) => {
-        toast.error(error);
       },
     }
   );

@@ -23,14 +23,7 @@ export function LikeButton({
   isAuth,
   className,
 }: Props) {
-  const { execute, isPending } = useAction(toggleSnippetLike, {
-    onSuccess: (data) => {
-      toast.success(data.message);
-    },
-    onError: (error) => {
-      toast.error(error);
-    },
-  });
+  const { execute, isPending } = useAction(toggleSnippetLike);
 
   function handleLike() {
     if (!isAuth) {
