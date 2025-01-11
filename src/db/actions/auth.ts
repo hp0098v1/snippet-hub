@@ -6,10 +6,13 @@ import { nanoid } from "nanoid";
 import { redirect } from "next/navigation";
 
 import { db } from "@/db";
+import {
+  sendVerificationEmail,
+  sendResetPasswordEmail,
+} from "@/db/actions/email";
 import { users } from "@/db/schema";
 import { FormState } from "@/db/types";
 import { config } from "@/lib/config";
-import { sendVerificationEmail, sendResetPasswordEmail } from "@/lib/email";
 import { createSession, deleteSession } from "@/lib/session";
 import {
   loginSchema,
@@ -95,7 +98,11 @@ export async function signup(
     }
 
     // Send verification email
-    await sendVerificationEmail(parsedData.data.email, verificationCode);
+    await sendVerificationEmail(
+      parsedData.data.email,
+      parsedData.data.name,
+      verificationCode
+    );
   } catch {
     return {
       errors: {
@@ -257,7 +264,7 @@ export async function resendVerificationCode(
       })
       .where(eq(users.id, user.id));
 
-    await sendVerificationEmail(email, verificationCode);
+    await sendVerificationEmail(email, user.name, verificationCode);
 
     return {};
   } catch {
@@ -317,7 +324,7 @@ export async function forgotPassword(
 
     // Send reset password email
     const resetLink = `${config.env.app.url}/reset-password?token=${resetToken}`;
-    await sendResetPasswordEmail(user.email, resetLink);
+    await sendResetPasswordEmail(user.email, user.name, resetLink);
 
     return {
       success: true,

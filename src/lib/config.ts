@@ -7,6 +7,9 @@ export const config = {
     session: {
       secret: process.env.SESSION_SECRET,
     },
+    email: {
+      resendApiKey: process.env.RESEND_API_KEY,
+    },
     smtp: {
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
