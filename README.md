@@ -82,7 +82,7 @@ SnippetHub is a modern web application for sharing and managing code snippets. B
 - **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
 - **Authentication**: Custom email/password with session management
 - **Storage**: [Vercel Blob Storage](https://vercel.com/storage/blobs)
-- **Email**: Nodemailer
+- **Email**: [Resend](https://resend.com/)
 - **Deployment**: [Vercel](https://vercel.com/)
 
 ## Project Structure
@@ -94,6 +94,7 @@ src/
 │   ├── (public)/          # Public routes
 │   └── dashboard/         # Protected dashboard routes
 ├── components/            # React components
+│   ├── email/             # Email components
 │   ├── auth/             # Authentication components
 │   ├── shared/           # Shared components
 │   ├── snippets/         # Snippet-related components
@@ -104,7 +105,6 @@ src/
 │   ├── queries/         # Database queries
 │   └── schema.ts        # Database schema
 ├── lib/                 # Utility functions
-│   ├── email.ts        # Email functionality
 │   ├── session.ts      # Session management
 │   └── validations/    # Form validations
 └── middleware.ts       # Next.js middleware
@@ -132,22 +132,21 @@ src/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/snippet-hub.git
+git clone https://github.com/hp0098v1/snippet-hub.git
 cd snippet-hub
 ```
 
 2. Copy `.env.example` to `.env` and fill in your values:
 
 ```bash
-DATABASE_URL="postgresql://user:password@localhost:5432/your_database"
-BLOB_READ_WRITE_TOKEN="your_vercel_blob_token"
-NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN="your_vercel_blob_token"
-SESSION_SECRET="your_session_secret"
-SMTP_HOST="smtp.gmail.com"
-SMTP_PORT="587"
-SMTP_USER="your_email@gmail.com"
-SMTP_PASSWORD="your_app_specific_password"
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
+DATABASE_URL=your_database_url
+BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
+
+SESSION_SECRET=your_session_secret
+
+RESEND_API_KEY=your_resend_api_key
+
+APP_URL=your-app-url
 ```
 
 3. Install dependencies:
