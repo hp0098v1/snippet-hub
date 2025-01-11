@@ -2,6 +2,10 @@
 
 import { put, del } from "@vercel/blob";
 
+import { config } from "@/lib/config";
+
+const blobReadWriteToken = config.env.database.blobReadWriteToken!;
+
 interface UploadResult {
   url: string;
   success: boolean;
@@ -47,7 +51,7 @@ export async function uploadFile(
         const pathname = oldFileUrl.pathname;
         const filename = pathname.substring(pathname.lastIndexOf("/") + 1);
         await del(filename, {
-          token: process.env.BLOB_READ_WRITE_TOKEN!,
+          token: blobReadWriteToken,
         });
       } catch (error) {
         console.error("Error deleting old file:", error);
@@ -60,7 +64,7 @@ export async function uploadFile(
       .substring(2)}${file.name.substring(file.name.lastIndexOf("."))}`;
     const blob = await put(uniqueFilename, file, {
       access: "public",
-      token: process.env.BLOB_READ_WRITE_TOKEN!,
+      token: blobReadWriteToken,
     });
 
     return {
@@ -83,7 +87,7 @@ export async function deleteFile(url: string): Promise<boolean> {
     const pathname = fileUrl.pathname;
     const filename = pathname.substring(pathname.lastIndexOf("/") + 1);
     await del(filename, {
-      token: process.env.BLOB_READ_WRITE_TOKEN!,
+      token: blobReadWriteToken,
     });
     return true;
   } catch (error) {

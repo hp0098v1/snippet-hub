@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { FormState } from "@/db/types";
+import { config } from "@/lib/config";
 import { sendVerificationEmail, sendResetPasswordEmail } from "@/lib/email";
 import { createSession, deleteSession } from "@/lib/session";
 import {
@@ -315,7 +316,7 @@ export async function forgotPassword(
       .where(eq(users.id, user.id));
 
     // Send reset password email
-    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${resetToken}`;
+    const resetLink = `${config.env.app.url}/reset-password?token=${resetToken}`;
     await sendResetPasswordEmail(user.email, resetLink);
 
     return {

@@ -2,16 +2,16 @@
 import nodemailer from "nodemailer";
 import type { TransportOptions } from "nodemailer";
 
-import { env } from "@/lib/env";
+import { config } from "@/lib/config";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  host: env.SMTP_HOST,
-  port: env.SMTP_PORT,
+  host: config.env.smtp.host,
+  port: config.env.smtp.port,
   secure: true,
   auth: {
-    user: env.SMTP_USER,
-    pass: env.SMTP_PASSWORD,
+    user: config.env.smtp.user,
+    pass: config.env.smtp.password,
   },
 } as TransportOptions);
 
@@ -27,7 +27,7 @@ export async function sendVerificationEmail(email: string, code: string) {
 
 export async function sendResetPasswordEmail(email: string, resetLink: string) {
   const mailOptions = {
-    from: `"SnippetHub" <${process.env.SMTP_USER}>`,
+    from: `"SnippetHub" <${config.env.smtp.user}>`,
     to: email,
     subject: "بازیابی رمز عبور | SnippetHub",
     html: `

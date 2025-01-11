@@ -3,12 +3,14 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { config } from "@/lib/config";
+
 export type SessionPayload = {
   userId: string;
   expiresAt: Date;
 };
 
-const secretKey = process.env.SESSION_SECRET;
+const secretKey = config.env.session.secret;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: SessionPayload) {

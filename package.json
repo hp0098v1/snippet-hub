@@ -11,7 +11,6 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
     "db:push": "drizzle-kit push",
-    "db:seed": "tsx src/db/seed.ts",
     "prepare": "husky install"
   },
   "dependencies": {
