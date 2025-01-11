@@ -2,7 +2,6 @@ import { Metadata } from "next";
 
 import { PageHeader } from "@/components/shared/page-header";
 import { SnippetForm } from "@/components/snippets/forms/snippet-form";
-import { createSnippet } from "@/db/actions";
 import { getLanguages } from "@/db/queries";
 
 export const metadata: Metadata = {
@@ -20,11 +19,7 @@ export default async function NewSnippetPage() {
         title="ایجاد قطعه کد جدید"
       />
 
-      <SnippetForm
-        cancelLink={`/dashboard`}
-        languages={languages}
-        onSubmit={createSnippet}
-      />
+      <SnippetForm cancelLink={`/dashboard`} languages={languages} />
     </div>
   );
 }

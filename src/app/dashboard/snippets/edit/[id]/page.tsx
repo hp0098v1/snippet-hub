@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/shared/page-header";
 import { SnippetForm } from "@/components/snippets/forms/snippet-form";
-import { updateSnippet } from "@/db/actions";
 import { getLanguages, getSnippetById } from "@/db/queries";
 
 type Props = {
@@ -48,13 +47,11 @@ export default async function EditSnippetPage(props: Props) {
         cancelLink={`/snippets/${params.id}`}
         defaultValues={{
           title: snippet.title,
-          content: snippet.content,
+          content: snippet.content ?? "",
           languageId: snippet.languageId,
-          userId: snippet.userId,
         }}
         languages={languages}
         snippetId={params.id}
-        onSubmit={updateSnippet}
       />
     </div>
   );
