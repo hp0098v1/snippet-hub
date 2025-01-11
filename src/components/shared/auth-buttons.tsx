@@ -7,6 +7,7 @@ import { DashboardMenu } from "@/components/shared/dashboard-menu";
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/context/session-provider";
 import { logout } from "@/db/actions";
+import { config } from "@/lib/config";
 
 export function AuthButtons() {
   const { isAuth } = useSession();
@@ -26,10 +27,10 @@ export function AuthButtons() {
       ) : (
         <>
           <Button asChild variant="ghost">
-            <Link href="/login">ورود</Link>
+            <Link href={config.routes.auth.login()}>ورود</Link>
           </Button>
           <Button asChild>
-            <Link href="/signup">ثبت‌نام</Link>
+            <Link href={config.routes.auth.signUp()}>ثبت‌نام</Link>
           </Button>
         </>
       )}

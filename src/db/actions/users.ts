@@ -9,6 +9,7 @@ import { db } from "@/db";
 import { uploadFile } from "@/db/actions/upload";
 import { users } from "@/db/schema";
 import { FormState } from "@/db/types";
+import { config } from "@/lib/config";
 import { verifySession } from "@/lib/session";
 import { updatePasswordSchema, updateUserSchema } from "@/lib/validations/user";
 
@@ -88,10 +89,10 @@ export async function updateUser(
     };
   }
 
-  revalidatePath(`/dashboard`);
-  revalidatePath(`/users`);
-  revalidatePath(`/users/${userId}`);
-  redirect(`/dashboard`);
+  revalidatePath(config.routes.dashboard.home());
+  revalidatePath(config.routes.public.users());
+  revalidatePath(config.routes.public.usersProfile(userId));
+  redirect(config.routes.dashboard.home());
 }
 
 export async function updatePassword(
@@ -155,7 +156,7 @@ export async function updatePassword(
     };
   }
 
-  redirect("/dashboard");
+  redirect(config.routes.dashboard.home());
 }
 
 export async function cleanupUnverifiedUsers() {

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { updateUser } from "@/db/actions";
 import { User } from "@/db/types";
+import { config } from "@/lib/config";
 
 type Props = {
   user: User;
@@ -124,7 +125,7 @@ export function ProfileForm({ user }: Props) {
 
           <div className="flex justify-end gap-4">
             <Button asChild variant="outline">
-              <Link href={`/dashboard`}>انصراف</Link>
+              <Link href={config.routes.dashboard.home()}>انصراف</Link>
             </Button>
             <Button disabled={isPending} type="submit">
               {isPending ? "در حال ذخیره..." : "ذخیره تغییرات"}

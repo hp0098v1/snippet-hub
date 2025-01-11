@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { ResetPasswordForm } from "@/components/auth/forms/reset-password-form";
+import { config } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "تغییر رمز عبور | SnippetHub",
@@ -18,7 +19,7 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
   const { token } = await searchParams;
 
   if (!token) {
-    redirect("/forgot-password");
+    redirect(config.routes.auth.forgotPassword());
   }
 
   return (

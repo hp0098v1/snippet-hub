@@ -10,8 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { signup } from "@/db/actions";
+import { config } from "@/lib/config";
 
-export function SignupForm() {
+export function SignUpForm() {
   const [state, formAction, isPending] = useActionState(signup, { errors: {} });
 
   return (
@@ -90,7 +91,10 @@ export function SignupForm() {
       <CardFooter className="border-t p-6">
         <p className="w-full text-center text-sm text-muted-foreground">
           قبلاً ثبت‌نام کرده‌اید؟{" "}
-          <Link className="text-primary hover:underline" href="/login">
+          <Link
+            className="text-primary hover:underline"
+            href={config.routes.auth.login()}
+          >
             وارد شوید
           </Link>
         </p>

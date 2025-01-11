@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { snippets, likes, savedSnippets } from "@/db/schema";
 import { FormState } from "@/db/types";
+import { config } from "@/lib/config";
 import { verifySession } from "@/lib/session";
 import {
   createSnippetSchema,
@@ -44,9 +45,9 @@ export async function createSnippet(
     };
   }
 
-  revalidatePath("/snippets");
-  revalidatePath(`/users/${userId}`);
-  redirect(`/snippets/${snippetId}`);
+  revalidatePath(config.routes.public.snippets());
+  revalidatePath(config.routes.public.usersProfile(userId));
+  redirect(config.routes.public.snippets());
 }
 
 export async function updateSnippet(
@@ -94,10 +95,10 @@ export async function updateSnippet(
     };
   }
 
-  revalidatePath("/snippets");
-  revalidatePath(`/snippets/${parsedFormData.data.id}`);
-  revalidatePath(`/users/${userId}`);
-  redirect(`/snippets/${parsedFormData.data.id}`);
+  revalidatePath(config.routes.public.snippets());
+  revalidatePath(config.routes.public.snippetsDetail(parsedFormData.data.id));
+  revalidatePath(config.routes.public.usersProfile(userId));
+  redirect(config.routes.public.snippetsDetail(parsedFormData.data.id));
 }
 
 export async function deleteSnippet(id: string): Promise<FormState> {
@@ -133,9 +134,9 @@ export async function deleteSnippet(id: string): Promise<FormState> {
     };
   }
 
-  revalidatePath("/snippets");
-  revalidatePath(`/users/${selectedSnippet.userId}`);
-  redirect(`/users/${selectedSnippet.userId}`);
+  revalidatePath(config.routes.public.snippets());
+  revalidatePath(config.routes.public.usersProfile(selectedSnippet.userId));
+  redirect(config.routes.public.usersProfile(selectedSnippet.userId));
 }
 
 export async function incrementSnippetViews(id: string) {
@@ -174,9 +175,9 @@ export async function toggleSnippetLike(snippetId: string): Promise<FormState> {
     }
 
     // Revalidate the pages
-    revalidatePath("/snippets");
-    revalidatePath(`/snippets/${snippetId}`);
-    revalidatePath(`/users/${userId}`);
+    revalidatePath(config.routes.public.snippets());
+    revalidatePath(config.routes.public.snippetsDetail(snippetId));
+    revalidatePath(config.routes.public.usersProfile(userId));
 
     return {
       success: true,
@@ -220,10 +221,10 @@ export async function toggleSaveSnippet(snippetId: string): Promise<FormState> {
       });
     }
 
-    revalidatePath("/snippets");
-    revalidatePath(`/snippets/${snippetId}`);
-    revalidatePath(`/users/${userId}`);
-    revalidatePath(`/dashboard/saved-snippets`);
+    revalidatePath(config.routes.public.snippets());
+    revalidatePath(config.routes.public.snippetsDetail(snippetId));
+    revalidatePath(config.routes.public.usersProfile(userId));
+    revalidatePath(config.routes.dashboard.savedSnippets());
 
     return {
       success: true,

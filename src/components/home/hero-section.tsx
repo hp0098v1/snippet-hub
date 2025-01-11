@@ -2,6 +2,7 @@ import { Search, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { config } from "@/lib/config";
 
 export function HeroSection() {
   return (
@@ -18,13 +19,13 @@ export function HeroSection() {
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Button asChild size="lg">
-            <Link href="/signup">
+            <Link href={config.routes.auth.signUp()}>
               شروع کنید
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline">
-            <Link href="/snippets">
+            <Link href={config.routes.public.snippets()}>
               جستجو در کد ها
               <Search className="h-4 w-4" />
             </Link>

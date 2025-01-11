@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SnippetsList } from "@/components/snippets/snippets-list";
 import { Button } from "@/components/ui/button";
 import { SnippetWithAuthorAndLanguage } from "@/db/types";
+import { config } from "@/lib/config";
 
 type Props = {
   isOwnProfile?: boolean;
@@ -23,7 +24,9 @@ export function UserSnippets({
         <h2 className="text-2xl font-bold">قطعه کدها</h2>
         {isOwnProfile && (
           <Button asChild>
-            <Link href="/dashboard/snippets/new">ایجاد قطعه کد جدید</Link>
+            <Link href={config.routes.dashboard.snippets.create()}>
+              ایجاد قطعه کد جدید
+            </Link>
           </Button>
         )}
       </div>

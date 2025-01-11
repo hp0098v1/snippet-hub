@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { config } from "@/lib/config";
 
 export default function NotFound() {
   return (
@@ -11,7 +12,9 @@ export default function NotFound() {
           قطعه کد مورد نظر شما یافت نشد یا حذف شده است
         </p>
         <Button asChild>
-          <Link href="/snippets">بازگشت به قطعه کدها</Link>
+          <Link href={config.routes.public.snippets()}>
+            بازگشت به قطعه کدها
+          </Link>
         </Button>
       </div>
     </div>

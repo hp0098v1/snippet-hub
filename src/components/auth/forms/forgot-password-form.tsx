@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { forgotPassword } from "@/db/actions";
+import { config } from "@/lib/config";
 
 export function ForgotPasswordForm() {
   const [state, formAction, isPending] = useActionState(forgotPassword, {});
@@ -67,7 +68,7 @@ export function ForgotPasswordForm() {
             </Button>
 
             <Button asChild variant="ghost">
-              <Link href="/login">بازگشت به صفحه ورود</Link>
+              <Link href={config.routes.auth.login()}>بازگشت به صفحه ورود</Link>
             </Button>
           </div>
         </form>

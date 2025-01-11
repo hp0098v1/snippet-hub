@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { config } from "@/lib/config";
+
 type Props = {
   title: string;
   description: string;
@@ -29,14 +31,14 @@ export function AuthContainer({
             با ورود به سایت، شما{" "}
             <Link
               className="underline underline-offset-4 hover:text-primary"
-              href="/legal"
+              href={config.routes.public.legal()}
             >
               قوانین و مقررات
             </Link>{" "}
             و{" "}
             <Link
               className="underline underline-offset-4 hover:text-primary"
-              href="/legal"
+              href={config.routes.public.legal()}
             >
               حریم خصوصی
             </Link>{" "}

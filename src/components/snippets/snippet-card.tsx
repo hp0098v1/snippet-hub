@@ -13,6 +13,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { SnippetWithAuthorAndLanguage } from "@/db/types";
+import { config } from "@/lib/config";
 
 import { LikeButton } from "./like-button";
 
@@ -34,7 +35,7 @@ export function SnippetCard({ isAuth, snippet }: Props) {
             <div className="space-y-1">
               <Link
                 className="text-sm font-medium hover:underline"
-                href={`/users/${snippet.user.id}`}
+                href={config.routes.public.usersProfile(snippet.user.id)}
               >
                 {snippet.user.name}
               </Link>
@@ -49,7 +50,7 @@ export function SnippetCard({ isAuth, snippet }: Props) {
             {snippet.language.name}
           </Badge>
         </div>
-        <Link href={`/snippets/${snippet.id}`}>
+        <Link href={config.routes.public.snippetsDetail(snippet.id)}>
           <h3 className="line-clamp-1 text-lg font-semibold hover:underline">
             {snippet.title}
           </h3>

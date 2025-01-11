@@ -2,6 +2,7 @@ import { ArrowLeft, Home, XCircle } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { config } from "@/lib/config";
 
 export default function NotFound() {
   return (
@@ -24,7 +25,7 @@ export default function NotFound() {
       {/* Navigation Buttons */}
       <div className="flex flex-col gap-4 sm:flex-row">
         <Button asChild size="lg">
-          <Link href="/">
+          <Link href={config.routes.public.home()}>
             <Home className="ml-2 h-5 w-5" />
             صفحه اصلی
           </Link>

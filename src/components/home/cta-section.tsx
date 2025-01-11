@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { config } from "@/lib/config";
 
 export function CtaSection() {
   return (
@@ -11,7 +12,7 @@ export function CtaSection() {
         ثبت‌نام رایگان و شروع مدیریت و اشتراک‌گذاری کدهای خود
       </p>
       <Button asChild size="lg">
-        <Link href="/signup">
+        <Link href={config.routes.auth.signUp()}>
           ثبت‌نام کنید
           <ArrowLeft className="h-4 w-4" />
         </Link>

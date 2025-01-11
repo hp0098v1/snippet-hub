@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { login } from "@/db/actions";
+import { config } from "@/lib/config";
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, { errors: {} });
@@ -44,7 +45,7 @@ export function LoginForm() {
                 <Label htmlFor="password">رمز عبور</Label>
                 <Link
                   className="text-xs text-muted-foreground hover:underline"
-                  href="/forgot-password"
+                  href={config.routes.auth.forgotPassword()}
                 >
                   رمز عبور را فراموش کرده‌اید؟
                 </Link>
@@ -75,7 +76,10 @@ export function LoginForm() {
       <CardFooter className="border-t p-6">
         <p className="w-full text-center text-sm text-muted-foreground">
           حساب کاربری ندارید؟{" "}
-          <Link className="text-primary hover:underline" href="/signup">
+          <Link
+            className="text-primary hover:underline"
+            href={config.routes.auth.signUp()}
+          >
             ثبت‌نام کنید
           </Link>
         </p>

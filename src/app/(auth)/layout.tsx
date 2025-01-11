@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { config } from "@/lib/config";
+
 export default function AuthLayout({
   children,
 }: {
@@ -17,7 +19,7 @@ export default function AuthLayout({
         />
         <div className="absolute inset-0 bg-zinc-900/50"></div>
         <div className="relative z-20 flex items-center text-lg font-medium">
-          <Link href="/">
+          <Link href={config.routes.public.home()}>
             <span className="text-xl font-bold text-white">SnippetHub</span>
           </Link>
         </div>

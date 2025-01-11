@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { config as appConfig } from "@/lib/config";
 import { decrypt } from "@/lib/session";
 
 export async function middleware(request: NextRequest) {
@@ -14,7 +15,7 @@ export async function middleware(request: NextRequest) {
   if (path.startsWith("/dashboard") && !session?.userId) {
     const callbackUrl = encodeURIComponent(request.nextUrl.pathname);
     return NextResponse.redirect(
-      new URL(`/login?callbackUrl=${callbackUrl}`, request.url)
+      new URL(appConfig.routes.auth.login(callbackUrl), request.url)
     );
   }
 

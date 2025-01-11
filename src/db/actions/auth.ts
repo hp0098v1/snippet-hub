@@ -106,7 +106,7 @@ export async function signup(
   }
 
   // Redirect to verify page
-  redirect(`/verify-email?email=${parsedData.data.email}`);
+  redirect(config.routes.auth.verifyEmail(parsedData.data.email));
 }
 
 export async function login(
@@ -154,7 +154,7 @@ export async function login(
 
   // Get callback URL from form data
   const callbackUrl = formData.get("callbackUrl") as string;
-  redirect(callbackUrl || "/dashboard");
+  redirect(callbackUrl || config.routes.dashboard.home());
 }
 
 export async function verifyEmail(
@@ -221,7 +221,7 @@ export async function verifyEmail(
     };
   }
 
-  redirect(`/dashboard`);
+  redirect(config.routes.dashboard.home());
 }
 
 export async function resendVerificationCode(
@@ -271,7 +271,7 @@ export async function resendVerificationCode(
 
 export async function logout() {
   await deleteSession();
-  redirect("/login");
+  redirect(config.routes.auth.login());
 }
 
 export async function forgotPassword(

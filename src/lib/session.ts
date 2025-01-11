@@ -40,7 +40,7 @@ export const verifySession = async (): Promise<{
   const session = await decrypt(cookie);
 
   if (!session?.userId) {
-    redirect("/login");
+    redirect(config.routes.auth.login());
   }
 
   return { isAuth: true, userId: session.userId as string };

@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { config } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "تماس با ما | SnippetHub",
@@ -45,7 +46,6 @@ export default function ContactPage() {
           </CardHeader>
           <CardContent>
             <form className="space-y-6">
-              {/* Name */}
               <div className="space-y-2">
                 <Label htmlFor="name">نام و نام خانوادگی</Label>
                 <Input
@@ -55,7 +55,6 @@ export default function ContactPage() {
                 />
               </div>
 
-              {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email">ایمیل</Label>
                 <Input
@@ -66,7 +65,6 @@ export default function ContactPage() {
                 />
               </div>
 
-              {/* Message */}
               <div className="space-y-2">
                 <Label htmlFor="message">پیام</Label>
                 <Textarea
@@ -77,7 +75,6 @@ export default function ContactPage() {
                 />
               </div>
 
-              {/* Submit Button */}
               <Button className="w-full" type="submit">
                 <Send className="ml-2 h-4 w-4" />
                 ارسال پیام
@@ -99,7 +96,6 @@ export default function ContactPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Email */}
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Mail className="h-5 w-5" />
@@ -108,32 +104,13 @@ export default function ContactPage() {
                   <p className="font-medium">ایمیل پشتیبانی</p>
                   <Link
                     className="text-sm text-muted-foreground hover:text-primary"
-                    href="mailto:erfanpaya2021@gmail.com"
+                    href={`mailto:${config.author.email}`}
                   >
-                    erfanpaya2021@gmail.com
+                    {config.author.email}
                   </Link>
                 </div>
               </div>
 
-              {/* Social Media */}
-              {/* <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Twitter className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-medium">توییتر</p>
-                  <a
-                    href="https://twitter.com/snippethub"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-muted-foreground hover:text-primary"
-                  >
-                    @snippethub
-                  </a>
-                </div>
-              </div> */}
-
-              {/* GitHub */}
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Github className="h-5 w-5" />
@@ -142,48 +119,16 @@ export default function ContactPage() {
                   <p className="font-medium">گیت‌هاب</p>
                   <Link
                     className="text-sm text-muted-foreground hover:text-primary"
-                    href="https://github.com/hp0098v1/snippet-hub"
+                    href={config.project.github}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    github.com/hp0098v1/snippet-hub
+                    {config.project.github}
                   </Link>
                 </div>
               </div>
             </CardContent>
           </Card>
-
-          {/* FAQ Card */}
-          {/* <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle>سؤالات متداول</CardTitle>
-              <CardDescription>
-                قبل از تماس با پشتیبانی، می‌توانید سؤالات متداول را مطالعه کنید
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium">
-                    چگونه می‌توانم اشتراک تهیه کنم؟
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    برای تهیه اشتراک، به صفحه پلن‌ها مراجعه کنید و پلن مورد نظر
-                    خود را انتخاب نمایید.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-medium">
-                    چگونه می‌توانم رمز عبور خود را بازیابی کنم؟
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    در صفحه ورود، روی لینک &quot;فراموشی رمز عبور&quot; کلیک
-                    کنید و مراحل بازیابی را دنبال نمایید.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card> */}
         </div>
       </div>
     </div>

@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { updatePassword } from "@/db/actions";
+import { config } from "@/lib/config";
 
 export function ChangePasswordForm() {
   const [state, formAction, isPending] = useActionState(updatePassword, {
@@ -75,7 +76,7 @@ export function ChangePasswordForm() {
 
           <div className="flex justify-end gap-4">
             <Button asChild variant="outline">
-              <Link href={`/dashboard`}>انصراف</Link>
+              <Link href={config.routes.dashboard.home()}>انصراف</Link>
             </Button>
             <Button disabled={isPending} type="submit">
               {isPending ? "در حال تغییر رمز عبور..." : "تغییر رمز عبور"}

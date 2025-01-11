@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { config } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
 interface UserCardProps {
@@ -47,7 +48,7 @@ export function UserCard({
                 <h3>
                   <Link
                     className="transition-colors hover:text-primary"
-                    href={`/users/${id}`}
+                    href={config.routes.public.usersProfile(id)}
                   >
                     {name}
                   </Link>
@@ -59,7 +60,7 @@ export function UserCard({
             </div>
           </div>
           <Button asChild size="icon" variant="ghost">
-            <Link href={`/users/${id}`}>
+            <Link href={config.routes.public.usersProfile(id)}>
               <ChevronLeft className="size-5 text-muted-foreground" />
             </Link>
           </Button>

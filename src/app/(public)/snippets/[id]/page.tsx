@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { incrementSnippetViews } from "@/db/actions";
 import { getSnippetById, getSnippetByLanguage } from "@/db/queries";
+import { config } from "@/lib/config";
 import { getSession } from "@/lib/session";
 
 type Props = {
@@ -71,7 +72,7 @@ export default async function SnippetPage(props: Props) {
           <div className="space-y-1">
             <Link
               className="text-lg font-medium hover:underline"
-              href={`/users/${snippet.user.id}`}
+              href={config.routes.public.usersProfile(snippet.user.id)}
             >
               {snippet.user.name}
             </Link>
@@ -107,7 +108,7 @@ export default async function SnippetPage(props: Props) {
           {isOwner && (
             <div className="flex items-center gap-1">
               <Button asChild size="icon" variant="ghost">
-                <Link href={`/dashboard/snippets/edit/${id}`}>
+                <Link href={config.routes.dashboard.snippets.edit(id)}>
                   <Pencil className="h-4 w-4" />
                   <span className="sr-only">ویرایش</span>
                 </Link>

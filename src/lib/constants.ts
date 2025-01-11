@@ -10,43 +10,45 @@ import {
   Users,
 } from "lucide-react";
 
+import { config } from "@/lib/config";
+
 export const NAVIGATION_LINKS = [
   {
     label: "خانه",
     icon: Home,
-    href: "/",
+    href: config.routes.public.home(),
   },
   {
     label: "قطعه کدها",
     icon: Code,
-    href: "/snippets",
+    href: config.routes.public.snippets(),
   },
   {
     label: "کاربران",
     icon: Users,
-    href: "/users",
+    href: config.routes.public.users(),
   },
 ];
 
 export const DASHBOARD_LINKS = [
   {
     label: "پروفایل",
-    href: "/dashboard",
+    href: config.routes.dashboard.home(),
     icon: User,
   },
   {
     label: "ویرایش پروفایل",
-    href: "/dashboard/settings/profile",
+    href: config.routes.dashboard.settings.profile(),
     icon: Pencil,
   },
   {
     label: "تغییر رمز عبور",
-    href: "/dashboard/settings/change-password",
+    href: config.routes.dashboard.settings.changePassword(),
     icon: Lock,
   },
   {
     label: "کد های ذخیره شده",
-    href: "/dashboard/saved-snippets",
+    href: config.routes.dashboard.savedSnippets(),
     icon: Bookmark,
   },
 ];

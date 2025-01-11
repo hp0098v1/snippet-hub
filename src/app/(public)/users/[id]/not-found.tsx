@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { config } from "@/lib/config";
 
 export default function NotFound() {
   return (
@@ -11,7 +12,7 @@ export default function NotFound() {
           کاربر مورد نظر شما یافت نشد یا حساب کاربری خود را حذف کرده است
         </p>
         <Button asChild>
-          <Link href="/users">بازگشت به کاربران</Link>
+          <Link href={config.routes.public.users()}>بازگشت به کاربران</Link>
         </Button>
       </div>
     </div>
