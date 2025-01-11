@@ -11,7 +11,6 @@ import {
   sendResetPasswordEmail,
 } from "@/db/actions/email";
 import { users } from "@/db/schema";
-import { FormState } from "@/db/types";
 import { config } from "@/lib/config";
 import { createSession, deleteSession } from "@/lib/session";
 import {
@@ -21,6 +20,7 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
 } from "@/lib/validations/auth";
+import { FormState } from "@/types";
 
 export async function signup(
   prevState: FormState,

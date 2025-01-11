@@ -5,7 +5,7 @@ import { Code2, Users, Heart, Eye } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 
 import { Card } from "@/components/ui/card";
-import { Stats as StatsType } from "@/db/types";
+import { Stats as StatsType } from "@/types";
 
 function formatNumber(num: number): string {
   if (num >= 1000000) {

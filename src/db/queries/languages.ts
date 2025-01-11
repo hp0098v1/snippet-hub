@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import { languages } from "@/db/schema";
-import { Language } from "@/db/types";
+import { Language } from "@/types";
 
 export async function getLanguages(): Promise<Language[]> {
   return db.query.languages.findMany();

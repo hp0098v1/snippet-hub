@@ -7,13 +7,13 @@ import { redirect } from "next/navigation";
 
 import { db } from "@/db";
 import { snippets, likes, savedSnippets } from "@/db/schema";
-import { FormState } from "@/db/types";
 import { config } from "@/lib/config";
 import { verifySession } from "@/lib/session";
 import {
   createSnippetSchema,
   updateSnippetSchema,
 } from "@/lib/validations/snippets";
+import { FormState } from "@/types";
 
 export async function createSnippet(
   prevState: FormState,

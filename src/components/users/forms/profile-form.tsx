@@ -9,8 +9,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { updateUser } from "@/db/actions";
-import { User } from "@/db/types";
 import { config } from "@/lib/config";
+import { User } from "@/types";
 
 type Props = {
   user: User;

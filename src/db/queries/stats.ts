@@ -4,7 +4,7 @@ import { count, eq, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import { users, snippets, likes } from "@/db/schema";
-import { Stats } from "@/db/types";
+import { Stats } from "@/types";
 
 export async function getStats(): Promise<Stats> {
   // Get verified users count

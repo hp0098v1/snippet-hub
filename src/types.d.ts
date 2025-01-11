@@ -1,6 +1,6 @@
 import { type InferSelectModel } from "drizzle-orm";
 
-import { languages, snippets, users, likes, savedSnippets } from "./schema";
+import { languages, snippets, users, likes, savedSnippets } from "@/db/schema";
 
 export type FormState = {
   success?: boolean;
@@ -16,6 +16,10 @@ export type FormState = {
 export type SortOption = {
   label: string;
   value: string;
+};
+
+export type SearchParams = {
+  [key: string]: string | string[] | undefined;
 };
 
 export type SnippetsSortOption =

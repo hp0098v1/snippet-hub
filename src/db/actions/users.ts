@@ -8,10 +8,10 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { uploadFile } from "@/db/actions/upload";
 import { users } from "@/db/schema";
-import { FormState } from "@/db/types";
 import { config } from "@/lib/config";
 import { verifySession } from "@/lib/session";
 import { updatePasswordSchema, updateUserSchema } from "@/lib/validations/user";
+import { FormState } from "@/types";
 
 export async function updateUser(
   prevState: FormState,

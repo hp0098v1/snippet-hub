@@ -27,8 +27,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Language } from "@/db/types";
 import { cn } from "@/lib/utils";
+import { Language } from "@/types";
 
 import "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";

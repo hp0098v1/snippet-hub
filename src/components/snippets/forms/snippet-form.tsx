@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { CreateSnippet, Language, FormState } from "@/db/types";
+import { CreateSnippet, Language, FormState } from "@/types";
 
 const RichTextEditor = dynamic(
   () =>

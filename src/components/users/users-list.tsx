@@ -1,7 +1,7 @@
 import { PaginationControl } from "@/components/shared/pagination-control";
 import { UserCard } from "@/components/users/user-card";
-import { UserWithSnippets } from "@/db/types";
 import { cn } from "@/lib/utils";
+import { UserWithSnippets } from "@/types";
 
 type Props = {
   users: UserWithSnippets[];

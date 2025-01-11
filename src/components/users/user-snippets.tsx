@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { SnippetsList } from "@/components/snippets/snippets-list";
 import { Button } from "@/components/ui/button";
-import { SnippetWithAuthorAndLanguage } from "@/db/types";
 import { config } from "@/lib/config";
+import { SnippetWithAuthorAndLanguage } from "@/types";
 
 type Props = {
   isOwnProfile?: boolean;

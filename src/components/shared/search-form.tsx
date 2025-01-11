@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Language } from "@/db/types";
 import { cn } from "@/lib/utils";
+import { Language } from "@/types";
 
 type Props = {
   query: string;

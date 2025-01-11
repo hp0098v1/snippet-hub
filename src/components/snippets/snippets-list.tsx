@@ -1,7 +1,7 @@
 import { PaginationControl } from "@/components/shared/pagination-control";
 import { SnippetCard } from "@/components/snippets/snippet-card";
-import { SnippetWithAuthorAndLanguage } from "@/db/types";
 import { cn } from "@/lib/utils";
+import { SnippetWithAuthorAndLanguage } from "@/types";
 
 type Props = {
   snippets: SnippetWithAuthorAndLanguage[];

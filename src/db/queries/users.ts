@@ -9,7 +9,7 @@ import {
   PaginatedResponse,
   User,
   UserWithSnippets,
-} from "@/db/types";
+} from "@/types";
 
 export async function getUserById(id: string): Promise<User | undefined> {
   const conditions = [eq(users.id, id), eq(users.emailVerified, true)];

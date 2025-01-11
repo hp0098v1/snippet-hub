@@ -12,8 +12,8 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { SnippetWithAuthorAndLanguage } from "@/db/types";
 import { config } from "@/lib/config";
+import { SnippetWithAuthorAndLanguage } from "@/types";
 
 import { LikeButton } from "./like-button";
 
