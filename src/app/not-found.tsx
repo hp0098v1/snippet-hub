@@ -1,6 +1,7 @@
-import { ArrowLeft, Home, XCircle } from "lucide-react";
+import { Home, XCircle } from "lucide-react";
 import Link from "next/link";
 
+import { BackButton } from "@/components/shared/back-button";
 import { Button } from "@/components/ui/button";
 import { config } from "@/lib/config";
 
@@ -30,14 +31,7 @@ export default function NotFound() {
             صفحه اصلی
           </Link>
         </Button>
-        <Button
-          size="lg"
-          variant="outline"
-          //   onClick={() => window.history.back()}
-        >
-          <ArrowLeft className="ml-2 h-5 w-5" />
-          بازگشت
-        </Button>
+        <BackButton />
       </div>
 
       {/* Additional Help Text */}
