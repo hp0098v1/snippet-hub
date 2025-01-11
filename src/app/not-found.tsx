@@ -25,7 +25,7 @@ export default function NotFound() {
 
       {/* Navigation Buttons */}
       <div className="flex flex-col gap-4 sm:flex-row">
-        <Button asChild size="lg">
+        <Button asChild>
           <Link href={config.routes.public.home()}>
             <Home className="ml-2 h-5 w-5" />
             صفحه اصلی

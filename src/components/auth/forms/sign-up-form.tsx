@@ -1,92 +1,143 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { signup } from "@/db/actions";
+import { useAction } from "@/hooks/use-action";
 import { config } from "@/lib/config";
+import { signupSchema, type SignupSchema } from "@/lib/validations/auth";
 
 export function SignUpForm() {
-  const [state, formAction, isPending] = useActionState(signup, { errors: {} });
+  const router = useRouter();
+
+  const { execute, isPending } = useAction(signup, {
+    onSuccess: () => {
+      toast.success("ایمیل تاییدی برای شما ارسال شد");
+      router.push(config.routes.auth.verifyEmail(form.getValues("email")));
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
+  const form = useForm<SignupSchema>({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    resolver: zodResolver(signupSchema),
+  });
+
+  function onSubmit(data: SignupSchema) {
+    execute(data);
+  }
 
   return (
     <Card>
       <CardContent className="pt-6">
-        <form action={formAction}>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">نام و نام خانوادگی</Label>
-              <Input
-                autoComplete="name"
-                defaultValue={state.data?.name ?? ""}
-                id="name"
-                name="name"
-                type="text"
-              />
-              {state.errors?.name && (
-                <p className="text-sm text-destructive">{state.errors.name}</p>
+        <Form {...form}>
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>نام و نام خانوادگی</FormLabel>
+                  <FormControl>
+                    <Input autoComplete="name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">ایمیل</Label>
-              <Input
-                autoComplete="email"
-                className="text-left"
-                defaultValue={state.data?.email ?? ""}
-                dir="ltr"
-                id="email"
-                name="email"
-                placeholder="example@domain.com"
-              />
-              {state.errors?.email && (
-                <p className="text-sm text-destructive">{state.errors.email}</p>
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ایمیل</FormLabel>
+                  <FormControl>
+                    <Input
+                      autoComplete="email"
+                      className="text-left"
+                      dir="ltr"
+                      placeholder="example@domain.com"
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">رمز عبور</Label>
-              <PasswordInput
-                className="text-left"
-                defaultValue={state.data?.password ?? ""}
-                dir="ltr"
-                id="password"
-                name="password"
-              />
-              {state.errors?.password && (
-                <p className="text-sm text-destructive">
-                  {state.errors.password}
-                </p>
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>رمز عبور</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      autoComplete="new-password"
+                      className="text-left"
+                      dir="ltr"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="confirm-password">تکرار رمز عبور</Label>
-              <PasswordInput
-                className="text-left"
-                defaultValue={state.data?.confirmPassword ?? ""}
-                dir="ltr"
-                id="confirm-password"
-                name="confirmPassword"
-              />
-              {state.errors?.confirmPassword && (
-                <p className="text-sm text-destructive">
-                  {state.errors.confirmPassword}
-                </p>
+            />
+
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>تکرار رمز عبور</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      autoComplete="new-password"
+                      className="text-left"
+                      dir="ltr"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </div>
+            />
+
             <Button className="w-full" disabled={isPending}>
-              {isPending ? "ایجاد حساب..." : "ایجاد حساب"}
+              {isPending ? "در حال ایجاد حساب..." : "ایجاد حساب"}
               <ArrowLeft className="mr-2 h-4 w-4" />
             </Button>
-          </div>
-          {state.errors?.message && (
-            <p className="text-sm text-destructive">{state.errors.message}</p>
-          )}
-        </form>
+          </form>
+        </Form>
       </CardContent>
       <CardFooter className="border-t p-6">
         <p className="w-full text-center text-sm text-muted-foreground">

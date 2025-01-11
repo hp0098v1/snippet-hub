@@ -1,93 +1,111 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { PasswordInput } from "@/components/ui/password-input";
 import { resetPassword } from "@/db/actions";
+import { useAction } from "@/hooks/use-action";
+import { config } from "@/lib/config";
+import {
+  resetPasswordSchema,
+  type ResetPasswordSchema,
+} from "@/lib/validations/auth";
 
-type Props = {
+interface ResetPasswordFormProps {
   token: string;
-};
+}
 
-export function ResetPasswordForm({ token }: Props) {
+export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const router = useRouter();
-  const resetPasswordBinded = resetPassword.bind(null, token);
-  const [state, formAction, isPending] = useActionState(
-    resetPasswordBinded,
-    {}
-  );
 
-  useEffect(() => {
-    if (state.success) {
+  const { execute, isPending } = useAction(resetPassword, {
+    onSuccess: () => {
       toast.success("رمز عبور با موفقیت تغییر کرد");
-      router.push("/login");
-    }
-  }, [state.success, router]);
+      router.push(config.routes.auth.login());
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
+  const form = useForm<ResetPasswordSchema>({
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+    resolver: zodResolver(resetPasswordSchema),
+  });
+
+  function onSubmit(data: ResetPasswordSchema) {
+    execute({ ...data, token });
+  }
 
   return (
     <Card>
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl">تغییر رمز عبور</CardTitle>
-        <CardDescription>رمز عبور جدید خود را وارد کنید</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form action={formAction} className="space-y-4">
-          <div className="space-y-2">
-            <PasswordInput
-              className="text-left"
-              defaultValue={state.data?.password ?? ""}
-              dir="ltr"
-              id="password"
+      <CardContent className="pt-6">
+        <Form {...form}>
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <FormField
+              control={form.control}
               name="password"
-              placeholder="رمز عبور جدید"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>رمز عبور جدید</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      autoComplete="new-password"
+                      className="text-left"
+                      dir="ltr"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {state.errors?.password && (
-              <p className="text-sm text-red-500">{state.errors.password}</p>
-            )}
-          </div>
 
-          <div className="space-y-2">
-            <PasswordInput
-              className="text-left"
-              defaultValue={state.data?.confirmPassword ?? ""}
-              dir="ltr"
-              id="confirmPassword"
+            <FormField
+              control={form.control}
               name="confirmPassword"
-              placeholder="تکرار رمز عبور جدید"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>تکرار رمز عبور جدید</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      autoComplete="new-password"
+                      className="text-left"
+                      dir="ltr"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {state.errors?.confirmPassword && (
-              <p className="text-sm text-red-500">
-                {state.errors.confirmPassword}
-              </p>
-            )}
-          </div>
 
-          {state.errors?.message && (
-            <p className="text-sm text-red-500">{state.errors.message}</p>
-          )}
-
-          <Button className="w-full" disabled={isPending} type="submit">
-            {isPending ? (
-              <>
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                در حال ذخیره...
-              </>
-            ) : (
-              "ذخیره رمز عبور جدید"
-            )}
-          </Button>
-        </form>
+            <Button className="w-full" disabled={isPending}>
+              {isPending ? "در حال تغییر..." : "تغییر رمز عبور"}
+              <ArrowLeft className="mr-2 h-4 w-4" />
+            </Button>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

@@ -48,8 +48,8 @@ export const config = {
       },
       savedSnippets: () => "/dashboard/saved-snippets",
       snippets: {
-        create: () => "/dashboard/snippets/create",
-        edit: (id: string) => `/dashboard/snippets/${id}/edit`,
+        create: () => "/dashboard/snippets/new",
+        edit: (id: string) => `/dashboard/snippets/edit/${id}`,
       },
     },
   },

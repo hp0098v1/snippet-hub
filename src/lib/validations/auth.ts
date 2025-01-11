@@ -21,6 +21,10 @@ export const verifyEmailSchema = z.object({
   code: z.string().length(6, "کد تأیید باید ۶ رقم باشد"),
 });
 
+export const resendVerificationEmailSchema = z.object({
+  email: z.string().email("ایمیل نامعتبر است"),
+});
+
 export const forgotPasswordSchema = z.object({
   email: z.string().email("ایمیل نامعتبر است"),
 });
@@ -40,3 +44,12 @@ export const resetPasswordSchema = z
     message: "رمز عبور و تکرار آن باید یکسان باشند",
     path: ["confirmPassword"],
   });
+
+export type SignupSchema = z.infer<typeof signupSchema>;
+export type LoginSchema = z.infer<typeof loginSchema>;
+export type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;
+export type ResendVerificationEmailSchema = z.infer<
+  typeof resendVerificationEmailSchema
+>;
+export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;

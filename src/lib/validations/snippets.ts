@@ -16,5 +16,5 @@ export const updateSnippetSchema = createSnippetSchema.partial().extend({
   id: z.string().min(1),
 });
 
-export type CreateSnippet = z.infer<typeof createSnippetSchema>;
-export type UpdateSnippet = z.infer<typeof updateSnippetSchema>;
+export type CreateSnippetSchema = z.infer<typeof createSnippetSchema>;
+export type UpdateSnippetSchema = z.infer<typeof updateSnippetSchema>;

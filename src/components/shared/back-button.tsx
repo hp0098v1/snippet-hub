@@ -23,8 +23,8 @@ export function BackButton({ href, label, ...props }: Props) {
 
   return (
     <Button onClick={handleClick} {...props}>
-      <ArrowLeft className="ml-2 h-5 w-5" />
       {label ?? "بازگشت"}
+      <ArrowLeft className="ml-2 h-5 w-5" />
     </Button>
   );
 }

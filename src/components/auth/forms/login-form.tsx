@@ -1,77 +1,123 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Form,
+  FormField,
+  FormLabel,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { login } from "@/db/actions";
+import { useAction } from "@/hooks/use-action";
 import { config } from "@/lib/config";
+import { loginSchema, type LoginSchema } from "@/lib/validations/auth";
 
-export function LoginForm() {
-  const [state, formAction, isPending] = useActionState(login, { errors: {} });
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
+type Props = {
+  callbackUrl?: string;
+};
+
+export function LoginForm({ callbackUrl }: Props) {
+  const router = useRouter();
+
+  const { execute, isPending } = useAction(login, {
+    isProtected: false,
+    onSuccess: () => {
+      toast.success("ورود به حساب کاربری با موفقیت انجام شد");
+      router.push(callbackUrl || config.routes.dashboard.home());
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
+  const form = useForm<LoginSchema>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: zodResolver(loginSchema),
+  });
+
+  function onSubmit(data: LoginSchema) {
+    execute(data);
+  }
 
   return (
     <Card>
       <CardContent className="pt-6">
-        <form action={formAction}>
-          <input name="callbackUrl" type="hidden" value={callbackUrl || ""} />
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">ایمیل</Label>
-              <Input
-                autoComplete="email"
-                className="text-left"
-                defaultValue={state.data?.email ?? ""}
-                dir="ltr"
-                id="email"
-                name="email"
-                placeholder="example@domain.com"
-                type="email"
-              />
-              {state.errors?.email ? (
-                <p className="text-sm text-red-500">{state.errors.email}</p>
-              ) : null}
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">رمز عبور</Label>
-                <Link
-                  className="text-xs text-muted-foreground hover:underline"
-                  href={config.routes.auth.forgotPassword()}
-                >
-                  رمز عبور را فراموش کرده‌اید؟
-                </Link>
-              </div>
-              <PasswordInput
-                autoComplete="current-password"
-                className="text-left"
-                defaultValue={state.data?.password ?? ""}
-                dir="ltr"
-                id="password"
-                name="password"
-              />
-              {state.errors?.password ? (
-                <p className="text-sm text-red-500">{state.errors.password}</p>
-              ) : null}
-            </div>
+        <Form {...form}>
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <input name="callbackUrl" type="hidden" value={callbackUrl || ""} />
 
-            {state.errors?.message ? (
-              <p className="text-sm text-red-500">{state.errors.message}</p>
-            ) : null}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ایمیل</FormLabel>
+                  <FormControl>
+                    <Input
+                      autoComplete="email"
+                      className="text-left"
+                      dir="ltr"
+                      placeholder="example@domain.com"
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>رمز عبور</FormLabel>
+                    <Link
+                      className="text-xs text-muted-foreground hover:underline"
+                      href={config.routes.auth.forgotPassword()}
+                    >
+                      رمز عبور را فراموش کرده‌اید؟
+                    </Link>
+                  </div>
+                  <FormControl>
+                    <PasswordInput
+                      autoComplete="current-password"
+                      className="text-left"
+                      dir="ltr"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Button className="w-full" disabled={isPending}>
               {isPending ? "در حال ورود..." : "ورود به حساب"}
               <ArrowLeft className="mr-2 h-4 w-4" />
             </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </CardContent>
       <CardFooter className="border-t p-6">
         <p className="w-full text-center text-sm text-muted-foreground">

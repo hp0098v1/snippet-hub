@@ -3,142 +3,93 @@
 import { hash, compare } from "bcryptjs";
 import { eq, lt, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import { db } from "@/db";
 import { uploadFile } from "@/db/actions/upload";
 import { users } from "@/db/schema";
 import { config } from "@/lib/config";
 import { verifySession } from "@/lib/session";
-import { updatePasswordSchema, updateUserSchema } from "@/lib/validations/user";
-import { FormState } from "@/types";
+import {
+  type UpdateUserSchema,
+  type UpdatePasswordSchema,
+} from "@/lib/validations/user";
 
 export async function updateUser(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
+  data: UpdateUserSchema & { image?: File | null }
+) {
   const { userId } = await verifySession();
 
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.username, data.username),
+  });
+
+  if (existingUser && existingUser.id !== userId) {
+    throw new Error("این نام کاربری قبلاً استفاده شده است");
+  }
+
   let imageUrl: string | undefined = undefined;
-  const imageFile = formData.get("image") as File | null;
 
-  formData.delete("image");
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedFormData = updateUserSchema.safeParse(formDataObj);
-
-  if (!parsedFormData.success) {
-    return {
-      errors: parsedFormData.error.flatten().fieldErrors,
-      data: formDataObj as { [key: string]: string | undefined },
-    };
-  }
-
-  try {
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.username, parsedFormData.data.username),
-    });
-
-    if (existingUser && existingUser.id !== userId) {
-      return {
-        errors: {
-          username: "این نام کاربری قبلاً استفاده شده است",
-        },
-        data: parsedFormData.data,
-      };
-    }
-
-    if (imageFile && typeof imageFile !== "string") {
-      // Get current user to check if we need to delete old image
-      const user = await db.query.users.findFirst({
-        where: eq(users.id, userId),
-      });
-
-      const uploadResult = await uploadFile(imageFile, {
-        oldUrl: user?.image,
-        maxSize: 5 * 1024 * 1024, // 5MB
-        accept: "image/*",
-      });
-
-      if (!uploadResult.success) {
-        return {
-          errors: {
-            image: uploadResult.error,
-          },
-          data: parsedFormData.data,
-        };
-      }
-
-      imageUrl = uploadResult.url;
-    }
-
-    await db
-      .update(users)
-      .set({
-        ...parsedFormData.data,
-        image: imageUrl,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, userId));
-  } catch (error) {
-    console.error("Error updating user:", error);
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-      data: parsedFormData.data,
-    };
-  }
-
-  revalidatePath(config.routes.dashboard.home());
-  revalidatePath(config.routes.public.users());
-  revalidatePath(config.routes.public.usersProfile(userId));
-  redirect(config.routes.dashboard.home());
-}
-
-export async function updatePassword(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedData = updatePasswordSchema.safeParse(formDataObj);
-
-  if (!parsedData.success) {
-    return {
-      errors: parsedData.error.flatten().fieldErrors,
-      data: formDataObj as { [key: string]: string | undefined },
-    };
-  }
-
-  try {
-    const { userId } = await verifySession();
+  if (data.image) {
+    // Get current user to check if we need to delete old image
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId),
     });
 
-    if (!user) {
-      return {
-        errors: {
-          message: "کاربر یافت نشد",
-        },
-        data: parsedData.data,
-      };
+    const uploadResult = await uploadFile(data.image, {
+      oldUrl: user?.image,
+      maxSize: 5 * 1024 * 1024, // 5MB
+      accept: "image/*",
+    });
+
+    if (!uploadResult.success) {
+      throw new Error(uploadResult.error);
     }
 
-    const isPasswordCorrect = await compare(
-      parsedData.data.currentPassword,
-      user.password
-    );
+    imageUrl = uploadResult.url;
+  }
 
-    if (!isPasswordCorrect) {
-      return {
-        errors: {
-          currentPassword: "رمز عبور فعلی اشتباه است",
-        },
-        data: parsedData.data,
-      };
-    }
+  try {
+    await db
+      .update(users)
+      .set({
+        username: data.username,
+        name: data.name,
+        bio: data.bio,
+        image: imageUrl,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId));
 
-    const hashedPassword = await hash(parsedData.data.newPassword, 10);
+    revalidatePath(config.routes.dashboard.home());
+    revalidatePath(config.routes.public.users());
+    revalidatePath(config.routes.public.usersProfile(userId));
+
+    return { success: "اطلاعات کاربری با موفقیت بروزرسانی شد" };
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw new Error("خطایی در بروزرسانی اطلاعات رخ داده است");
+  }
+}
+
+export async function updatePassword(data: UpdatePasswordSchema) {
+  const { userId } = await verifySession();
+
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+  });
+
+  if (!user) {
+    throw new Error("کاربر یافت نشد");
+  }
+
+  const isPasswordCorrect = await compare(data.currentPassword, user.password);
+
+  if (!isPasswordCorrect) {
+    throw new Error("رمز عبور فعلی اشتباه است");
+  }
+
+  try {
+    const hashedPassword = await hash(data.newPassword, 10);
 
     await db
       .update(users)
@@ -147,16 +98,13 @@ export async function updatePassword(
         updatedAt: new Date(),
       })
       .where(eq(users.id, userId));
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-      data: parsedData.data,
-    };
-  }
 
-  redirect(config.routes.dashboard.home());
+    revalidatePath(config.routes.dashboard.home());
+    return { success: "رمز عبور با موفقیت تغییر کرد" };
+  } catch (error) {
+    console.error("Error updating password:", error);
+    throw new Error("خطایی در تغییر رمز عبور رخ داده است");
+  }
 }
 
 export async function cleanupUnverifiedUsers() {

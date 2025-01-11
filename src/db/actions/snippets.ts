@@ -3,140 +3,83 @@
 import { eq, sql, and } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import { db } from "@/db";
 import { snippets, likes, savedSnippets } from "@/db/schema";
 import { config } from "@/lib/config";
 import { verifySession } from "@/lib/session";
 import {
-  createSnippetSchema,
-  updateSnippetSchema,
+  type CreateSnippetSchema,
+  type UpdateSnippetSchema,
 } from "@/lib/validations/snippets";
-import { FormState } from "@/types";
 
-export async function createSnippet(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedFormData = createSnippetSchema.safeParse(formDataObj);
-
-  if (!parsedFormData.success) {
-    return {
-      errors: parsedFormData.error.flatten().fieldErrors,
-    };
-  }
-
+export async function createSnippet(data: CreateSnippetSchema) {
   const { userId } = await verifySession();
   const snippetId = nanoid();
 
-  try {
-    await db.insert(snippets).values({
-      id: snippetId,
-      userId,
-      ...parsedFormData.data,
-    });
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
-  }
+  await db.insert(snippets).values({
+    id: snippetId,
+    userId,
+    ...data,
+  });
 
   revalidatePath(config.routes.public.snippets());
   revalidatePath(config.routes.public.usersProfile(userId));
-  redirect(config.routes.public.snippets());
+
+  return { id: snippetId };
 }
 
-export async function updateSnippet(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedFormData = updateSnippetSchema.safeParse(formDataObj);
-
-  if (!parsedFormData.success) {
-    return {
-      errors: parsedFormData.error.flatten().fieldErrors,
-    };
-  }
-
+export async function updateSnippet(data: UpdateSnippetSchema) {
   const { userId } = await verifySession();
 
   const selectedSnippet = await db.query.snippets.findFirst({
-    where: eq(snippets.id, parsedFormData.data.id),
+    where: eq(snippets.id, data.id),
   });
 
-  const isOwner = selectedSnippet?.userId === userId;
+  if (!selectedSnippet) {
+    throw new Error("قطعه کد یافت نشد");
+  }
+
+  const isOwner = selectedSnippet.userId === userId;
 
   if (!isOwner) {
-    return {
-      errors: {
-        message: "شما نمیتوانید قطعه کد دیگری را ویرایش کنید",
-      },
-    };
+    throw new Error("شما نمیتوانید قطعه کد دیگری را ویرایش کنید");
   }
 
-  try {
-    await db
-      .update(snippets)
-      .set({
-        ...parsedFormData.data,
-        updatedAt: new Date(),
-      })
-      .where(eq(snippets.id, parsedFormData.data.id));
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
-  }
+  await db
+    .update(snippets)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(snippets.id, data.id));
 
   revalidatePath(config.routes.public.snippets());
-  revalidatePath(config.routes.public.snippetsDetail(parsedFormData.data.id));
+  revalidatePath(config.routes.public.snippetsDetail(data.id));
   revalidatePath(config.routes.public.usersProfile(userId));
-  redirect(config.routes.public.snippetsDetail(parsedFormData.data.id));
+
+  return { id: data.id };
 }
 
-export async function deleteSnippet(id: string): Promise<FormState> {
+export async function deleteSnippet(id: string) {
+  const { userId } = await verifySession();
+
   const selectedSnippet = await db.query.snippets.findFirst({
     where: eq(snippets.id, id),
   });
 
   if (!selectedSnippet) {
-    return {
-      errors: {
-        message: "قطعه کد یافت نشد",
-      },
-    };
+    throw new Error("قطعه کد یافت نشد");
   }
 
-  try {
-    const { userId } = await verifySession();
-
-    if (selectedSnippet.userId !== userId) {
-      return {
-        errors: {
-          message: "شما نمیتوانید قطعه کد دیگری را حذف کنید",
-        },
-      };
-    }
-
-    await db.delete(snippets).where(eq(snippets.id, id));
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
+  if (selectedSnippet.userId !== userId) {
+    throw new Error("شما نمیتوانید قطعه کد دیگری را حذف کنید");
   }
+
+  await db.delete(snippets).where(eq(snippets.id, id));
 
   revalidatePath(config.routes.public.snippets());
-  revalidatePath(config.routes.public.usersProfile(selectedSnippet.userId));
-  redirect(config.routes.public.usersProfile(selectedSnippet.userId));
+  revalidatePath(config.routes.public.usersProfile(userId));
 }
 
 export async function incrementSnippetViews(id: string) {
@@ -152,89 +95,67 @@ export async function incrementSnippetViews(id: string) {
   }
 }
 
-export async function toggleSnippetLike(snippetId: string): Promise<FormState> {
-  try {
-    const { userId } = await verifySession();
-
-    // Check if user has already liked the snippet
-    const existingLike = await db.query.likes.findFirst({
-      where: and(eq(likes.userId, userId), eq(likes.snippetId, snippetId)),
-    });
-
-    if (existingLike) {
-      // Unlike: Remove the like
-      await db
-        .delete(likes)
-        .where(and(eq(likes.userId, userId), eq(likes.snippetId, snippetId)));
-    } else {
-      // Like: Add new like
-      await db.insert(likes).values({
-        userId,
-        snippetId,
-      });
-    }
-
-    // Revalidate the pages
-    revalidatePath(config.routes.public.snippets());
-    revalidatePath(config.routes.public.snippetsDetail(snippetId));
-    revalidatePath(config.routes.public.usersProfile(userId));
-
-    return {
-      success: true,
-    };
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
-  }
-}
-
-export async function toggleSaveSnippet(snippetId: string): Promise<FormState> {
+export async function toggleSnippetLike(snippetId: string) {
   const { userId } = await verifySession();
 
-  try {
-    // Check if user has already saved the snippet
-    const existingSave = await db.query.savedSnippets.findFirst({
-      where: and(
-        eq(savedSnippets.userId, userId),
-        eq(savedSnippets.snippetId, snippetId)
-      ),
+  const existingLike = await db.query.likes.findFirst({
+    where: and(eq(likes.userId, userId), eq(likes.snippetId, snippetId)),
+  });
+
+  if (existingLike) {
+    await db
+      .delete(likes)
+      .where(and(eq(likes.userId, userId), eq(likes.snippetId, snippetId)));
+  } else {
+    await db.insert(likes).values({
+      userId,
+      snippetId,
     });
-
-    if (existingSave) {
-      // Unsave: Remove the save
-      await db
-        .delete(savedSnippets)
-        .where(
-          and(
-            eq(savedSnippets.userId, userId),
-            eq(savedSnippets.snippetId, snippetId)
-          )
-        );
-    } else {
-      // Save: Add new save
-      await db.insert(savedSnippets).values({
-        userId,
-        snippetId,
-      });
-    }
-
-    revalidatePath(config.routes.public.snippets());
-    revalidatePath(config.routes.public.snippetsDetail(snippetId));
-    revalidatePath(config.routes.public.usersProfile(userId));
-    revalidatePath(config.routes.dashboard.savedSnippets());
-
-    return {
-      success: true,
-    };
-  } catch (error) {
-    console.log("Failed to toggle save:", error);
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
   }
+
+  revalidatePath(config.routes.public.snippets());
+  revalidatePath(config.routes.public.snippetsDetail(snippetId));
+  revalidatePath(config.routes.public.usersProfile(userId));
+
+  return {
+    type: "success",
+    message: existingLike ? "لایک برداشته شد" : "لایک اضافه شد",
+  };
+}
+
+export async function toggleSaveSnippet(snippetId: string) {
+  const { userId } = await verifySession();
+
+  const existingSave = await db.query.savedSnippets.findFirst({
+    where: and(
+      eq(savedSnippets.userId, userId),
+      eq(savedSnippets.snippetId, snippetId)
+    ),
+  });
+
+  if (existingSave) {
+    await db
+      .delete(savedSnippets)
+      .where(
+        and(
+          eq(savedSnippets.userId, userId),
+          eq(savedSnippets.snippetId, snippetId)
+        )
+      );
+  } else {
+    await db.insert(savedSnippets).values({
+      userId,
+      snippetId,
+    });
+  }
+
+  revalidatePath(config.routes.public.snippets());
+  revalidatePath(config.routes.public.snippetsDetail(snippetId));
+  revalidatePath(config.routes.public.usersProfile(userId));
+  revalidatePath(config.routes.dashboard.savedSnippets());
+
+  return {
+    type: "success",
+    message: existingSave ? "از ذخیره‌ها حذف شد" : "به ذخیره‌ها اضافه شد",
+  };
 }

@@ -17,7 +17,7 @@ export function AuthContainer({
 }: Props) {
   return (
     <div className="lg:p-8">
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[420px]">
         {/* Header */}
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>

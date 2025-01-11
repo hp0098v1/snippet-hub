@@ -18,3 +18,4 @@ export const updatePasswordSchema = z
   });
 
 export type UpdateUserSchema = z.infer<typeof updateUserSchema>;
+export type UpdatePasswordSchema = z.infer<typeof updatePasswordSchema>;

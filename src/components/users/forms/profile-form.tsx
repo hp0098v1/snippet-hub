@@ -1,49 +1,68 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useActionState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { ImageUpload } from "@/components/shared/image-upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { updateUser } from "@/db/actions";
+import { useAction } from "@/hooks/use-action";
 import { config } from "@/lib/config";
+import {
+  updateUserSchema,
+  type UpdateUserSchema,
+} from "@/lib/validations/user";
 import { User } from "@/types";
 
-type Props = {
+interface ProfileFormProps {
   user: User;
-};
+}
 
-export function ProfileForm({ user }: Props) {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [state, formAction, isPending] = useActionState(updateUser, {
-    errors: {},
+export function ProfileForm({ user }: ProfileFormProps) {
+  const router = useRouter();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const { execute, isPending } = useAction(updateUser, {
+    onSuccess: () => {
+      toast.success("اطلاعات کاربری با موفقیت بروزرسانی شد");
+      router.push(config.routes.dashboard.home());
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
   });
 
-  const handleImageChange = (file: File | null) => {
-    // Create a hidden input if it doesn't exist
-    let input = formRef.current?.querySelector(
-      'input[name="image"]'
-    ) as HTMLInputElement;
-    if (!input) {
-      input = document.createElement("input");
-      input.type = "file";
-      input.name = "image";
-      input.style.display = "none";
-      formRef.current?.appendChild(input);
-    }
+  const form = useForm<UpdateUserSchema>({
+    resolver: zodResolver(updateUserSchema),
+    defaultValues: {
+      username: user.username,
+      name: user.name,
+      bio: user.bio || "",
+    },
+  });
 
-    // Create a DataTransfer object to set the file
-    if (file) {
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      input.files = dataTransfer.files;
-    } else {
-      input.value = "";
-    }
-  };
+  function onSubmit(data: UpdateUserSchema) {
+    // Add image to form data if it exists
+    execute({
+      ...data,
+      image: imageFile,
+    });
+  }
 
   return (
     <Card>
@@ -53,85 +72,84 @@ export function ProfileForm({ user }: Props) {
             defaultFallback={user.name.slice(0, 2)}
             defaultImage={user.image ?? undefined}
             variant="avatar"
-            onChange={handleImageChange}
+            onChange={setImageFile}
           />
           <div className="text-center">
             <p className="text-sm text-muted-foreground">
               تصویر پروفایل خود را تغییر دهید
             </p>
           </div>
-          {state.errors?.image && (
-            <p className="text-sm text-red-500">{state.errors.image}</p>
-          )}
         </div>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-6" ref={formRef}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="name">
-                نام
-              </label>
-              <Input
-                defaultValue={state.data?.name ?? user.name}
-                id="name"
+        <Form {...form}>
+          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
                 name="name"
-                placeholder="نام خود را وارد کنید"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>نام</FormLabel>
+                    <FormControl>
+                      <Input placeholder="نام خود را وارد کنید" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {state.errors?.name && (
-                <p className="text-sm text-red-500">{state.errors.name}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="username">
-                نام کاربری
-              </label>
-              <Input
-                className="text-left"
-                defaultValue={state.data?.username ?? user.username}
-                dir="ltr"
-                id="username"
+
+              <FormField
+                control={form.control}
                 name="username"
-                placeholder="نام کاربری خود را وارد کنید"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>نام کاربری</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="text-left"
+                        dir="ltr"
+                        placeholder="نام کاربری خود را وارد کنید"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {state.errors?.username && (
-                <p className="text-sm text-red-500">{state.errors.username}</p>
-              )}
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="bio">
-              بیوگرافی
-            </label>
-            <Textarea
-              className="h-32 resize-none"
-              defaultValue={state.data?.bio ?? (user.bio || "")}
-              id="bio"
+            <FormField
+              control={form.control}
               name="bio"
-              placeholder="درباره خود بنویسید..."
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>بیوگرافی</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      className="h-32 resize-none"
+                      placeholder="درباره خود بنویسید..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <p className="text-[0.8rem] text-muted-foreground">
+                    بیوگرافی شما در پروفایل عمومی نمایش داده می‌شود.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <p className="text-[0.8rem] text-muted-foreground">
-              بیوگرافی شما در پروفایل عمومی نمایش داده می‌شود.
-            </p>
-            {state.errors?.bio && (
-              <p className="text-sm text-red-500">{state.errors.bio}</p>
-            )}
-          </div>
 
-          {state.errors?.message && (
-            <p className="text-sm text-red-500">{state.errors.message}</p>
-          )}
-
-          <div className="flex justify-end gap-4">
-            <Button asChild variant="outline">
-              <Link href={config.routes.dashboard.home()}>انصراف</Link>
-            </Button>
-            <Button disabled={isPending} type="submit">
-              {isPending ? "در حال ذخیره..." : "ذخیره تغییرات"}
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-4">
+              <Button asChild variant="outline">
+                <Link href={config.routes.dashboard.home()}>انصراف</Link>
+              </Button>
+              <Button disabled={isPending} type="submit">
+                {isPending ? "در حال ذخیره..." : "ذخیره تغییرات"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

@@ -1,11 +1,11 @@
 "use client";
 
 import { Heart } from "lucide-react";
-import { useTransition } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { toggleSnippetLike } from "@/db/actions";
+import { useAction } from "@/hooks/use-action";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -23,7 +23,14 @@ export function LikeButton({
   isAuth,
   className,
 }: Props) {
-  const [isPending, startTransition] = useTransition();
+  const { execute, isPending } = useAction(toggleSnippetLike, {
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
 
   function handleLike() {
     if (!isAuth) {
@@ -31,13 +38,7 @@ export function LikeButton({
       return;
     }
 
-    startTransition(async () => {
-      const result = await toggleSnippetLike(snippetId);
-
-      if (result.errors) {
-        toast.error(result.errors.message);
-      }
-    });
+    execute(snippetId);
   }
 
   return (

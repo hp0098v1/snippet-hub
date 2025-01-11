@@ -1,7 +1,9 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -16,25 +18,28 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { deleteSnippet } from "@/db/actions";
+import { useAction } from "@/hooks/use-action";
+import { config } from "@/lib/config";
 
 type Props = {
   id: string;
 };
 
 export function SnippetDeleteForm({ id }: Props) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const { execute, isPending } = useAction(deleteSnippet, {
+    onSuccess: () => {
+      toast.success("قطعه کد با موفقیت حذف شد");
+      router.push(config.routes.public.snippets());
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
 
   const handleDelete = () => {
-    startTransition(async () => {
-      const state = await deleteSnippet(id);
-      setError(state.errors?.message || null);
-
-      if (!state.errors) {
-        setIsOpen(false);
-      }
-    });
+    execute(id);
   };
 
   return (
@@ -58,11 +63,6 @@ export function SnippetDeleteForm({ id }: Props) {
           <AlertDialogDescription>
             این عملیات غیرقابل برگشت است. این قطعه کد برای همیشه حذف خواهد شد.
           </AlertDialogDescription>
-          {error && (
-            <AlertDialogDescription className="text-base text-destructive">
-              {error}
-            </AlertDialogDescription>
-          )}
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={() => setIsOpen(false)}>

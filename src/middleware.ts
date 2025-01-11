@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   const cookie = (await cookies()).get("session")?.value;
   const session = await decrypt(cookie);
 
-  if (path.startsWith("/dashboard") && !session?.userId) {
+  if (path.startsWith(appConfig.routes.dashboard.home()) && !session?.userId) {
     const callbackUrl = encodeURIComponent(request.nextUrl.pathname);
     return NextResponse.redirect(
       new URL(appConfig.routes.auth.login(callbackUrl), request.url)

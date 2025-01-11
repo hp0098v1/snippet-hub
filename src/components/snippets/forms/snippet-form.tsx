@@ -1,15 +1,24 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
-import Form from "next/form";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { RichTextEditorSkeleton } from "@/components/shared/skeletons";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectTrigger,
@@ -17,7 +26,14 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { CreateSnippet, Language, FormState } from "@/types";
+import { createSnippet, updateSnippet } from "@/db/actions";
+import { useAction } from "@/hooks/use-action";
+import { config } from "@/lib/config";
+import {
+  createSnippetSchema,
+  type CreateSnippetSchema,
+} from "@/lib/validations/snippets";
+import { Language } from "@/types";
 
 const RichTextEditor = dynamic(
   () =>
@@ -30,122 +46,149 @@ const RichTextEditor = dynamic(
 interface SnippetFormProps {
   snippetId?: string;
   languages: Language[];
-  defaultValues?: Omit<CreateSnippet, "views">;
-  onSubmit: (prevState: FormState, formData: FormData) => Promise<FormState>;
+  defaultValues?: CreateSnippetSchema;
   cancelLink: string;
 }
-
-const initialState = {
-  errors: {},
-};
 
 export function SnippetForm({
   snippetId,
   languages,
   defaultValues,
-  onSubmit,
   cancelLink,
 }: SnippetFormProps) {
-  const isEditing = !!defaultValues;
+  const router = useRouter();
+  const isEditing = !!snippetId;
 
-  const [content, setContent] = useState(defaultValues?.content || "");
-  const [language, setLanguage] = useState(defaultValues?.languageId || "");
-
-  const [state, formAction, isSubmitting] = useActionState(
-    onSubmit,
-    initialState
+  const { execute: executeCreate, isPending: isCreatePending } = useAction(
+    createSnippet,
+    {
+      onSuccess: (data) => {
+        toast.success("قطعه کد با موفقیت ایجاد شد");
+        router.push(config.routes.public.snippetsDetail(data.id));
+      },
+      onError: (error) => {
+        toast.error(error);
+      },
+    }
   );
 
+  const { execute: executeUpdate, isPending: isUpdatePending } = useAction(
+    updateSnippet,
+    {
+      onSuccess: () => {
+        toast.success("قطعه کد با موفقیت ویرایش شد");
+        router.push(config.routes.public.snippetsDetail(snippetId!));
+      },
+      onError: (error) => {
+        toast.error(error);
+      },
+    }
+  );
+
+  const form = useForm<CreateSnippetSchema>({
+    resolver: zodResolver(createSnippetSchema),
+    defaultValues: defaultValues || {
+      title: "",
+      languageId: "",
+      content: "",
+    },
+  });
+
+  async function onSubmit(data: CreateSnippetSchema) {
+    if (isEditing && snippetId) {
+      await executeUpdate({
+        ...data,
+        id: snippetId,
+      });
+    } else {
+      await executeCreate(data);
+    }
+  }
+
   return (
-    <Form
-      action={(formData: FormData) => {
-        const newFormData = new FormData();
-        if (isEditing) {
-          newFormData.append("id", snippetId as string);
-        }
+    <Card>
+      <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-start sm:*:flex-1">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>عنوان</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="یک عنوان توصیفی برای قطعه کد خود وارد کنید"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        newFormData.append("title", formData.get("title") as string);
-        newFormData.append("languageId", formData.get("languageId") as string);
-        newFormData.append("content", content);
+              <FormField
+                control={form.control}
+                name="languageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>زبان برنامه‌نویسی</FormLabel>
+                    <Select
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="انتخاب زبان برنامه‌نویسی" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {languages.map((lang) => (
+                          <SelectItem key={lang.id} value={lang.id}>
+                            {lang.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-        formAction(newFormData);
-      }}
-    >
-      <Card>
-        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-start sm:*:flex-1">
-          <div className="space-y-2">
-            <Label htmlFor="title">عنوان</Label>
-            <Input
-              defaultValue={defaultValues?.title}
-              id="title"
-              name="title"
-              placeholder="یک عنوان توصیفی برای قطعه کد خود وارد کنید"
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>محتوا</FormLabel>
+                  <FormControl>
+                    <RichTextEditor languages={languages} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {state.errors?.title && (
-              <p className="text-sm text-red-500">{state.errors.title}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="language">زبان برنامه‌نویسی</Label>
-            <Select
-              defaultValue={defaultValues?.languageId}
-              name="languageId"
-              value={language}
-              onValueChange={setLanguage}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="انتخاب زبان برنامه‌نویسی" />
-              </SelectTrigger>
-              <SelectContent>
-                {languages.map((lang) => (
-                  <SelectItem key={lang.id} value={lang.id}>
-                    {lang.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {state.errors?.languageId && (
-              <p className="text-sm text-red-500">{state.errors.languageId}</p>
-            )}
-          </div>
-        </CardHeader>
 
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="content">محتوا</Label>
-            <RichTextEditor
-              languages={languages}
-              value={content}
-              onChange={setContent}
-            />
-            {state.errors?.content && (
-              <p className="text-sm text-red-500">{state.errors.content}</p>
-            )}
-          </div>
-
-          {state.errors?.message && (
-            <p className="text-sm text-red-500">{state.errors.message}</p>
-          )}
-
-          <div className="flex justify-end gap-4">
-            <Button
-              asChild
-              disabled={isSubmitting}
-              type="button"
-              variant="outline"
-            >
-              <Link href={cancelLink}>انصراف</Link>
-            </Button>
-            <Button disabled={isSubmitting} type="submit">
-              {isSubmitting
-                ? "در حال ارسال..."
-                : isEditing
-                  ? "ذخیره تغییرات"
-                  : "ایجاد قطعه کد"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </Form>
+            <div className="mt-6 flex justify-end gap-4">
+              <Button asChild variant="outline">
+                <Link href={cancelLink}>انصراف</Link>
+              </Button>
+              <Button
+                disabled={isCreatePending || isUpdatePending}
+                type="submit"
+              >
+                {isCreatePending || isUpdatePending
+                  ? "در حال ارسال..."
+                  : isEditing
+                    ? "ذخیره تغییرات"
+                    : "ایجاد قطعه کد"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CardHeader>
+    </Card>
   );
 }

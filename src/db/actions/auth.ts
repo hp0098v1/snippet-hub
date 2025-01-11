@@ -14,266 +14,142 @@ import { users } from "@/db/schema";
 import { config } from "@/lib/config";
 import { createSession, deleteSession } from "@/lib/session";
 import {
-  loginSchema,
-  signupSchema,
-  verifyEmailSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
+  LoginSchema,
+  SignupSchema,
+  VerifyEmailSchema,
+  ResetPasswordSchema,
+  ForgotPasswordSchema,
+  ResendVerificationEmailSchema,
 } from "@/lib/validations/auth";
-import { FormState } from "@/types";
 
-export async function signup(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedData = signupSchema.safeParse(formDataObj);
+export async function signup({ email, name, password }: SignupSchema) {
+  // Generate verification code
+  const verificationCode = Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
+  const verificationCodeExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-  if (!parsedData.success) {
-    return {
-      errors: parsedData.error.flatten().fieldErrors,
-      data: formDataObj as { [key: string]: string | undefined },
-    };
-  }
+  const hashedPassword = await hash(password, 10);
 
-  try {
-    // Generate verification code
-    const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
-    const verificationCodeExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+  // Check if user exists
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
 
-    const hashedPassword = await hash(parsedData.data.password, 10);
+  if (existingUser && existingUser.emailVerified) {
+    throw new Error("این ایمیل قبلاً ثبت شده است");
+  } else if (existingUser && !existingUser.emailVerified) {
+    await db
+      .update(users)
+      .set({
+        name: name,
+        verificationCode,
+        verificationCodeExpiresAt,
+        password: hashedPassword,
+      })
+      .where(eq(users.id, existingUser.id));
+  } else {
+    const userId = nanoid();
+    const username = `user-${Math.floor(100000 + Math.random() * 900000)}`;
+    const data = await db
+      .insert(users)
+      .values({
+        id: userId,
+        name: name,
+        username,
+        email: email,
+        password: hashedPassword,
+        verificationCode,
+        verificationCodeExpiresAt,
+        deleteAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Delete after 24 hours if not verified
+      })
+      .returning({ id: users.id });
 
-    // Check if user exists
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.email, parsedData.data.email),
-    });
+    const user = data[0];
 
-    if (existingUser && existingUser.emailVerified) {
-      return {
-        errors: {
-          email: "این ایمیل قبلاً ثبت شده است",
-        },
-        data: parsedData.data,
-      };
-    } else if (existingUser && !existingUser.emailVerified) {
-      await db
-        .update(users)
-        .set({
-          name: parsedData.data.name,
-          verificationCode,
-          verificationCodeExpiresAt,
-          password: hashedPassword,
-        })
-        .where(eq(users.id, existingUser.id));
-    } else {
-      // Create user
-      const userId = nanoid();
-      const username = `user-${Math.floor(100000 + Math.random() * 900000)}`;
-      const data = await db
-        .insert(users)
-        .values({
-          id: userId,
-          name: parsedData.data.name,
-          username,
-          email: parsedData.data.email,
-          password: hashedPassword,
-          verificationCode,
-          verificationCodeExpiresAt,
-          deleteAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Delete after 24 hours if not verified
-        })
-        .returning({ id: users.id });
-
-      const user = data[0];
-
-      if (!user) {
-        return {
-          errors: {
-            message: "خطایی رخ داده است",
-          },
-          data: parsedData.data,
-        };
-      }
+    if (!user) {
+      throw new Error("خطایی رخ داده است");
     }
-
-    // Send verification email
-    await sendVerificationEmail(
-      parsedData.data.email,
-      parsedData.data.name,
-      verificationCode
-    );
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-      data: parsedData.data,
-    };
   }
 
-  // Redirect to verify page
-  redirect(config.routes.auth.verifyEmail(parsedData.data.email));
+  await sendVerificationEmail(email, name, verificationCode);
 }
 
-export async function login(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedData = loginSchema.safeParse(formDataObj);
-
-  if (!parsedData.success) {
-    return {
-      errors: parsedData.error.flatten().fieldErrors,
-      data: formDataObj as { [key: string]: string | undefined },
-    };
-  }
-
+export async function login({ email, password }: LoginSchema) {
   const user = await db.query.users.findFirst({
-    where: eq(users.email, parsedData.data.email),
+    where: eq(users.email, email),
   });
 
   if (!user) {
-    return {
-      errors: {
-        message: "ایمیل یا رمز عبور اشتباه است",
-      },
-      data: parsedData.data,
-    };
+    throw new Error("ایمیل یا رمز عبور اشتباه است");
   }
 
-  const isPasswordCorrect = await compare(
-    parsedData.data.password,
-    user.password
-  );
+  const isPasswordCorrect = await compare(password, user.password);
 
   if (!isPasswordCorrect) {
-    return {
-      errors: {
-        message: "ایمیل یا رمز عبور اشتباه است",
-      },
-      data: parsedData.data,
-    };
+    throw new Error("ایمیل یا رمز عبور اشتباه است");
   }
 
   await createSession(user.id);
-
-  // Get callback URL from form data
-  const callbackUrl = formData.get("callbackUrl") as string;
-  redirect(callbackUrl || config.routes.dashboard.home());
 }
 
-export async function verifyEmail(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const email = formData.get("email") as string;
-  const code = formData.get("code") as string;
+export async function verifyEmail({
+  email,
+  code,
+}: VerifyEmailSchema & { email: string }) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
 
-  const parsedData = verifyEmailSchema.safeParse({ code });
-  if (!parsedData.success) {
-    return {
-      errors: parsedData.error.flatten().fieldErrors,
-      data: { code },
-    };
+  if (!user || user.verificationCode !== code) {
+    throw new Error("کد تأیید اشتباه است");
   }
 
-  let user;
-
-  try {
-    user = await db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
-
-    if (!user || user.verificationCode !== code) {
-      return {
-        errors: {
-          code: "کد تأیید نامعتبر است",
-        },
-        data: { code },
-      };
-    }
-
-    if (
-      user.verificationCodeExpiresAt &&
-      user.verificationCodeExpiresAt < new Date()
-    ) {
-      return {
-        errors: {
-          code: "کد تأیید منقضی شده است",
-        },
-        data: { code },
-      };
-    }
-
-    // Verify user
-    await db
-      .update(users)
-      .set({
-        emailVerified: true,
-        verificationCode: null,
-        verificationCodeExpiresAt: null,
-      })
-      .where(eq(users.id, user.id));
-
-    // Create session token
-    await createSession(user.id);
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-      data: { code },
-    };
+  if (
+    user.verificationCodeExpiresAt &&
+    user.verificationCodeExpiresAt < new Date()
+  ) {
+    throw new Error("کد تأیید منقضی شده است");
   }
 
-  redirect(config.routes.dashboard.home());
+  await db
+    .update(users)
+    .set({
+      emailVerified: true,
+      verificationCode: null,
+      verificationCodeExpiresAt: null,
+    })
+    .where(eq(users.id, user.id));
+
+  await createSession(user.id);
 }
 
-export async function resendVerificationCode(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const email = formData.get("email") as string;
+export async function resendVerificationCode({
+  email,
+}: ResendVerificationEmailSchema) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
 
-  try {
-    const user = await db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
-
-    if (!user || user.emailVerified) {
-      return {
-        errors: {
-          message: "کاربر یافت نشد یا قبلاً تأیید شده است",
-        },
-      };
-    }
-
-    const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
-    const verificationCodeExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-    await db
-      .update(users)
-      .set({
-        verificationCode,
-        verificationCodeExpiresAt,
-        deleteAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Extend deletion time
-      })
-      .where(eq(users.id, user.id));
-
-    await sendVerificationEmail(email, user.name, verificationCode);
-
-    return {};
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-    };
+  if (!user || user.emailVerified) {
+    throw new Error("کاربر یافت نشد یا قبلاً تأیید شده است");
   }
+
+  const verificationCode = Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
+  const verificationCodeExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+  await db
+    .update(users)
+    .set({
+      verificationCode,
+      verificationCodeExpiresAt,
+      deleteAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Extend deletion time
+    })
+    .where(eq(users.id, user.id));
+
+  await sendVerificationEmail(email, user.name, verificationCode);
 }
 
 export async function logout() {
@@ -281,120 +157,54 @@ export async function logout() {
   redirect(config.routes.auth.login());
 }
 
-export async function forgotPassword(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedData = forgotPasswordSchema.safeParse(formDataObj);
+export async function forgotPassword({ email }: ForgotPasswordSchema) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
 
-  if (!parsedData.success) {
-    return {
-      errors: parsedData.error.flatten().fieldErrors,
-      data: formDataObj as { [key: string]: string | undefined },
-    };
+  if (!user || !user.emailVerified) {
+    throw new Error("کاربری با این ایمیل یافت نشد");
   }
 
-  try {
-    const user = await db.query.users.findFirst({
-      where: eq(users.email, parsedData.data.email),
-    });
+  const resetToken = nanoid(32);
+  const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
-    if (!user || !user.emailVerified) {
-      return {
-        errors: {
-          email: "کاربری با این ایمیل یافت نشد",
-        },
-        data: parsedData.data,
-      };
-    }
+  await db
+    .update(users)
+    .set({
+      resetToken,
+      resetTokenExpiresAt,
+    })
+    .where(eq(users.id, user.id));
 
-    // Generate reset token
-    const resetToken = nanoid(32);
-    const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-    // Update user with reset token
-    await db
-      .update(users)
-      .set({
-        resetToken,
-        resetTokenExpiresAt,
-      })
-      .where(eq(users.id, user.id));
-
-    // Send reset password email
-    const resetLink = `${config.env.app.url}/reset-password?token=${resetToken}`;
-    await sendResetPasswordEmail(user.email, user.name, resetLink);
-
-    return {
-      success: true,
-    };
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-      data: parsedData.data,
-    };
-  }
+  const resetLink = `${config.env.app.url}/reset-password?token=${resetToken}`;
+  await sendResetPasswordEmail(user.email, user.name, resetLink);
 }
 
-export async function resetPassword(
-  token: string,
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const formDataObj = Object.fromEntries(formData.entries());
-  const parsedData = resetPasswordSchema.safeParse(formDataObj);
+export async function resetPassword({
+  token,
+  password,
+}: ResetPasswordSchema & { token: string }) {
+  const user = await db.query.users.findFirst({
+    where: and(
+      eq(users.resetToken, token),
+      sql`${users.resetTokenExpiresAt} > NOW()`
+    ),
+  });
 
-  if (!parsedData.success) {
-    return {
-      errors: parsedData.error.flatten().fieldErrors,
-      data: formDataObj as { [key: string]: string | undefined },
-    };
+  if (!user) {
+    throw new Error("لینک بازیابی رمز عبور نامعتبر یا منقضی شده است");
   }
 
-  try {
-    // Find user with valid reset token
-    const user = await db.query.users.findFirst({
-      where: and(
-        eq(users.resetToken, token),
-        sql`${users.resetTokenExpiresAt} > NOW()`
-      ),
-    });
+  const hashedPassword = await hash(password, 10);
 
-    if (!user) {
-      return {
-        errors: {
-          message: "لینک بازیابی رمز عبور نامعتبر یا منقضی شده است",
-        },
-        data: parsedData.data,
-      };
-    }
-
-    // Hash new password
-    const hashedPassword = await hash(parsedData.data.password, 10);
-
-    // Update user password and clear reset token
-    await db
-      .update(users)
-      .set({
-        password: hashedPassword,
-        resetToken: null,
-        resetTokenExpiresAt: null,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, user.id));
-
-    return {
-      success: true,
-    };
-  } catch {
-    return {
-      errors: {
-        message: "خطایی رخ داده است",
-      },
-      data: parsedData.data,
-    };
-  }
+  await db
+    .update(users)
+    .set({
+      password: hashedPassword,
+      resetToken: null,
+      resetTokenExpiresAt: null,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, user.id));
 }
